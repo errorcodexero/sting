@@ -1,5 +1,5 @@
 -Laptop configuration
-	-Make all of them have the same password
+	-Make all of them have the same password "errorcode"
 	-"Prince Charming":
 		install git, g++, graphviz, valgrind, vim, konsole, kdiff3, arduino, roboRIO dev env
 	-All of the laptops: install linux roboRIO dev env & test

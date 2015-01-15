@@ -1,0 +1,15 @@
+-Laptop configuration
+	-Make all of them have the same password
+	-"Prince Charming":
+		install git, g++, graphviz, valgrind, vim, konsole, kdiff3, arduino, roboRIO dev env
+	-All of the laptops: install linux roboRIO dev env & test
+-Try out the new Victor SP's
+-Try out the new Talon SRX's
+	-PWM
+	-CAN
+		-just power levels
+		-all the sensor-based modes
+-Set up a git repo for this year's codebase
+-Vision stuff
+-Autonomous mode stuff
+-Drivebase code

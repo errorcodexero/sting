@@ -9,7 +9,6 @@
 	-CAN
 		-just power levels
 		-all the sensor-based modes
--Set up a git repo for this year's codebase
 -Vision stuff
 -Autonomous mode stuff
 -Drivebase code

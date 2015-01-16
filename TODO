@@ -1,7 +1,7 @@
 -Laptop configuration
 	-Make all of them have the same password "errorcode"
 	-"Prince Charming":
-		install git, g++, graphviz, valgrind, vim, konsole, kdiff3, arduino, roboRIO dev env
+		install & test roboRIO dev env
 	-All of the laptops: install linux roboRIO dev env & test
 -Try out the new Victor SP's
 -Try out the new Talon SRX's
@@ -12,3 +12,6 @@
 -Vision stuff
 -Autonomous mode stuff
 -Drivebase code
+-roboRIO setup:
+	-test all the new ones & see that they at least turn on
+	-consider setting up ssh using keypairs so don't need a password

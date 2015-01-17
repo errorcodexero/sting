@@ -1,0 +1,3 @@
+ssh admin@roboRIO-1425.local rm /home/lvuser/FRCUserProgram
+scp FRCUserProgram admin@roboRIO-1425.local:/home/lvuser/FRCUserProgram
+ssh admin@roboRIO-1425.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"

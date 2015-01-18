@@ -1,0 +1,1 @@
+g++ -DCOUNTDOWN_TIMER_TEST -Wall -Werror countdown_timer.cpp -o countdown_timer 2>&1 && ./countdown_timer

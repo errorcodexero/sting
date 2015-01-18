@@ -1,0 +1,1 @@
+g++ -Wall -Werror -std=c++0x -DINJECTOR_TEST injector.cpp ../util/countup_timer.cpp -o injector 2>&1 && ./injector 2>&1

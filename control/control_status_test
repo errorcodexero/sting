@@ -1,0 +1,1 @@
+g++ -Wall -Werror -std=c++0x control_status.cpp -D CONTROL_STATUS_TEST -o control_status && ./control_status

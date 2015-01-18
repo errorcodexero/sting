@@ -1,0 +1,7 @@
+g++ -Wall -Werror -DWHEELRPMS_TEST wheelrpms.cpp \
+	shooter_wheels.cpp \
+	shooter_status.cpp \
+	../util/jag_interface.cpp \
+	../util/posedge_trigger.cpp \
+	../util/util.cpp \
+	-o wheelrpms -std=c++0x 2>&1 && ./wheelrpms

@@ -1,0 +1,1 @@
+g++ -Wall -Werror -DINPUT_UTIL_TEST util.cpp -o util && ./util

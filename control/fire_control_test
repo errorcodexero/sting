@@ -1,0 +1,5 @@
+g++ -Wall -Werror -std=c++0x -DFIRE_CONTROL_TEST \
+\
+fire_control.cpp \
+control_status.cpp \
+-o fire_control 2>&1 && ./fire_control

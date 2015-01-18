@@ -1,0 +1,1 @@
+g++ -Wall -Werror -std=c++0x -DEJECTOR_TEST ejector.cpp ../util/countup_timer.cpp -o ejector 2>&1 && ./ejector 2>&1

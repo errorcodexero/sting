@@ -1,0 +1,12 @@
+digraph G{
+up -> lowering [label="Output: Down"]
+up -> unknown [label="Output: Neither"]
+raising -> up [label="Output: Up \n Time has passed"]
+raising -> unknown [label="Output: !Up"]
+unknown -> lowering [label="Output: Down"]
+unknown -> raising [label="Output: Up"]
+down -> raising [label="Output: Up"]
+lowering -> down [label="Output: Down \n Time has passed"]
+lowering -> raising [label="Output: Up"]
+lowering -> unknown [label="Output: Neither"]
+}

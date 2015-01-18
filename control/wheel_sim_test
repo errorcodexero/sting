@@ -1,0 +1,1 @@
+g++ -Wall -Werror -std=c++0x -DWHEEL_SIM_TEST wheel_sim.cpp shooter_wheels.cpp wheelrpms.cpp shooter_status.cpp ../util/jag_interface.cpp ../util/posedge_trigger.cpp ../util/util.cpp ../util/negedge_trigger.cpp -o wheel_sim 2>&1 && ./wheel_sim

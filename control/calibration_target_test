@@ -1,0 +1,4 @@
+g++ -Wall -Werror -std=c++0x -DCALIBRATION_TARGET_TEST \
+	calibration_target.cpp \
+	fire_control.cpp \
+	-o calibration_target 2>&1 && ./calibration_target

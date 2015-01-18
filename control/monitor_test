@@ -1,0 +1,27 @@
+g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
+	monitor.cpp \
+	toplevel.cpp \
+	../util/interface.cpp \
+	../util/jag_interface.cpp \
+	gyro_tracker.cpp \
+	collector_tilt.cpp \
+	injector.cpp \
+	injector_arms.cpp \
+	ejector.cpp \
+	shooter_status.cpp \
+	pump.cpp \
+	../util/posedge_toggle.cpp \
+	force_interface.cpp \
+	control_status.cpp \
+	holonomic.cpp \
+	../util/driver_station_interface.cpp \
+	../util/util.cpp \
+	shooter_wheels.cpp \
+	../util/countup_timer.cpp \
+	force.cpp \
+	../util/posedge_trigger.cpp \
+	../util/point.cpp \
+	wheelrpms.cpp \
+	collector.cpp \
+	../util/negedge_trigger.cpp \
+	-o monitor 2>&1 && ./monitor

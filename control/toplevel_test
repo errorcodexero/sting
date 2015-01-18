@@ -1,0 +1,20 @@
+g++ -Wall -Werror -std=c++0x -DTOPLEVEL_TEST shooter_status.cpp \
+	wheelrpms.cpp \
+	toplevel.cpp \
+	collector.cpp \
+	collector_tilt.cpp \
+	injector.cpp \
+	injector_arms.cpp \
+	shooter_wheels.cpp \
+	../util/posedge_trigger.cpp \
+	../util/negedge_trigger.cpp \
+	../util/countup_timer.cpp \
+	ejector.cpp \
+	pump.cpp \
+	../util/point.cpp \
+	holonomic.cpp \
+	../util/interface.cpp \
+	../util/jag_interface.cpp \
+	../util/driver_station_interface.cpp \
+	../util/util.cpp \
+	-o toplevel 2>&1 && ./toplevel 2>&1

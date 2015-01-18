@@ -1,0 +1,7 @@
+g++ -Wall -Werror -std=c++0x -DPUMP_ADVANCED_TEST pump_advanced.cpp pump.cpp \
+	ejector.cpp \
+	injector.cpp \
+	injector_arms.cpp \
+	collector_tilt.cpp \
+	../util/countup_timer.cpp \
+	-o pump_advanced 2>&1 && ./pump_advanced

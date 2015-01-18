@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+
+#This is supposed to give a faster way to run all the tests.  It's not super elegant, oh well.
+
+from glob import glob
+
+#output stream -> void
+def makefile(out):
+	def get_base(test_script):
+		return test_script[:-5].split('/')[1]
+
+	def get_target_name(test_script):
+		return test_script.replace('/','_')
+
+	def get_dir(test_script): return test_script.split('/')[0]
+
+	def get_cppfile(test_script):
+		return get_dir(test_script)+'/'+get_base(test_script)+'.cpp'
+
+	test_scripts=filter(lambda x: 'joystick_linux' not in x,glob('*/*_test'))
+
+	print>>out,'H_FILES=*.h */*.h'
+	print>>out,'CXX_FLAGS=-Wall -Wextra -Werror -std=c++0x'
+	print>>out,'.PHONY: clean'
+	print>>out,''
+
+	print>>out,'all:',
+	for a in test_scripts: print>>out, get_target_name(a),
+	print>>out, ''
+
+	print>>out,'%.o: %.cpp ${H_FILES}'
+	print>>out,'\t$(CXX) $(CXX_FLAGS) -c $(basename $@).cpp -o $@'
+	print>>out,''
+
+	#str->[str]
+	def objects_needed(script_name):
+		#base=get_base(script_name)
+		cppfile=get_cppfile(script_name)
+		def expand_dir(x):
+			if x[:3]=='../': x=x[3:]
+			if '/' in x: return x
+			return get_dir(script_name)+'/'+x
+		m=map(expand_dir,
+			filter(lambda x: '.cpp' in x,file(script_name).read().split())
+			)
+		cpp_files=filter(lambda x: x!=cppfile,m)
+		return map(lambda x: x.split('.')[0]+'.o',cpp_files)
+
+	for test_script in test_scripts:
+		base=get_base(test_script)
+		dir=get_dir(test_script)
+
+		define=base.upper()+'_TEST'
+		if test_script=='input/util_test':
+			define='INPUT_UTIL_TEST'
+
+		cppfile=get_cppfile(test_script)
+		objects=' '.join(objects_needed(test_script))
+		print>>out, '%s: ${H_FILES} util/util.o %s'%(get_target_name(test_script),cppfile),objects
+		exe_name='test_'+base
+		print>>out, '\t$(CXX) $(CXX_FLAGS) -D%s'%define,objects,cppfile,'-o',exe_name
+		print>>out, '\t./%s'%exe_name
+		print>>out,''
+
+	print>>out, 'clean:' 
+	print>>out, '\trm -f test_*'
+	print>>out, '\tfind -name \*.o | xargs rm -f'
+
+if __name__=='__main__':
+	makefile(open('t.mk','w'))
+	import os,sys
+	r=os.system('make -f t.mk && make -f t.mk clean')
+	assert r&0xff==0
+	sys.exit(r>>8)

@@ -1,0 +1,1 @@
+g++ -Wall -Werror -DJAG_INTERFACE_TEST jag_interface.cpp util.cpp -o jag_interface 2>&1 && ./jag_interface

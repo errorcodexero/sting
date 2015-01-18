@@ -1,0 +1,9 @@
+g++ -Wall -Werror -std=c++0x -DSHOOTER_WHEELS_TEST shooter_wheels.cpp \
+	wheelrpms.cpp \
+	shooter_status.cpp \
+	../util/jag_interface.cpp \
+	../util/posedge_trigger.cpp \
+	fire_control.cpp \
+	calibration_target.cpp \
+	../util/util.cpp \
+	-o shooter_wheels 2>&1 && ./shooter_wheels

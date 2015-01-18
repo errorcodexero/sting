@@ -1,0 +1,1 @@
+g++ -Wall -Werror -std=c++0x -DPUMP_TEST pump.cpp -o pump 2>&1 && ./pump

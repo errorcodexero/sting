@@ -1,0 +1,61 @@
+digraph G{
+	in [shape=house]
+	est [shape=house]
+	control_status [shape=house]
+
+	force [shape=box]
+
+	in->gyro
+	in->perf
+	in->since_switch
+	in->main_joystick
+	main_joystick->force
+	main_joystick->ball_collector
+	in->tanks_full
+	in->driver_station->panel
+	est->toplevel_status
+
+	control_status->next
+	toplevel_status->next
+	in->joystick1->next
+	panel->next
+	in->robot_mode->autonomous->next
+	autonomous->autonomous_start
+	robot_mode->enabled->autonomous_start
+	autonomous_start->next
+	since_switch->next
+	next->control_status1
+
+	main_joystick->field_relative
+	control_status1->mode
+	control_status1->drive_goal1
+	main_joystick->drive_goal1
+	field_relative->drive_goal1
+
+	mode->subgoals_now
+	drive_goal1->subgoals_now
+	rpmsdefault->subgoals_now
+	toplevel_status->subgoals_now
+
+	toplevel_status->high_level_outputs
+	subgoals_now->high_level_outputs
+	
+	high_level_outputs->high_level_outputs1
+	panel->high_level_outputs1
+
+	high_level_outputs1->r
+
+	est->est1
+	in->jaguar->est1
+	in->now->est1
+	enabled->est1
+	high_level_outputs1->est1
+	tanks_full->est1
+	gyro->est1
+
+	r->force->r1
+
+	r1 [shape=invhouse]
+	est1 [shape=invhouse]
+	control_status1 [shape=invhouse]
+}

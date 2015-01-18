@@ -1,0 +1,1 @@
+g++ -DBUNNY_LAUNCHER_TEST -Wall -Werror -I.. bunny_launcher.cpp -o bunny_launcher 2>&1 && ./bunny_launcher

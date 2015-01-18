@@ -1,0 +1,1 @@
+g++ -Wall -Werror -DCYBORG_JOYSTICK_TEST cyborg_joystick.cpp -o cyborg_joystick 2>&1 && ./cyborg_joystick 2>&1

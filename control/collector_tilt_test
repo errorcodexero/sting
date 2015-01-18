@@ -1,0 +1,1 @@
+g++ -Wall -Werror -std=c++0x -DCOLLECTOR_TILT_TEST collector_tilt.cpp ../util/countup_timer.cpp -o collector_tilt 2>&1 && ./collector_tilt 2>&1

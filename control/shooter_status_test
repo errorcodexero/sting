@@ -1,0 +1,1 @@
+g++ -Wall -Wextra -Werror -std=c++0x -DSHOOTER_STATUS_TEST shooter_status.cpp ../util/util.cpp -o shooter_status && ./shooter_status

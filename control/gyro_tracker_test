@@ -1,0 +1,1 @@
+g++ -Wall -Werror -DGYRO_TRACKER_TEST -I.. gyro_tracker.cpp ../util/point.cpp -o gyro_tracker 2>&1 && ./gyro_tracker

@@ -1,0 +1,1 @@
+g++ -Wall -Werror -DINJECTOR_ARMS_TEST injector_arms.cpp ../util/countup_timer.cpp -o injector_arms -std=c++0x 2>&1 && ./injector_arms

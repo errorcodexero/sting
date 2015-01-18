@@ -1,0 +1,22 @@
+digraph g{
+	GOING_UP->GOING_UP [label="out==OUTPUT_UP"];
+	GOING_UP->UP [label="out==OUTPUT_UP && elapsed>RISE_TIME "];
+	GOING_UP->GOING_DOWN [label="out==OUTPUT_DOWN"];
+	GOING_UP->X [label="ELSE"];
+	UP->UP [label="out==OUTPUT_UP"];
+	UP->GOING_DOWN [label="out==OUTPUT_DOWN"];
+	UP->X [label="out==OUTPUT_VENT"];
+	GOING_DOWN->GOING_DOWN [label="out==OUTPUT_DOWN && !elapsed>LOWER_TIME"];
+	GOING_DOWN->DOWN_VENT [label="out==OUTPUT_DOWN && elapsed>LOWER_TIME"];
+	GOING_DOWN->X[label="out==ELSE"];
+	GOING_DOWN->GOING_UP [label="out==OUTPUT_UP"];
+	DOWN_VENT->DOWN_VENT [label="out==OUTPUT_VENT"];
+	DOWN_VENT->DOWN_IDLE [label="out==OUTPUT_VENT && elapsed>VENT_TIME"];
+	DOWN_VENT->GOING_UP [label="out==OUTPUT_UP"];
+	DOWN_IDLE->DOWN_IDLE [label="out==OUTPUT_VENT"];
+	DOWN_IDLE->DOWN_VENT [label="out==OUTPUT_DOWN"];
+	DOWN_IDLE->GOING_UP [label="out==OUTPUT_UP"];
+	X->X [label="out==OUTPUT_VENT"];
+	X->GOING_DOWN [label="out==OUTPUT_DOWN"];
+	X->GOING_UP [label="out==OUTPUT_UP"];
+}

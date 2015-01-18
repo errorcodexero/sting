@@ -1,0 +1,5 @@
+g++ -Wall -Werror -DLCD_SCROLLER_TEST lcd_scroller.cpp \
+	../util/posedge_trigger.cpp \
+	../util/driver_station_interface.cpp \
+	../util/util.cpp \
+	-o lcd_scroller 2>&1 && ./lcd_scroller

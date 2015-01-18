@@ -1,0 +1,3 @@
+set -e
+g++ -Wall -Werror -DOCTOCANUM_TEST --std=c++0x octocanum.cpp -o octocanum 2>&1 | head
+./octocanum

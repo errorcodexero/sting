@@ -1,8 +1,8 @@
 -Laptop configuration
 	-Make all of them have the same password "errorcode"
-	-"Prince Charming":
-		install & test roboRIO dev env
-	-All of the laptops: install linux roboRIO dev env & test
+	-ssh config:
+		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
+		-add keys on both the roboRIOs for all the machines
 -Try out the new Victor SP's
 -Try out the new Talon SRX's
 	-PWM
@@ -14,4 +14,3 @@
 -Drivebase code
 -roboRIO setup:
 	-test all the new ones & see that they at least turn on
-	-consider setting up ssh using keypairs so don't need a password

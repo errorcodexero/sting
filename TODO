@@ -12,7 +12,6 @@
 -Vision stuff
 -Autonomous mode stuff
 -Drivebase code
+-Write logging code
 -roboRIO setup:
 	-test all the new ones & see that they at least turn on
-	-See if compatible w/ USB drives
-	-See if compatible w/ USB keyboards

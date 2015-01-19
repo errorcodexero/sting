@@ -12,15 +12,17 @@
  */
 class Robot: public SampleRobot
 {
-	RobotDrive myRobot; // robot drive system
+	RobotDrive myRobot,myRobot2; // robot drive system
 	Joystick stick; // only joystick
 
 public:
 	Robot() :
-			myRobot(0, 2),	// initialize the RobotDrive to use motor controllers on ports 0 and 1
+			myRobot(1, 0),	// initialize the RobotDrive to use motor controllers on ports 0 and 1
+			myRobot2(3,2),
 			stick(0)
 	{
 		myRobot.SetExpiration(0.1);
+		myRobot2.SetExpiration(0.1);
 	}
 
 	/**
@@ -31,6 +33,7 @@ public:
 		while (IsOperatorControl() && IsEnabled())
 		{
 			myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
+			myRobot2.ArcadeDrive(stick); // drive with arcade style (use right stick)
 			Wait(0.005);				// wait for a motor update time
 		}
 	}

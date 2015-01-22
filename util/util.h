@@ -13,6 +13,7 @@
 #endif
 
 Pwm_output pwm_convert(double);
+double from_pwm(Pwm_output);
 
 int write_file(std::string const& filename,std::string const& contents);
 int read_file(std::string const& filename,std::string &out);//I don't like out parameters.

@@ -18,6 +18,13 @@ bool operator!=(PID_coefficients a,PID_coefficients b){
 	return !(a==b);
 }
 
+bool operator<(PID_coefficients const& a,PID_coefficients const& b){
+	#define X(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
+	X(p) X(i) X(d)
+	#undef X
+	return 0;
+}
+
 ostream& operator<<(ostream& o,PID_coefficients p){
 	return o<<"PID_constants("<<p.p<<" "<<p.i<<" "<<p.d<<")";
 }
@@ -69,6 +76,13 @@ bool operator==(Jaguar_output a,Jaguar_output b){
 
 bool operator!=(Jaguar_output a,Jaguar_output b){
 	return !(a==b);
+}
+
+bool operator<(Jaguar_output a,Jaguar_output b){
+	#define X(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
+	X(pid) X(speed) X(voltage) X(controlSpeed)
+	#undef X
+	return 0;
 }
 
 ostream& operator<<(ostream& o,Jaguar_output a){

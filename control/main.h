@@ -9,6 +9,7 @@
 #include "control_status.h"
 #include "../util/countup_timer.h"
 #include "toplevel.h"
+#include "drivebase.h"
 
 struct Main{
 	Force_interface force;
@@ -29,7 +30,8 @@ struct Main{
 	Posedge_toggle light;
 		
 	Shooter_wheels::Calibration_manager wheel_calibration;
-	
+	Drivebase drivebase;
+
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };

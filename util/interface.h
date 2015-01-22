@@ -39,6 +39,7 @@ struct Robot_outputs{
 	Robot_outputs();
 };
 
+bool operator<(Robot_outputs,Robot_outputs);
 bool operator==(Robot_outputs,Robot_outputs);
 bool operator!=(Robot_outputs,Robot_outputs);
 std::ostream& operator<<(std::ostream& o,Robot_outputs);

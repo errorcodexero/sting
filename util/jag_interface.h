@@ -27,6 +27,7 @@ struct Jaguar_output{
 };
 bool operator==(Jaguar_output,Jaguar_output);
 bool operator!=(Jaguar_output,Jaguar_output);
+bool operator<(Jaguar_output,Jaguar_output);
 std::ostream& operator<<(std::ostream&,Jaguar_output);
 
 struct Jaguar_input{

@@ -386,18 +386,32 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	light.update ( main_joystick.button[Gamepad_button::X] );
 	bool ledOn = in.robot_mode.autonomous || light.get();
 	r.relay[1] = r.relay[6] = (ledOn) ? Relay_output::_10 : Relay_output::_00;
-	
 
-	r=force(r);
-	
-	r.driver_station.lcd.line[0]=as_string(panel.auto_mode);
-	r.driver_station.lcd.line[1]=as_string(r.jaguar[0]).substr(13, 20)+as_string(panel.pidselect);
+	cout<<"this\n";
+	auto l_x=main_joystick.axis[0];
+	auto l_y=main_joystick.axis[1];
+	auto r_x=main_joystick.axis[2];
+	auto r_y=main_joystick.axis[3];
+	cout<<"that\n";
+	//left wheels
+	r.pwm[0]=pwm_convert(-l_y);
+	//right wheels
+	r.pwm[1]=pwm_convert(-r_y);
+	//center wheel (strafe)
+	r.pwm[2]=pwm_convert((l_x+r_x)/2);
+	cout<<"what1\n";
+	//r=force(r);
+	cout<<"right\n";
+	//r.driver_station.lcd.line[0]=as_string(panel.auto_mode);
+	/*r.driver_station.lcd.line[1]=as_string(r.jaguar[0]).substr(13, 20)+as_string(panel.pidselect);
 	r.driver_station.lcd.line[2]=as_string(r.jaguar[1]).substr(13, 20);
 	r.driver_station.lcd.line[3]=as_string(r.jaguar[2]).substr(13, 20);
-	r.driver_station.lcd.line[4]=as_string(r.jaguar[3]).substr(13, 20);
+	r.driver_station.lcd.line[4]=as_string(r.jaguar[3]).substr(13, 20);*/
+	cout<<"eee\n";
 	stringstream strin;
 	strin<<toplevel_status.shooter_wheels;
-	r.driver_station.lcd.line[5]="Speeds:"+strin.str().substr(22, 20);
+	cout<<"wwww\n";
+	//r.driver_station.lcd.line[5]="Speeds:"+strin.str().substr(22, 20);
 
 	//r.driver_station.lcd=format_for_lcd(as_string(in.now)+as_string(in.driver_station));
 	/*r.driver_station.lcd=format_for_lcd(
@@ -405,7 +419,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 		as_string(subgoals_now)+as_string(toplevel_status)
 	);*/
 	//r.driver_station.lcd=format_for_lcd(as_string(panel));
-	r.driver_station.digital[7]=ready(toplevel_status,subgoals_now);
+	//r.driver_station.digital[7]=ready(toplevel_status,subgoals_now);
+	cout<<"pppp\n";
 	{
 		static int i=0;
 		if(i==0){
@@ -424,6 +439,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	//cerr<<subgoals_now<<"\r\n";
 	//cerr<<toplevel_status<<"\r\n\r\n";
 	//cerr<<"Waiting on:"<<not_ready(toplevel_status,subgoals_now)<<"\n";
+	cout<<"thoihewoi\n";
 	
 	if(print_button(main_joystick.button[Gamepad_button::LB])){
 		cout<<in<<"\r\n";
@@ -431,6 +447,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 		cout<<"\r\n";
 	}
 	//log_line(cout,in,*this,r);
+	cout<<"done1\n";
 	return r;
 }
 

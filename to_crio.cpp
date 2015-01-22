@@ -222,7 +222,7 @@ public:
 	To_crio():error_code(0),skipped(0),gyro(NULL)
 	{
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
-		SendWOL();
+		//SendWOL();
 
 		//int solenoid_module=find_solenoid_module();
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
@@ -253,9 +253,9 @@ public:
 
 		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 			//it just so happens that our four jags are numbered 1-4.  This is contrary to the IO map document that we have and also contrary to the recommendations in the Jaguar documentation (which recomends not to use the number 1 because it's the factory default).  We should change this at some point.  
-			jaguar[i].init(i+1);
+			//jaguar[i].init(i+1);
 		}
-		CANJaguar::UpdateSyncGroup(Jag_control::SYNC_GROUP);
+		//CANJaguar::UpdateSyncGroup(Jag_control::SYNC_GROUP);
 		
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			int r=digital_io[i].set_channel(i);
@@ -341,7 +341,13 @@ public:
 			int r=set_pwm(i,out.pwm[i]);
 			if(r) error_code|=2;
 		}
-		
+
+		cout<<"cout1\n";
+		cout.flush();
+		cerr<<"cerr1\n";
+		cerr.flush();
+		usleep(1000*5);		
+
 		/*if(0){
 			//The first column is numbered 1.
 			lcd->Printf(DriverStationLCD::kUser_Line1,1,"%s",space_out(out.driver_station.lcd.line[0]).c_str());
@@ -384,7 +390,7 @@ public:
 		}
 
 		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
-			jaguar[i].set(out.jaguar[i],enabled);
+			//jaguar[i].set(out.jaguar[i],enabled);
 			//cerr<<jaguar[i]<<"\n";
 			//cerr<<"Are we enabled?"<<enabled<<"\n";
 			//cerr<<out.jaguar[i]<<"\n";
@@ -434,7 +440,9 @@ public:
 	}
 	
 	void run(Robot_inputs in){
+		cout<<"in:"<<in<<"\n";
 		Robot_outputs out=main(in);
+		cout<<"out:"<<out<<"\n";
 		set_outputs(out,in.robot_mode.enabled);
 		static int i=0;
 		if(!i){
@@ -472,7 +480,7 @@ public:
 		Robot_inputs in=in1.first;
 		error_code|=in1.second;
 		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
-			in.jaguar[i]=jaguar[i].get();
+			//in.jaguar[i]=.3;//jaguar[i].get();
 		}
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			in.digital_io[i]=digital_io[i].get();
@@ -495,6 +503,8 @@ public:
 template<typename USER_CODE>
 class Robot_adapter: public SampleRobot{
 	To_crio<USER_CODE> u;
+
+	void RobotInit(){}
 	
 	void Autonomous(void)
 	{

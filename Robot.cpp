@@ -12,28 +12,44 @@
  */
 class Robot: public SampleRobot
 {
-	RobotDrive myRobot,myRobot2; // robot drive system
+	//RobotDrive myRobot,myRobot2; // robot drive system
+	PWM l,r,c;
 	Joystick stick; // only joystick
+	Compressor cmp;
 
 public:
 	Robot() :
-			myRobot(1, 0),	// initialize the RobotDrive to use motor controllers on ports 0 and 1
-			myRobot2(3,2),
+			//myRobot(1, 0),	// initialize the RobotDrive to use motor controllers on ports 0 and 1
+			//myRobot2(3,2),
+			l(0),r(1),c(2),
 			stick(0)
 	{
-		myRobot.SetExpiration(0.1);
-		myRobot2.SetExpiration(0.1);
+		//myRobot.SetExpiration(0.1);
+		//myRobot2.SetExpiration(0.1);
 	}
 
 	/**
 	 * Runs the motors with arcade steering.
 	 */
+	void set(unsigned short value,PWM& p){
+		p.SetRaw(value);
+	}
+
 	void OperatorControl()
 	{
+		cmp.SetClosedLoopControl(1);
 		while (IsOperatorControl() && IsEnabled())
 		{
-			myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
-			myRobot2.ArcadeDrive(stick); // drive with arcade style (use right stick)
+			set(127,l);
+			set(-127,r);
+			set(0,c);
+			/*l->setPosition(0);
+			r->setPosition(1);
+			c->setPosition(-1);*/
+			//.SetRaw(p-128);
+			//r.SetRaw
+			//myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
+			//myRobot2.ArcadeDrive(stick); // drive with arcade style (use right stick)
 			Wait(0.005);				// wait for a motor update time
 		}
 	}

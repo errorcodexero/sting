@@ -126,6 +126,39 @@ bool operator!=(Robot_outputs a,Robot_outputs b){
 	return !(a==b);
 }
 
+bool operator<(Robot_outputs a,Robot_outputs b){
+	for(unsigned i=0;i<Robot_outputs::PWMS;i++){
+		if(a.pwm[i]<b.pwm[i]) return 1;
+		if(b.pwm[i]<a.pwm[i]) return 0;
+	}
+
+	for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
+		if(a.solenoid[i]<b.solenoid[i]) return 1;
+		if(b.solenoid[i]<a.solenoid[i]) return 0;
+	}
+
+	for(unsigned i=0;i<Robot_outputs::RELAYS;i++){
+		if(a.relay[i]<b.relay[i]) return 1;
+		if(b.relay[i]<a.relay[i]) return 0;
+	}
+
+	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
+		auto a1=a.digital_io[i];
+		auto b1=b.digital_io[i];
+		if(a1<b1) return 1;
+		if(b1<a1) return 0;
+	}
+
+	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+		auto a1=a.jaguar[i];
+		auto b1=b.jaguar[i];
+		if(a1<b1) return 1;
+		if(b1<a1) return 0;
+	}
+
+	return 0;
+}
+
 ostream& operator<<(ostream& o,Robot_outputs a){
 	o<<"Robot_outputs(";
 	o<<"pwm:";

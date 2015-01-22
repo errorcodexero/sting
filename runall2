@@ -21,7 +21,7 @@ def makefile(out):
 	test_scripts=filter(lambda x: 'joystick_linux' not in x,glob('*/*_test'))
 
 	print>>out,'H_FILES=*.h */*.h'
-	print>>out,'CXX_FLAGS=-Wall -Wextra -Werror -std=c++0x'
+	print>>out,'CXX_FLAGS=-Wall -Wextra -Werror -std=c++11'
 	print>>out,'.PHONY: clean'
 	print>>out,''
 
@@ -77,7 +77,7 @@ def cross_makefile(out):
 
 	print>>out,"H_FILES=*.h */*.h"
 	print>>out,"CXX=arm-frc-linux-gnueabi-g++"
-	print>>out,"CXX_FLAGS=-Wall -Wextra -std=c++11 -I"+os.environ['HOME']+"/wpilib/cpp/current/include -fmessage-length=0"
+	print>>out,"CXX_FLAGS=-Wall -Wextra -g --std=c++11 -I"+os.environ['HOME']+"/wpilib/cpp/current/include -fmessage-length=0"
 	print>>out,"LD_FLAGS=-L"+os.environ['HOME']+"/wpilib/cpp/current/lib -Wl,-rpath,/opt/GenICam_v2_3/bin/Linux_armv7-a -lwpi"
 	print>>out,".PHONY: clean\n"
 
@@ -94,14 +94,21 @@ def cross_makefile(out):
 	print>>out,"\t$(CXX) $(CXX_FLAGS) -c $(basename $@).cpp -o $@\n"
 
 if __name__=='__main__':
-	if sys.argv[1]=="test":
+	from optparse import OptionParser
+	p=OptionParser()
+	p.add_option('--test',action='store_true',help="Run unit tests")
+	p.add_option('--build',action='store_true',help="Build the executable to load onto the robot")
+	options,args=p.parse_args()
+	assert len(args)==0
+
+	if options.test:
 		func=makefile
 		func(open('t.mk','w'))
 		import os,sys
 		r=os.system('make -f t.mk && make -f t.mk clean')
 		assert r&0xff==0
 		sys.exit(r>>8)
-	elif sys.argv[1]=="build":
+	elif options.build:
 		cross_makefile(open('t.mk','w'))
 		import os,sys
 		r=os.system('make -f t.mk')

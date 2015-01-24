@@ -1,9 +1,10 @@
 -Laptop configuration
-	-Make all of them have the same password "errorcode"
+	-Make all of them have the same password
 	-ssh config:
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 		-add keys on both the roboRIOs for all the machines
--Try out the new Victor SP's
+	-Updated Driver Stations
+-New Launchpad Controller
 -Try out the new Talon SRX's
 	-PWM
 	-CAN
@@ -12,6 +13,11 @@
 -Vision stuff
 -Autonomous mode stuff
 -Drivebase code
+-Lifter Code
+	-UI
+	-Motor and Encoders
+	-Gripper 
 -Write logging code
+-OI:
 -roboRIO setup:
 	-test all the new ones & see that they at least turn on

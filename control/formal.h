@@ -39,7 +39,14 @@ template<typename T>
 void test_ostream(std::string heading,T* t){
 	std::cout<<heading<<":";
 	std::set<std::string> used;
-	for(auto a:examples(t)){
+	auto ex=examples(t);
+
+	if(ex.empty()){
+		std::cout<<"Error: No examples\n";
+		exit(1);
+	}
+
+	for(auto a:ex){
 		std::stringstream ss;
 		ss<<a;
 		auto s=ss.str();
@@ -141,6 +148,7 @@ void tester(Part p){
 			auto recovered=p1.output_applicator(out);
 			if(recovered!=output){
 				//the value recovery didn't work
+				cout<<"recovered:"<<recovered<<" "<<"output:"<<output<<"\n";
 				NYI
 			}
 		}

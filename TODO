@@ -9,12 +9,13 @@
 		-just power levels
 		-all the sensor-based modes
 -Vision stuff
--Autonomous mode stuff
+-Autonomous mode stuff-Logan&Matthew
 -Drivebase code
 -Lifter Code
 	-UI
 	-Motor and Encoders
 	-Gripper 
+	-Lifter Simulator-Jared
 -Write logging code
 -OI:
 

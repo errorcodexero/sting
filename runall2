@@ -72,7 +72,7 @@ def cross_makefile(out):
 	def object_files():
 		cppfiles=commands.getoutput("find -name \*.cpp").splitlines()
 		cppfiles=filter(lambda x: 'Robot' not in x,cppfiles)
-		print cppfiles
+		#print cppfiles
 		return map(lambda x: '.'.join(x.split('.')[:-1])+'.o',cppfiles)
 
 	print>>out,"H_FILES=*.h */*.h"

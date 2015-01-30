@@ -41,8 +41,8 @@ public:
 		while (IsOperatorControl() && IsEnabled())
 		{
 			set(127,l);
-			set(-127,r);
-			set(0,c);
+			set(127,r);
+			set(127,c);
 			/*l->setPosition(0);
 			r->setPosition(1);
 			c->setPosition(-1);*/

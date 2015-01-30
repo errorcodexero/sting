@@ -1,9 +1,7 @@
 -Laptop configuration
-	-Make all of them have the same password
 	-ssh config:
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 		-add keys on both the roboRIOs for all the machines
-	-Updated Driver Stations
 -New Launchpad Controller
 -Try out the new Talon SRX's
 	-PWM
@@ -11,13 +9,13 @@
 		-just power levels
 		-all the sensor-based modes
 -Vision stuff
--Autonomous mode stuff
+-Autonomous mode stuff-Logan&Matthew
 -Drivebase code
 -Lifter Code
 	-UI
 	-Motor and Encoders
 	-Gripper 
+	-Lifter Simulator-Jared
 -Write logging code
 -OI:
--roboRIO setup:
-	-test all the new ones & see that they at least turn on
+

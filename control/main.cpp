@@ -318,7 +318,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 		r.pwm[2]=x;
 		return r;
 	}
-
 	gyro.update(in.now,in.analog[0]);
 	perf.update(in.now);
 	since_switch.update(in.now,0);
@@ -406,17 +405,25 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	bool ledOn = in.robot_mode.autonomous || light.get();
 	r.relay[1] = r.relay[6] = (ledOn) ? Relay_output::_10 : Relay_output::_00;
 
+<<<<<<< HEAD
 	//cout<<"this\n";
 	auto l_x=main_joystick.axis[0];
 	auto l_y=main_joystick.axis[1];
 	auto r_x=main_joystick.axis[3];
 	auto r_y=main_joystick.axis[4];
 	//cout<<"that\n";
+=======
+	auto l_x=main_joystick.axis[0];
+	auto l_y=main_joystick.axis[1];
+	auto r_x=main_joystick.axis[2];
+	auto r_y=main_joystick.axis[3];
+>>>>>>> 36d93bfacb8a0b724aef5676a73274f745b7e62f
 	//left wheels
 	//r.pwm[0]=pwm_convert(-l_y);
 	//right wheels
 	//r.pwm[1]=180;//pwm_convert(-r_y);
 	//center wheel (strafe)
+<<<<<<< HEAD
 	//r.pwm[2]=180;//pwm_convert((l_x+r_x)/2);
 	//cout<<"what1\n";
 	//r=force(r);
@@ -440,6 +447,12 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	//r.driver_station.lcd=format_for_lcd(as_string(panel));
 	//r.driver_station.digital[7]=ready(toplevel_status,subgoals_now);
 	//cout<<"pppp\n";
+=======
+	r.pwm[2]=pwm_convert((l_x+r_x)/2);
+	//r=force(r);
+	stringstream strin;
+	strin<<toplevel_status.shooter_wheels;
+>>>>>>> 36d93bfacb8a0b724aef5676a73274f745b7e62f
 	{
 		static int i=0;
 		if(i==0){

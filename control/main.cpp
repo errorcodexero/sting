@@ -307,9 +307,15 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 		for(unsigned i=0;i<r.PWMS;i++){
 			r.pwm[i]=128;
 		}
-		for(unsigned i=0;i<3;i++){
-			r.pwm[i]=main_joystick.axis[i]*20+128;
-		}
+		auto x=main_joystick.axis[0];
+		auto y=main_joystick.axis[1];
+		auto theta=main_joystick.axis[4];
+		auto l1=y-theta;
+		auto r1=y+theta;
+		auto lim=max(1.0,max(l1,r1));
+		r.pwm[0]=-(l1/lim);
+		r.pwm[1]=r1/lim;
+		r.pwm[2]=x;
 		return r;
 	}
 

@@ -324,7 +324,8 @@ public:
 		}else{
 			pwm[i]->SetRaw((int)p-128);
 		}*/
-		pwm[i]->Set(((float)p-128)/128);
+		//pwm[i]->Set(((float)p-128)/128);
+		pwm[i]->Set(p);
 		//pwm[i]->SetRaw(0);
 		return 0;
 	}

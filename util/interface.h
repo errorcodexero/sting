@@ -7,7 +7,7 @@
 #include "driver_station_interface.h"
 
 typedef double Time;
-typedef unsigned char Pwm_output;
+typedef double Pwm_output;
 typedef bool Solenoid_output;
 
 enum class Digital_out{INPUT,_1,_0};

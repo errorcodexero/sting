@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 
 using namespace std;
 
@@ -19,4 +19,4 @@ int main(){
 	cout<<"Oz*in on motor sized: "<<motTorque<<"\n";
 	cout<<"Rotational per second with weight: "<<rotWitWeight<<"\n";
 	cout<<"Speed of chain moving inch per second: "<<speWitWeight<<"\n";
-}
+}*/

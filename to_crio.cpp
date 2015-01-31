@@ -205,21 +205,21 @@ template<typename USER_CODE>
 class To_crio
 {
 	//todo: see if these still have to all be pointers or if there's some alternative w/ the roboRIO
-	Solenoid *solenoid[Robot_outputs::SOLENOIDS];
-	DIO_control digital_io[Robot_outputs::DIGITAL_IOS];
-	PWM *pwm[Robot_outputs::PWMS];
-	Relay *relay[Robot_outputs::RELAYS];
-	AnalogInput *analog_in[Robot_inputs::ANALOG_INPUTS];
+	//Solenoid *solenoid[Robot_outputs::SOLENOIDS];
+	//DIO_control digital_io[Robot_outputs::DIGITAL_IOS];
+	VictorSP *pwm[Robot_outputs::PWMS];
+	//Relay *relay[Robot_outputs::RELAYS];
+	//AnalogInput *analog_in[Robot_inputs::ANALOG_INPUTS];
 	int error_code;
 	USER_CODE main;
 	int skipped;
-	Jag_control jaguar[Robot_outputs::CAN_JAGUARS];
+	//Jag_control jaguar[Robot_outputs::CAN_JAGUARS];
 	//DriverStationLCD *lcd;
 	//NetworkTable *table;
-	Gyro *gyro;
+	//Gyro *gyro;
 	Compressor *compressor;
 public:
-	To_crio():error_code(0),skipped(0),gyro(NULL)
+	To_crio():error_code(0),skipped(0)//,gyro(NULL)
 	{
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
 		//SendWOL();
@@ -230,25 +230,25 @@ public:
 				solenoid[i]=NULL;
 			}else{*/
 				//solenoid[i]=new Solenoid(solenoid_module+1,i+1);
-				solenoid[i]=new Solenoid(i);//don't know of any way to determine module number, so just take the default one.
+				//solenoid[i]=new Solenoid(i);//don't know of any way to determine module number, so just take the default one.
 				//solenoid[i]=new Solenoid(i+1);
-				if(!solenoid[i]) error_code|=8;
+				//if(!solenoid[i]) error_code|=8;
 			//}
 		}
 		
 		for(unsigned i=0;i<Robot_outputs::PWMS;i++){
-			pwm[i]=new PWM(i);//untested
+			pwm[i]=new VictorSP(i);//untested
 			if(!pwm[i]) error_code|=8;
 		}
 
 		for(unsigned i=0;i<Robot_outputs::RELAYS;i++){
-			relay[i]=new Relay(i);
-			if(!relay[i]) error_code|=8;
+			//relay[i]=new Relay(i);
+			//if(!relay[i]) error_code|=8;
 		}
 
 		for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
-			analog_in[i]=new AnalogInput(i);
-			if(!analog_in[i]) error_code|=8;
+			//analog_in[i]=new AnalogInput(i);
+			//if(!analog_in[i]) error_code|=8;
 		}
 
 		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
@@ -256,12 +256,12 @@ public:
 			//jaguar[i].init(i+1);
 		}
 		//CANJaguar::UpdateSyncGroup(Jag_control::SYNC_GROUP);
-		
+		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			int r=digital_io[i].set_channel(i);
 			if(r) error_code|=256;
 			//digital_in[i]=new DigitalInput(i+1);
-		}
+		}*/
 		
 		/*lcd=DriverStationLCD::GetInstance();
 		if(!lcd) error_code|=512;*/
@@ -288,7 +288,7 @@ public:
 		int error=0;
 		for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
 			if(r.analog[i]){
-				r.analog[i]=analog_in[i]->GetVoltage();
+				r.analog[i]=.666;//analog_in[i]->GetVoltage();
 			}else{
 				error=64;
 			}
@@ -308,30 +308,38 @@ public:
 	}
 
 	int set_solenoid(unsigned i,Solenoid_output v){
-		if(i>=Robot_outputs::SOLENOIDS) return 1;
+		/*if(i>=Robot_outputs::SOLENOIDS) return 1;
 		if(!solenoid[i]) return 2;
-		solenoid[i]->Set(v);
+		solenoid[i]->Set(v);*/
 		return 0;
 	}
 
 	int set_pwm(unsigned i,Pwm_output p){
+		//cout<<"set_pwm "<<i<<" "<<(int)p<<"\n";
 		if(i>=Robot_outputs::PWMS) return 1;
 		if(!pwm[i]) return 2;
 		//pwm[i]->SetRaw(p);//we're assuming that the values taken here are the same as given before
-		pwm[i]->SetRaw(p-128);
+		/*if(i==0){
+			pwm[i]->SetRaw(50);
+		}else{
+			pwm[i]->SetRaw((int)p-128);
+		}*/
+		//pwm[i]->Set(((float)p-128)/128);
+		pwm[i]->Set(p);
+		//pwm[i]->SetRaw(0);
 		return 0;
 	}
 
 	int set_relay(unsigned i,Relay_output out){
 		if(i>=Robot_outputs::RELAYS) return 1;
-		if(!relay[i]) return 2;
+		/*if(!relay[i]) return 2;
 		relay[i]->Set([=](){
 			if(out==Relay_output::_00) return Relay::kOff;
 			if(out==Relay_output::_01) return Relay::kOn;
 			if(out==Relay_output::_10) return Relay::kForward;
 			//Assuming RELAY_11
 			return Relay::kReverse;
-		}());
+		}());*/
 		return 0;
 	}
 
@@ -342,11 +350,11 @@ public:
 			if(r) error_code|=2;
 		}
 
-		cout<<"cout1\n";
+		/*cout<<"cout1\n";
 		cout.flush();
 		cerr<<"cerr1\n";
 		cerr.flush();
-		usleep(1000*5);		
+		usleep(1000*5);*/
 
 		/*if(0){
 			//The first column is numbered 1.
@@ -369,8 +377,8 @@ public:
 			if(r) error_code|=32;
 		}
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-			int r=digital_io[i].set(out.digital_io[i]);
-			if(r) error_code|=512;
+			/*int r=digital_io[i].set(out.digital_io[i]);
+			if(r) error_code|=512;*/
 		}
 
 		{
@@ -440,10 +448,11 @@ public:
 	}
 	
 	void run(Robot_inputs in){
-		cout<<"in:"<<in<<"\n";
+		//cout<<"in:"<<in<<"\n";
 		Robot_outputs out=main(in);
-		cout<<"out:"<<out<<"\n";
-		set_outputs(out,in.robot_mode.enabled);
+		//cout<<"out:"<<out<<"\n";
+		int x=set_outputs(out,in.robot_mode.enabled);
+		if(x) cout<<"x was:"<<x<<"\n";
 		static int i=0;
 		if(!i){
 			for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
@@ -483,11 +492,11 @@ public:
 			//in.jaguar[i]=.3;//jaguar[i].get();
 		}
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-			in.digital_io[i]=digital_io[i].get();
+			//in.digital_io[i]=digital_io[i].get();
 		}
-		if(gyro){
+		/*if(gyro){
 			in.orientation=gyro->GetAngle();
-		}
+		}*/
 		run(in);
 
 /*                // Network Table update:

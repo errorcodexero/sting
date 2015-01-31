@@ -248,6 +248,7 @@ ostream& operator<<(ostream& o,Log_entry a){
 	return o<<")";
 }
 
+#if 0
 Maybe<Log_entry> parse_log_entry(string s){
 	vector<string> v=split(s,',');
 	for(unsigned i=0;i<v.size();i++){
@@ -297,15 +298,35 @@ Maybe<Log_entry> parse_log_entry(string s){
 	r.jaguar[i]=*/
 	return Maybe<Log_entry>(r);
 }
+#endif
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
-	return Robot_outputs{};
-
+	Joystick_data main_joystick=in.joystick[0];
+	{
+		Robot_outputs r;
+		for(unsigned i=0;i<r.PWMS;i++){
+			r.pwm[i]=0;
+		}
+		auto x=main_joystick.axis[0];
+		auto y=main_joystick.axis[1];
+		auto theta=main_joystick.axis[4];
+		auto l1=y-theta;
+		auto r1=y+theta;
+		auto lim=max(1.0,max(l1,r1));
+		r.pwm[0]=-(l1/lim);
+		r.pwm[1]=r1/lim;
+		r.pwm[2]=x;
+		r.pwm[3]=[&](){
+			if(main_joystick.button[0]) return .5;
+			if(main_joystick.button[1]) return -.5;
+			return 0.0;
+		}();
+		return r;
+	}
 	gyro.update(in.now,in.analog[0]);
 	perf.update(in.now);
 	since_switch.update(in.now,0);
 	Joystick_data gunner_joystick=in.joystick[1];
-	Joystick_data main_joystick=in.joystick[0];
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -389,19 +410,40 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	bool ledOn = in.robot_mode.autonomous || light.get();
 	r.relay[1] = r.relay[6] = (ledOn) ? Relay_output::_10 : Relay_output::_00;
 
+	//cout<<"this\n";
 	auto l_x=main_joystick.axis[0];
 	auto l_y=main_joystick.axis[1];
-	auto r_x=main_joystick.axis[2];
-	auto r_y=main_joystick.axis[3];
+	auto r_x=main_joystick.axis[3];
+	auto r_y=main_joystick.axis[4];
+	//cout<<"that\n";
 	//left wheels
-	r.pwm[0]=pwm_convert(-l_y);
+	//r.pwm[0]=pwm_convert(-l_y);
 	//right wheels
-	r.pwm[1]=pwm_convert(-r_y);
+	//r.pwm[1]=180;//pwm_convert(-r_y);
 	//center wheel (strafe)
-	r.pwm[2]=pwm_convert((l_x+r_x)/2);
+	//r.pwm[2]=180;//pwm_convert((l_x+r_x)/2);
+	//cout<<"what1\n";
 	//r=force(r);
+	//cout<<"right\n";
+	//r.driver_station.lcd.line[0]=as_string(panel.auto_mode);
+	/*r.driver_station.lcd.line[1]=as_string(r.jaguar[0]).substr(13, 20)+as_string(panel.pidselect);
+	r.driver_station.lcd.line[2]=as_string(r.jaguar[1]).substr(13, 20);
+	r.driver_station.lcd.line[3]=as_string(r.jaguar[2]).substr(13, 20);
+	r.driver_station.lcd.line[4]=as_string(r.jaguar[3]).substr(13, 20);*/
+	//cout<<"eee\n";
 	stringstream strin;
 	strin<<toplevel_status.shooter_wheels;
+	//cout<<"wwww\n";
+	//r.driver_station.lcd.line[5]="Speeds:"+strin.str().substr(22, 20);
+
+	//r.driver_station.lcd=format_for_lcd(as_string(in.now)+as_string(in.driver_station));
+	/*r.driver_station.lcd=format_for_lcd(
+		//abbreviate_text(as_string(in.now)+"\n"+as_string(panel)+as_string(in.driver_station))
+		as_string(subgoals_now)+as_string(toplevel_status)
+	);*/
+	//r.driver_station.lcd=format_for_lcd(as_string(panel));
+	//r.driver_station.digital[7]=ready(toplevel_status,subgoals_now);
+	//cout<<"pppp\n";
 	{
 		static int i=0;
 		if(i==0){
@@ -412,7 +454,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 			//ss<<in.driver_station<<"\r\n";
 			//ss<<"Field Relative?:"<<field_relative.get()<<"\n";
 			//ss<<"Gyro ="<<in.orientation<<"\n";
-			cerr<<ss.str();//putting this all together at once in hope that it'll show up at closer to the same time.  
+			//cerr<<ss.str();//putting this all together at once in hope that it'll show up at closer to the same time.  
 			//cerr<<subgoals_now<<high_level_outputs<<"\n";
 		}
 		i=(i+1)%100;
@@ -420,7 +462,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	//cerr<<subgoals_now<<"\r\n";
 	//cerr<<toplevel_status<<"\r\n\r\n";
 	//cerr<<"Waiting on:"<<not_ready(toplevel_status,subgoals_now)<<"\n";
-	cout<<"thoihewoi\n";
+	//cout<<"thoihewoi\n";
 	
 	if(print_button(main_joystick.button[Gamepad_button::LB])){
 		cout<<in<<"\r\n";
@@ -428,7 +470,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 		cout<<"\r\n";
 	}
 	//log_line(cout,in,*this,r);
-	cout<<"done1\n";
 	return r;
 }
 

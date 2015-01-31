@@ -13,7 +13,9 @@ int main(){
 	float speTorSlope = -1*maxSpeed/stallTorque;
 	float motTorque = weight*sprocRad/gearRed;
 	float rotWitWeight = speTorSlope*motTorque+maxSpeed;
-	float speWitWeight = rotWitWeight/(60*gearRed);
+	float speWitWeight = rotWitWeight/(60*gearRed);//may be wrong but i think i got it right
+
+
 	float maxWeight = gearRed*stallTorque/sprocRad/16;//Max Weight in pounds
 	cout<<"Slope of a speed torque graph: "<<speTorSlope<<"\n";
 	cout<<"Oz*in on motor sized: "<<motTorque<<"\n";

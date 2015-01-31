@@ -309,7 +309,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 		}
 		auto x=main_joystick.axis[0];
 		auto y=main_joystick.axis[1];
-		auto theta=main_joystick.axis[4];
+		auto theta=main_joystick.axis[4]/2; //theta is /2 so rotation is reduced to prevent bin tipping.
 		auto l1=y-theta;
 		auto r1=y+theta;
 		auto lim=max(1.0,max(l1,r1));
@@ -411,10 +411,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
 	r.relay[1] = r.relay[6] = (ledOn) ? Relay_output::_10 : Relay_output::_00;
 
 	//cout<<"this\n";
-	auto l_x=main_joystick.axis[0];
+	/*auto l_x=main_joystick.axis[0];
 	auto l_y=main_joystick.axis[1];
 	auto r_x=main_joystick.axis[3];
-	auto r_y=main_joystick.axis[4];
+	auto r_y=main_joystick.axis[4];*/
 	//cout<<"that\n";
 	//left wheels
 	//r.pwm[0]=pwm_convert(-l_y);
@@ -874,7 +874,7 @@ void log_line_test(){
 	Robot_outputs out;
 	log_line(ss,in,m,out);
 	cout<<ss.str()<<"\n";
-	parse_log_entry(ss.str());
+	//parse_log_entry(ss.str());
 	exit(1);
 }
 

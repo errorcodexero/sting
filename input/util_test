@@ -1,1 +1,1 @@
-g++ -Wall -Werror -DINPUT_UTIL_TEST util.cpp -o util && ./util
+g++ -std=c++11 -Wall -Werror -DINPUT_UTIL_TEST util.cpp -o util && ./util

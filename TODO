@@ -4,7 +4,6 @@
 		-add keys on both the roboRIOs for all the machines
 -New Launchpad Controller
 -Try out the new Talon SRX's
-	-PWM
 	-CAN
 		-just power levels
 		-all the sensor-based modes

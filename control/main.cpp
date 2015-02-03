@@ -338,7 +338,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 
 
 	ball_collecter.update(main_joystick.button[5]);
-	bool tanks_full=(in.digital_io[0]==DI_1);
+	bool tanks_full=(in.digital_io[0]==Digital_in::_1);
 
 	Panel panel;//ignore since absent=interpret(in.driver_station);
 	Shooter_wheels::Calibration calib=wheel_calibration.update(panel.learn,panel.speed,panel.target,panel.pidselect,panel.pidadjust);
@@ -387,7 +387,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Shooter_wheels::Status wheel;
 		wheel.top=in.jaguar[JAG_TOP_FEEDBACK].speed;
 		wheel.bottom=in.jaguar[JAG_BOTTOM_FEEDBACK].speed;
-		bool downsensor=in.digital_io[1]==DI_1;
+		bool downsensor=in.digital_io[1]==Digital_in::_1;
 		est.update(in.now,in.robot_mode.enabled,high_level_outputs,tanks_full?Pump::FULL:Pump::NOT_FULL,in.orientation,wheel,downsensor);
 	}
 
@@ -512,10 +512,10 @@ ostream& operator<<(ostream& o,Main m){
 
 Fire_control::Target to_target(Joystick_section j,Mode_buttons mode_buttons){
 	switch(j){
-		case JOY_LEFT: return Fire_control::TRUSS;
-		case JOY_RIGHT: return Fire_control::AUTO_SHOT;
-		case JOY_UP: return Fire_control::HIGH;
-		case JOY_DOWN: return Fire_control::EJECT;
+		case Joystick_section::LEFT: return Fire_control::TRUSS;
+		case Joystick_section::RIGHT: return Fire_control::AUTO_SHOT;
+		case Joystick_section::UP: return Fire_control::HIGH;
+		case Joystick_section::DOWN: return Fire_control::EJECT;
 		default: break;
 	}
 	if(mode_buttons.truss_toss) return Fire_control::TRUSS;
@@ -573,8 +573,8 @@ Control_status::Control_status next(
 	bool fire_now,fire_when_ready;
 	{
 		Joystick_section vert=divide_vertical(j.axis[Gamepad_axis::RIGHTY]);
-		fire_now=(vert==JOY_UP) || panel.fire;
-		fire_when_ready=(vert==JOY_DOWN); //No equivalent on the switchpanel.
+		fire_now=(vert==Joystick_section::UP) || panel.fire;
+		fire_when_ready=(vert==Joystick_section::DOWN); //No equivalent on the switchpanel.
 	}
 
 	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP,Drive_goal(),calib));

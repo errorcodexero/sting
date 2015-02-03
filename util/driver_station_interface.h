@@ -5,6 +5,7 @@
 #include<string>
 #include<vector>
 #include<bitset>
+#include<array>
 #include "maybe.h"
 
 struct Driver_station_output{
@@ -18,7 +19,7 @@ std::ostream& operator<<(std::ostream&,Driver_station_output);
 struct Driver_station_input{
 	//In the traditional mode of the Cybress board there are only 4 available, but there are 8 in the 'enhanced' mode
 	static const unsigned ANALOG_INPUTS=8;
-	double analog[ANALOG_INPUTS];
+	std::array<double,ANALOG_INPUTS> analog;
 
 	static const unsigned DIGITAL_INPUTS=8;
 	std::bitset<DIGITAL_INPUTS> digital;

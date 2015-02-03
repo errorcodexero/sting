@@ -3,6 +3,7 @@
 
 #include<iosfwd>
 #include<bitset>
+#include<array>
 #include "jag_interface.h"
 #include "driver_station_interface.h"
 
@@ -18,19 +19,19 @@ std::ostream& operator<<(std::ostream&,Relay_output);
 
 struct Robot_outputs{
 	static const unsigned PWMS=10;//Number of ports on the digital sidecar; roboRIO headers say 20 but there aren't that many ports on the board.
-	Pwm_output pwm[PWMS];
+	std::array<Pwm_output,PWMS> pwm;
 	
 	static const unsigned SOLENOIDS=8;
-	Solenoid_output solenoid[SOLENOIDS];
+	std::array<Solenoid_output,SOLENOIDS> solenoid;
 	
 	static const unsigned RELAYS=8;
-	Relay_output relay[RELAYS];
+	std::array<Relay_output,RELAYS> relay;
 	
 	static const unsigned DIGITAL_IOS=4;//there are really 14 on the cRIO and the roboRIO headers say 26.
-	Digital_out digital_io[DIGITAL_IOS];
+	std::array<Digital_out,DIGITAL_IOS> digital_io;
 	
 	static const unsigned CAN_JAGUARS=4;
-	Jaguar_output jaguar[CAN_JAGUARS];
+	std::array<Jaguar_output,CAN_JAGUARS> jaguar;
 	
 	//could add in some setup for the analog inputs
 	
@@ -71,7 +72,7 @@ bool operator==(Robot_mode,Robot_mode);
 bool operator!=(Robot_mode,Robot_mode);
 std::ostream& operator<<(std::ostream&,Robot_mode);
 
-typedef enum{DI_OUTPUT,DI_0,DI_1} Digital_in;
+enum class Digital_in{OUTPUT,_0,_1};
 std::ostream& operator<<(std::ostream&,Digital_in);
 
 typedef float Volt;
@@ -82,14 +83,14 @@ struct Robot_inputs{
 	Time now;//time since boot.
 
 	static const unsigned JOYSTICKS=2; //limitation of FRC coms
-	Joystick_data joystick[JOYSTICKS];
+	std::array<Joystick_data,JOYSTICKS> joystick;
 
-	Digital_in digital_io[Robot_outputs::DIGITAL_IOS];
+	std::array<Digital_in,Robot_outputs::DIGITAL_IOS> digital_io;
 	
 	static const unsigned ANALOG_INPUTS=8;
-	Volt analog[ANALOG_INPUTS];
+	std::array<Volt,ANALOG_INPUTS> analog;
 
-	Jaguar_input jaguar[Robot_outputs::CAN_JAGUARS];
+	std::array<Jaguar_input,Robot_outputs::CAN_JAGUARS> jaguar;
 	Driver_station_input driver_station;
 	Rad orientation;
 

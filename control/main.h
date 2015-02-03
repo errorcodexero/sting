@@ -14,7 +14,6 @@
 struct Main{
 	Force_interface force;
 	Perf_tracker perf;
-	Gyro_tracker gyro;
 	Toplevel::Estimator est;
 
 	Control_status::Control_status control_status;
@@ -26,9 +25,6 @@ struct Main{
 	Posedge_toggle field_relative;
 	Posedge_trigger autonomous_start;
 
-	// Keeps track of light status
-	Posedge_toggle light;
-		
 	Shooter_wheels::Calibration_manager wheel_calibration;
 	Drivebase drivebase;
 

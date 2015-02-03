@@ -36,7 +36,7 @@ string Monitor<Main>::update(Main b){
 	#define X(name) print_diff(o,""#name ": ",data.name,b.name);
 	#define Y(name) print_diff(o,data.name,b.name);
 	X(force)
-	Y(gyro);
+	//Y(gyro);
 	//Y(est)
 	o<<est.update(b.est);
 	X(control_status)

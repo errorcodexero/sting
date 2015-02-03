@@ -47,12 +47,12 @@ std::ostream& operator<<(std::ostream& o,std::vector<T> const& v){
 	return o<<" ]";
 }
 
-double sum(std::vector<double>);
-double mean(std::vector<double>);
-double stddev(std::vector<double>);
+double sum(std::vector<double> const&);
+double mean(std::vector<double> const&);
+double stddev(std::vector<double> const&);
 
 template<typename T>
-std::string as_string(T t){
+std::string as_string(T const& t){
 	std::stringstream ss;
 	ss<<t;
 	return ss.str();
@@ -62,7 +62,7 @@ double clip(double);
 
 //this is not efficient.
 template<typename T>
-Maybe<T> parse_enum(std::vector<T> options,std::string value){
+Maybe<T> parse_enum(std::vector<T> const& options,std::string const& value){
 	for(unsigned i=0;i<options.size();i++){
 		T opt=options[i];
 		if(as_string(opt)==value) return Maybe<T>(opt);

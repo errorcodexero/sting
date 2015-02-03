@@ -132,176 +132,20 @@ string abbreviate_text(string s){
 	return ss.str();
 }
 
-string fRel(bool field){
-	if(field){
-		return "True";
-	}
-	return "False";
-}
-
-void log_line(ostream& o,Robot_inputs in,Main m,Robot_outputs out){
-	o<<in.now;
-	#define X(name) o<<","<<name;
-	X(in.robot_mode.autonomous)
-	X(in.robot_mode.enabled)
-	/*for(unsigned i=0;i<Joystick_data::AXES;i++){
-		X(in.joystick[0].axis[i])
-	}
-	for(unsigned i=0;i<Joystick_data::BUTTONS;i++){
-		X(in.joystick[0].button[i])
-	}*/
-	X(in.joystick[0])
-	X(in.digital_io[0]) //pressure switch
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
-		X(in.jaguar[i].speed)
-	}
-	/*for(unsigned i=0;i<Driver_station_input::ANALOG_INPUTS;i++){
-		X(in.driver_station.analog[i])
-	}
-	for(unsigned i=0;i<Driver_station_input::DIGITAL_INPUTS;i++){
-		X(in.driver_station.digital[i])
-	}*/
-	X(in.driver_station)
-
-	//going to not put in the interpreted version of this in case need to diagnose a noise problem or something.  
-	
-	//put in the state stuff here...
-	//skipping any force stuff because I don't think our drivers know how to use it.  Would be detectable via joystic inputs.
-	X(m.control_status)
-	Toplevel::Status e=m.est.estimate();
-	X(e)
-	/*X(e.collector_tilt)
-	X(e.injector)
-	X(e.injector_arms)
-	X(e.ejector)
-	X(e.shooter_wheels)*/
-	//skip pump
-	//skip orientation
-
-	//X(m.wheel_calibration) -> this might be good to do
-	#define Y(n) X(m.wheel_calibration.calib.n)
-	Y(highgoal)
-	Y(lowgoal)
-	Y(overtruss)
-	Y(passing)
-	#undef Y
-
-	for(unsigned i=0;i<4;i++){ //others aren't used.
-		X((int)out.pwm[i])
-	}
-	for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
-		X(out.solenoid[i])
-	}
-	for(unsigned i=0;i<Robot_outputs::RELAYS && i<2;i++){
-		X(out.relay[i])
-	}
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
-		X(out.jaguar[i])
-	}
-	X(out.driver_station.digital[7])//ready light
-	#undef X
-	o<<"\n";
-}
-
-struct Log_entry{
-	Time time;
-	Robot_mode robot_mode;
-	Joystick_data driver_joystick;
-	bool pressure_switch;
-
-	//Jaguar_input jaguar_in[Robot_outputs::CAN_JAGUARS];
-	double jaguar_speed[Robot_outputs::CAN_JAGUARS];
-	Driver_station_input driver_station;
-	Control_status::Control_status control_status;
-	Toplevel::Status toplevel_status;
-	//wheelcalib wheel_calibration;
-
-	Pwm_output pwm[4];
-	Solenoid_output solenoid[Robot_outputs::SOLENOIDS];
-	Relay_output relay[2];
-	Jaguar_output jaguar_out[Robot_outputs::CAN_JAGUARS];
-	bool ready_light;
-};
-
-ostream& operator<<(ostream& o,Log_entry a){
-	o<<"Log_entry(";
-	#define X(name) o<<""#name<<":"<<a.name<<" ";
-	X(time)
-	X(robot_mode)
-	X(driver_joystick)
-	X(pressure_switch)
-	X(jaguar_speed)
-	X(driver_station)
-	X(control_status)
-	X(toplevel_status)
-	//X(wheel_calibration)
-	for(unsigned i=0;i<4;i++){
-		X(pwm[i])
-	}
-	for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
-		X(solenoid[i])
-	}
-	for(unsigned i=0;i<2;i++) X(relay[i])
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
-		assert(0);
-	}
-	return o<<")";
-}
-
-#if 0
-Maybe<Log_entry> parse_log_entry(string s){
-	vector<string> v=split(s,',');
-	for(unsigned i=0;i<v.size();i++){
-		cout<<i<<":"<<v[i]<<endl;
-	}
-	Log_entry r;
-	r.time=atof(v.at(0));
-	r.robot_mode.autonomous=atoi(v.at(1).c_str());
-	r.robot_mode.enabled=atoi(v.at(2).c_str());
-	{
-		Maybe<Joystick_data> m=Joystick_data::parse(v.at(3));
-		if(!m) return Maybe<Log_entry>();
-		r.driver_joystick=*m;
-	}
-	r.pressure_switch=atoi(v.at(4).c_str());
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
-		string s=v.at(5+i);
-		/*Maybe<Jaguar_input> m=Jaguar_input::parse(s);
-		cout<<s<<endl;
-		r.jaguar_in[i]=*m;*/
-		r.jaguar_speed[i]=atof(s.c_str());
-	}
-	{
-		Maybe<Driver_station_input> m=Driver_station_input::parse(v.at(9));
-		if(!m){
-			cout<<v.at(9)<<endl;
-		}
-		r.driver_station=*m;
-	}
-	{
-		Maybe<Control_status::Control_status> m=Control_status::parse(v.at(10));
-		r.control_status=*m;
-	}
-	{
-		stringstream ss;
-		ss<<v.at(11)<<","<<v.at(12);
-		Maybe<Toplevel::Status> m=Toplevel::parse_status(ss.str());
-		if(!m) cout<<v.at(11)<<endl;
-		r.toplevel_status=*m;
-	}
-	cout<<r<<"\n";
-	assert(0);
-	/*r.wheel_calibration=
-	r.pwm[i]=
-	r.solenoid[i]=
-	r.relay[i]=
-	r.jaguar[i]=*/
-	return Maybe<Log_entry>(r);
-}
-#endif
-
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
+	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
+	Joystick_data gunner_joystick=in.joystick[1];
+	since_switch.update(in.now,0);
+	force.update(
+		main_joystick.button[Gamepad_button::A],
+		main_joystick.button[Gamepad_button::LB],
+		main_joystick.button[Gamepad_button::RB],
+		main_joystick.button[Gamepad_button::BACK],
+		main_joystick.button[Gamepad_button::B],
+		main_joystick.button[Gamepad_button::X]
+	);
+
 	{
 		Robot_outputs r;
 		for(unsigned i=0;i<r.PWMS;i++){
@@ -321,21 +165,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			if(main_joystick.button[1]) return -.5;
 			return 0.0;
 		}();
+		r=force(r);
 		return r;
 	}
-	gyro.update(in.now,in.analog[0]);
-	perf.update(in.now);
-	since_switch.update(in.now,0);
-	Joystick_data gunner_joystick=in.joystick[1];
-	force.update(
-		main_joystick.button[Gamepad_button::A],
-		main_joystick.button[Gamepad_button::LB],
-		main_joystick.button[Gamepad_button::RB],
-		main_joystick.button[Gamepad_button::BACK],
-		main_joystick.button[Gamepad_button::B],
-		main_joystick.button[Gamepad_button::X]
-	);
-
 
 	ball_collecter.update(main_joystick.button[5]);
 	bool tanks_full=(in.digital_io[0]==Digital_in::_1);
@@ -391,69 +223,14 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		est.update(in.now,in.robot_mode.enabled,high_level_outputs,tanks_full?Pump::FULL:Pump::NOT_FULL,in.orientation,wheel,downsensor);
 	}
 
-        // Print out wheel RPMs:
-		//static int rpm_update_cnt = 0;
-/*	if (rpm_update_cnt == 100)
-        {
-            rpm_update_cnt = 0;
-            cerr << "top wheel rpm = " << in.jaguar[JAG_TOP_FEEDBACK].speed
-                 << "	bottom wheel rpm = " << in.jaguar[JAG_BOTTOM_FEEDBACK].speed
-                 << endl;
-        }
-        else
-        {
-            rpm_update_cnt++;
-        }*/
-
-	// Turn on camera light in autonomous mode (kForward):
-	light.update ( main_joystick.button[Gamepad_button::X] );
-	bool ledOn = in.robot_mode.autonomous || light.get();
-	r.relay[1] = r.relay[6] = (ledOn) ? Relay_output::_10 : Relay_output::_00;
-
-	//cout<<"this\n";
-	/*auto l_x=main_joystick.axis[0];
-	auto l_y=main_joystick.axis[1];
-	auto r_x=main_joystick.axis[3];
-	auto r_y=main_joystick.axis[4];*/
-	//cout<<"that\n";
-	//left wheels
-	//r.pwm[0]=pwm_convert(-l_y);
-	//right wheels
-	//r.pwm[1]=180;//pwm_convert(-r_y);
-	//center wheel (strafe)
-	//r.pwm[2]=180;//pwm_convert((l_x+r_x)/2);
-	//cout<<"what1\n";
-	//r=force(r);
-	//cout<<"right\n";
-	//r.driver_station.lcd.line[0]=as_string(panel.auto_mode);
-	/*r.driver_station.lcd.line[1]=as_string(r.jaguar[0]).substr(13, 20)+as_string(panel.pidselect);
-	r.driver_station.lcd.line[2]=as_string(r.jaguar[1]).substr(13, 20);
-	r.driver_station.lcd.line[3]=as_string(r.jaguar[2]).substr(13, 20);
-	r.driver_station.lcd.line[4]=as_string(r.jaguar[3]).substr(13, 20);*/
-	//cout<<"eee\n";
 	stringstream strin;
 	strin<<toplevel_status.shooter_wheels;
-	//cout<<"wwww\n";
-	//r.driver_station.lcd.line[5]="Speeds:"+strin.str().substr(22, 20);
-
-	//r.driver_station.lcd=format_for_lcd(as_string(in.now)+as_string(in.driver_station));
-	/*r.driver_station.lcd=format_for_lcd(
-		//abbreviate_text(as_string(in.now)+"\n"+as_string(panel)+as_string(in.driver_station))
-		as_string(subgoals_now)+as_string(toplevel_status)
-	);*/
-	//r.driver_station.lcd=format_for_lcd(as_string(panel));
-	//r.driver_station.digital[7]=ready(toplevel_status,subgoals_now);
-	//cout<<"pppp\n";
 	{
 		static int i=0;
 		if(i==0){
 			stringstream ss;
 			ss<<in<<"\r\n"<<*this<<mode<<"\r\n";
 			ss<<r<<"\r\n"; 
-			//ss<<panel<<"\r\n";
-			//ss<<in.driver_station<<"\r\n";
-			//ss<<"Field Relative?:"<<field_relative.get()<<"\n";
-			//ss<<"Gyro ="<<in.orientation<<"\n";
 			//cerr<<ss.str();//putting this all together at once in hope that it'll show up at closer to the same time.  
 			//cerr<<subgoals_now<<high_level_outputs<<"\n";
 		}
@@ -476,7 +253,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 bool operator==(Main a,Main b){
 	return a.force==b.force && 
 		a.perf==b.perf && 
-		a.gyro==b.gyro && 
 		a.est==b.est && 
 		a.control_status==b.control_status && 
 		a.since_switch==b.since_switch && 
@@ -496,7 +272,6 @@ ostream& operator<<(ostream& o,Main m){
 	o<<"Main(";
 	o<<m.force;
 	o<<m.perf;
-	o<<m.gyro;
 	o<<m.est;
 	o<<m.control_status;
 	o<<m.since_switch;
@@ -744,7 +519,6 @@ bool approx_equal(Main a,Main b){
 	if(a.force!=b.force) return 0;
 	//cout<<"b\n";
 	//if(!approx_equal(a.perf,b.perf)) return 0;
-	if(!approx_equal(a.gyro,b.gyro)) return 0;
 	//cout<<"1\n";
 	if(!approx_equal(a.est,b.est)) return 0;
 	//cout<<"a\n";
@@ -867,17 +641,6 @@ void check_auto_modes_end(){
 	}
 }
 
-void log_line_test(){
-	stringstream ss;
-	Robot_inputs in;
-	Main m;
-	Robot_outputs out;
-	log_line(ss,in,m,out);
-	cout<<ss.str()<<"\n";
-	//parse_log_entry(ss.str());
-	exit(1);
-}
-
 template<typename T>
 vector<T> uniq(vector<T> v){
 	vector<T> r;
@@ -890,7 +653,6 @@ vector<T> uniq(vector<T> v){
 }
 
 int main(){
-	//log_line_test();
 	check_auto_modes_end();
 	/*Main m;
 	cout<<m<<"\n";

@@ -300,7 +300,7 @@ Maybe<Log_entry> parse_log_entry(string s){
 }
 #endif
 
-Robot_outputs Main::operator()(Robot_inputs in,ostream& cerr){
+Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Joystick_data main_joystick=in.joystick[0];
 	{
 		Robot_outputs r;

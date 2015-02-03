@@ -84,62 +84,13 @@ ostream& operator<<(ostream& o,Driver_station_input a){
 	return o<<")";
 }
 
-bool operator==(Driver_station_output::Lcd a,Driver_station_output::Lcd b){
-	for(unsigned i=0;i<Driver_station_output::Lcd::HEIGHT;i++){
-		if(a.line[i]!=b.line[i]){
-			return 0;
-		}
-	}
-	return 1;
-}
-
-bool operator!=(Driver_station_output::Lcd a,Driver_station_output::Lcd b){
-	return !(a==b);
-}
-
-ostream& operator<<(ostream& o,Driver_station_output::Lcd a){
-	o<<"lcd(";
-	for(unsigned i=0;i<Driver_station_output::Lcd::HEIGHT;i++){
-		o<<a.line[i];
-		if(i+1!=Driver_station_output::Lcd::HEIGHT){
-			o<<"/";
-		}
-	}
-	return o<<")";
-}
-
-vector<string> to_lines(string const& s,unsigned width){
-	vector<string> r;
-	unsigned at=0;
-	for(unsigned i=0;at<s.size();i++){
-		stringstream ss;
-		for(unsigned j=0;j<width && at<s.size() && s[at]!='\n';j++){
-			ss<<s[at++];
-		}
-		if(s[at]=='\n'){
-			at++;
-		}
-		r|=ss.str();
-	}
-	return r;
-}
-
-Driver_station_output::Lcd format_for_lcd(string const& s){
-	Driver_station_output::Lcd r;
-	vector<string> v=to_lines(s,r.WIDTH);
-	for(unsigned i=0;i<v.size() && i<r.HEIGHT;i++){
-		r.line[i]=v[i];
-	}
-	return r;
-}
-
 bool operator==(Driver_station_output a,Driver_station_output b){
 	for(unsigned i=0;i<Driver_station_output::DIGITAL_OUTPUTS;i++){
 		if(a.digital[i]!=b.digital[i]){
 			return 0;
 		}
 	}
-	return a.lcd==b.lcd;
+	return 1;
 }
 
 bool operator!=(Driver_station_output a,Driver_station_output b){
@@ -152,7 +103,6 @@ ostream& operator<<(ostream& o,Driver_station_output a){
 	for(unsigned i=0;i<Driver_station_output::DIGITAL_OUTPUTS;i++){
 		o<<a.digital[i];
 	}
-	o<<a.lcd;
 	return o<<")";
 }
 

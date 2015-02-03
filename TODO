@@ -17,4 +17,9 @@
 	-Lifter Simulator-Jared
 -Write logging code
 -OI:
-
+	-put in outputs
+		-into framework
+		-figure out how to reprogram the TI launchpad
+-Cleanup stuff:
+	-use enum class more places
+	-use std::array in place of C arrays in several places

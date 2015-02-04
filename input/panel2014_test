@@ -5,7 +5,6 @@ g++ -Wall -Werror -std=c++0x -DPANEL2014_TEST panel2014.cpp ../control/fire_cont
 	../util/countup_timer.cpp \
 	../util/posedge_trigger.cpp \
 	../util/negedge_trigger.cpp \
-	../control/collector_tilt.cpp \
 	../util/driver_station_interface.cpp \
 	util.cpp \
 	../util/util.cpp \

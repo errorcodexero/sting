@@ -38,8 +38,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 	
 	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
 	
-	r.solenoid[0]=(a.collector_tilt==Collector_tilt::OUTPUT_DOWN);
-	r.solenoid[1]=(a.collector_tilt==Collector_tilt::OUTPUT_UP);
 	r.solenoid[2]=r.solenoid[3]=(a.injector==Injector::OUTPUT_DOWN);
 	r.solenoid[4]=r.solenoid[5]=(a.injector==Injector::OUTPUT_UP);
 	r.solenoid[7]=(a.injector_arms!=Injector_arms::OUTPUT_CLOSE);
@@ -101,7 +99,6 @@ Drive_goal drive_goal(Control_status::Control_status control_status,
 Toplevel::Output panel_override(Panel p,Toplevel::Output out){
 	#define X(name) if(p.name) out.name=*p.name;
 	X(collector)
-	X(collector_tilt)
 	X(injector)
 	//X(injector_arms)
 	#undef X
@@ -387,7 +384,7 @@ Control_status::Control_status next(
 		case A2_SPIN_UP2:
 			if(autonomous_mode){
 				if(auto_almost_done){
-					return (part_status.collector_tilt==Collector_tilt::STATUS_UP)?A2_FIRE2:A2_MOVE;
+					return A2_MOVE;
 				}
 				return ready_to_auto_shot?A2_FIRE2:A2_SPIN_UP2;
 			}

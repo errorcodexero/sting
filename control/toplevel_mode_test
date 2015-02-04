@@ -8,7 +8,6 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_MODE_TEST \
 	injector.cpp \
 	injector_arms.cpp \
 	../util/countup_timer.cpp \
-	collector_tilt.cpp \
 	pump.cpp \
 	wheelrpms.cpp \
 	collector.cpp \

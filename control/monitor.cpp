@@ -11,7 +11,6 @@ void print_diff(ostream& o,unsigned char a,unsigned char b){
 
 void print_diff(ostream& o,Toplevel::Status &a,Toplevel::Status const& b){
 	#define X(name) print_diff(o,""#name ": ",a.name,b.name);
-	X(collector_tilt)
 	X(injector)
 	X(injector_arms)
 	print_diff_approx(o,a.shooter_wheels,b.shooter_wheels);

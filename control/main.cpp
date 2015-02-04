@@ -155,8 +155,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;
 		r.pwm[3]=[&](){
-			if(main_joystick.button[0]) return .5;
-			if(main_joystick.button[1]) return -.5;
+			if(gunner_joystick.button[0]) return .5;
+			if(gunner_joystick.button[1]) return -.5;
 			return 0.0;
 		}();
 		r=force(r);

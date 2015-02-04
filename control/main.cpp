@@ -38,8 +38,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 	
 	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
 	
-	r.solenoid[2]=r.solenoid[3]=(a.injector==Injector::OUTPUT_DOWN);
-	r.solenoid[4]=r.solenoid[5]=(a.injector==Injector::OUTPUT_UP);
 	r.solenoid[7]=(a.injector_arms!=Injector_arms::OUTPUT_CLOSE);
 
 	//pressure switch
@@ -99,7 +97,6 @@ Drive_goal drive_goal(Control_status::Control_status control_status,
 Toplevel::Output panel_override(Panel p,Toplevel::Output out){
 	#define X(name) if(p.name) out.name=*p.name;
 	X(collector)
-	X(injector)
 	//X(injector_arms)
 	#undef X
 	if(p.force_wheels_off){
@@ -201,9 +198,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		field_relative.get()
 	);
 	Toplevel::Subgoals subgoals_now=subgoals(mode,drive_goal1,calib);
-	if(toplevel_status.injector!=Injector::Estimator::DOWN_IDLE&&toplevel_status.injector!=Injector::Estimator::DOWN_VENT){
-		subgoals_now.injector_arms=Injector_arms::GOAL_CLOSE;
-	}
 	Toplevel::Output high_level_outputs=control(toplevel_status,subgoals_now);
 	high_level_outputs=panel_override(panel,high_level_outputs);
 	if(gunner_joystick.button[Gamepad_button::START]){
@@ -350,7 +344,7 @@ Control_status::Control_status next(
 	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP,Drive_goal(),calib));
 	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT,Drive_goal(),calib));
 	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP,Drive_goal(),calib));
-	bool took_shot=location_to_status(part_status.injector)==Injector::RECOVERY;
+	bool took_shot=1;
 	bool have_collected_question = false;
 
 	static const Time AUTO_DRIVE_TIME=1.5;

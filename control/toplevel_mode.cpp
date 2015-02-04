@@ -57,9 +57,6 @@ namespace Toplevel{
 			case SHOOT_HIGH:
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL);
-				if(m==SHOOT_HIGH){
-					r.injector=Injector::START;
-				}
 				break;
 			case SHOOT_HIGH_PREP_NO_PUMP:
 			case SHOOT_HIGH_NO_PUMP:
@@ -67,15 +64,11 @@ namespace Toplevel{
 			case AUTO_SHOT:
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT);
-				if(m==AUTO_SHOT){
-					r.injector=Injector::START;
-				}
 				break;
 			case TRUSS_TOSS_PREP:
 			case TRUSS_TOSS:
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::TRUSS);
-				if(m==TRUSS_TOSS || m==SHOOT_HIGH_NO_PUMP) r.injector=Injector::START;
 				if(m==SHOOT_HIGH_PREP_NO_PUMP || m==SHOOT_HIGH_NO_PUMP){
 									r.pump=Pump::GOAL_OFF;
 				}
@@ -213,7 +206,6 @@ void toplevel_modes(){
 						tag(ss,"tr",
 							tag("td",as_string(mode))+
 							tag("td",g.collector)+
-							tag("td",g.injector)+
 							tag("td",g.injector_arms)+
 							tag("td",g.shooter_wheels.high_level)
 						);

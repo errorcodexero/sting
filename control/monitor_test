@@ -7,7 +7,6 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	collector_tilt.cpp \
 	injector.cpp \
 	injector_arms.cpp \
-	ejector.cpp \
 	shooter_status.cpp \
 	pump.cpp \
 	../util/posedge_toggle.cpp \

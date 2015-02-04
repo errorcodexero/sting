@@ -98,7 +98,6 @@ namespace Toplevel{
 			case EJECT:
                 r.collector_tilt=Collector_tilt::GOAL_UP;//was down, but with the current ejector geometry works better this way.
                 r.injector_arms=Injector_arms::GOAL_OPEN;
-                if(m==EJECT) r.ejector=Ejector::START;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
                 //Copied from a previous commit of the code, basically what it was before modification
 				break;
@@ -226,7 +225,6 @@ void toplevel_modes(){
 							tag("td",g.collector_tilt)+
 							tag("td",g.injector)+
 							tag("td",g.injector_arms)+
-							tag("td",g.ejector)+
 							tag("td",g.shooter_wheels.high_level)
 						);
 					}

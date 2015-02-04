@@ -7,7 +7,6 @@
 #include "injector.h"
 #include "injector_arms.h"
 #include "shooter_wheels.h"
-#include "ejector.h"
 #include "pump.h"
 #include "holonomic.h"
 
@@ -19,7 +18,6 @@ namespace Toplevel{
 		Collector_tilt::Output collector_tilt;
 		Injector::Output injector;
 		Injector_arms::Output injector_arms;
-		Ejector::Output ejector;
 		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
 		Drive_motors drive;
@@ -33,7 +31,6 @@ namespace Toplevel{
 		Collector_tilt::Goal collector_tilt;
 		Injector::Goal injector;
 		Injector_arms::Goal injector_arms;
-		Ejector::Goal ejector;
 		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;
 		Drive_goal drive;
@@ -48,7 +45,6 @@ namespace Toplevel{
 		Collector_tilt::Status collector_tilt;
 		Injector::Estimator::Location injector;
 		Injector_arms::Status injector_arms;
-		Ejector::Estimator::Location ejector;
 		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;
 		float orientation;
@@ -63,7 +59,6 @@ namespace Toplevel{
 		Collector_tilt::Estimator collector_tilt;
 		Injector::Estimator injector;
 		Injector_arms::Estimator injector_arms;
-		Ejector::Estimator ejector;
 		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;//for now just taking the sensor's measurement as gospel.
 		float orientation;

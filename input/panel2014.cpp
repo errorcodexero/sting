@@ -11,7 +11,6 @@ Mode_buttons::Mode_buttons():
 	collect(0),
 	shoot_high(0),
 	truss_toss(0),
-	eject(0),
 	catch_mode(0),
 	auto_shot(0)
 {}
@@ -40,7 +39,6 @@ ostream& operator<<(ostream& o,Mode_buttons m){
 	X(collect)
 	X(shoot_high)
 	X(truss_toss)
-	X(eject)
 	X(catch_mode)
 	X(auto_shot)
 	#undef X
@@ -106,7 +104,6 @@ ostream& operator<<(ostream& o,Panel p){
 	X(collector_tilt)
 	X(injector)
 	//X(injector_arms)
-	X(ejector)
 	X(auto_mode)
 	X(pidselect)
 	X(pidadjust)
@@ -199,15 +196,6 @@ Maybe<Injector_arms::Output> interpret_injector_arms(int x){
 	}
 }
 
-Maybe<Ejector::Output> interpret_ejector(int x){
-	switch(x){
-		case 0: return Maybe<Ejector::Output>();
-		case 1: return Maybe<Ejector::Output>(Ejector::OUTPUT_UP);
-		case 2: return Maybe<Ejector::Output>(Ejector::OUTPUT_DOWN);
-		default: assert(0);
-	}
-}
-
 Panel interpret(Driver_station_input d){
 	Panel panel;
 	{
@@ -223,7 +211,6 @@ Panel interpret(Driver_station_input d){
 		panel.mode_buttons.shoot_high=!d.digital[0];
 		panel.mode_buttons.truss_toss=(x<1.8 && x>1.5);
 		panel.mode_buttons.auto_shot=(x<.6&&x>.4);
-		panel.mode_buttons.eject=(x<1.25 && x>.95);
 		panel.pass_now=(x<.7&&x>.4);
 	}
 	panel.mode_buttons.catch_mode=!d.digital[2];
@@ -237,7 +224,6 @@ Panel interpret(Driver_station_input d){
 	{
 		double x=d.analog[4];
 		if(x>2 && x<2.35) panel.injector=Injector::OUTPUT_UP;
-		if(x>1.65 && x<2) panel.ejector=Ejector::OUTPUT_UP;
 		if(x>2.7 && x<3.10) panel.collector_tilt=Collector_tilt::OUTPUT_UP;
 		if(x>2.35 && x<2.65) panel.collector_tilt=Collector_tilt::OUTPUT_DOWN;
 		if(x>1.35 && x<1.75) panel.collector=Collector_mode::ON;

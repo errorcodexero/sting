@@ -7,12 +7,11 @@
 #include "../control/collector_tilt.h"
 #include "../control/injector.h"
 #include "../control/injector_arms.h"
-#include "../control/ejector.h"
 #include "../control/calibration_target.h"
 
 //these will probably be the things that light up.
 struct Mode_buttons{
-	bool drive_wo_ball,drive_w_ball,collect,shoot_high,truss_toss,eject,catch_mode,auto_shot;
+	bool drive_wo_ball,drive_w_ball,collect,shoot_high,truss_toss,catch_mode,auto_shot;
 
 	Mode_buttons();
 };
@@ -42,7 +41,6 @@ struct Panel{
 	Maybe<Collector_tilt::Output> collector_tilt;
 	Maybe<Injector::Output> injector;
 	//Maybe<Injector_arms::Output> injector_arms;
-	Maybe<Ejector::Output> ejector;
 	
 	bool force_wheels_off;
 	

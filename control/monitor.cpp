@@ -17,7 +17,6 @@ void print_diff(ostream& o,Toplevel::Status &a,Toplevel::Status const& b){
 	X(collector_tilt)
 	X(injector)
 	X(injector_arms)
-	X(ejector)
 	print_diff_approx(o,a.shooter_wheels,b.shooter_wheels);
 	X(pump)
 	//X(orientation)

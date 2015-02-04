@@ -12,7 +12,6 @@ namespace Toplevel{
 		collector_tilt(Collector_tilt::OUTPUT_UP),
 		injector(Injector::OUTPUT_DOWN),
 		injector_arms(Injector_arms::OUTPUT_CLOSE),
-		ejector(Ejector::OUTPUT_DOWN),
 		pump(Pump::OUTPUT_ON)
 	{}
 
@@ -22,7 +21,6 @@ namespace Toplevel{
 		o<<" colct_tlt:"<<g.collector_tilt;
 		o<<" inject:"<<g.injector;
 		o<<" inj arm:"<<g.injector_arms;
-		o<<" eject:"<<g.ejector;
 		o<<" shoot:"<<g.shooter_wheels;
 		o<<" pump:"<<g.pump;
 		o<<" drive:"<<g.drive;
@@ -34,7 +32,6 @@ namespace Toplevel{
 		collector_tilt(Collector_tilt::GOAL_UP),
 		injector(Injector::WAIT),
 		injector_arms(Injector_arms::GOAL_X),
-		ejector(Ejector::WAIT),
 		//shooter_wheels(Shooter_wheels:)
 		pump(Pump::GOAL_AUTO)
 	{}
@@ -45,7 +42,6 @@ namespace Toplevel{
 		o<<" colct_tlt:"<<g.collector_tilt;
 		o<<" inject:"<<g.injector;
 		o<<" inj_arm:"<<g.injector_arms;
-		o<<" eject:"<<g.ejector;
 		o<<" shoot:";
 		o<<g.shooter_wheels;
 		//o<<g.shooter_wheels.second;
@@ -59,7 +55,6 @@ namespace Toplevel{
 		collector_tilt(Collector_tilt::STATUS_LOWERING),
 		injector(Injector::Estimator::GOING_DOWN),
 		injector_arms(Injector_arms::STATUS_CLOSING),
-		ejector(Ejector::Estimator::GOING_DOWN),
 		pump(Pump::NOT_FULL)
 	{}
 
@@ -68,7 +63,6 @@ namespace Toplevel{
 		X(collector_tilt)
 		X(injector)
 		X(injector_arms)
-		X(ejector)
 		X(shooter_wheels)
 		X(pump)
 		X(orientation)
@@ -85,7 +79,6 @@ namespace Toplevel{
 		o<<"colct_tlt:"<<s.collector_tilt;
 		o<<" inject:"<<s.injector;
 		o<<" inj_arm:"<<s.injector_arms;
-		o<<" eject:"<<s.ejector;
 		o<<" shoot:"<<s.shooter_wheels;
 		o<<" pump:"<<s.pump;
 		o<<" orientation:"<<s.orientation;
@@ -122,11 +115,6 @@ namespace Toplevel{
 			r.injector_arms=*m;
 		}
 		{
-			Maybe<Ejector::Estimator::Location> m=Ejector::parse_location(X(3));
-			if(!m) return Maybe<Status>();
-			r.ejector=*m;
-		}
-		{
 			cout<<X(4)<<"\n";
 			Maybe<Shooter_wheels::Status> m=Shooter_wheels::parse_status(X(4));
 			if(!m) return Maybe<Status>();
@@ -148,7 +136,6 @@ namespace Toplevel{
 		collector_tilt.update(time,enabled?out.collector_tilt:Collector_tilt::OUTPUT_NEITHER);
 		injector.update(time,enabled?out.injector:Injector::OUTPUT_VENT,downsensor);
 		injector_arms.update(time,enabled?out.injector_arms:Injector_arms::OUTPUT_OPEN);
-		ejector.update(time,enabled?out.ejector:Ejector::OUTPUT_DOWN);
 		shooter_wheels=wheels_in;
 		pump=pump_status;
 		orientation = orientation1;
@@ -159,7 +146,6 @@ namespace Toplevel{
 		r.collector_tilt=collector_tilt.estimate();
 		r.injector=injector.estimate();
 		r.injector_arms=injector_arms.estimate();
-		r.ejector=ejector.estimate();
 		r.pump=pump;
 		r.shooter_wheels = shooter_wheels;
 		return r;
@@ -170,7 +156,6 @@ namespace Toplevel{
 		o<<"colct_tlt:"<<collector_tilt;
 		o<<" inject:"<<injector;
 		o<<" inj arm:"<<injector_arms;
-		o<<" eject:"<<ejector;
 		o<<" shooter_wheels:"<<shooter_wheels;
 		o<<" pump:"<<pump;
 		o<<")";
@@ -181,7 +166,6 @@ namespace Toplevel{
 		X(collector_tilt)
 		X(injector)
 		X(injector_arms)
-		X(ejector)
 		X(shooter_wheels)
 		X(pump)
 		X(orientation)
@@ -208,7 +192,6 @@ namespace Toplevel{
 		r.collector_tilt=Collector_tilt::control(g.collector_tilt);
 		r.injector=Injector::control(status.injector,g.injector);
 		r.injector_arms=Injector_arms::control(status.injector_arms,g.injector_arms);
-		r.ejector=Ejector::control(status.ejector,g.ejector);
 		r.shooter_wheels=control(status.shooter_wheels,g.shooter_wheels);
 		r.pump=Pump::control(status.pump,g.pump);
 		r.drive=::control(g.drive, status.orientation);
@@ -219,7 +202,6 @@ namespace Toplevel{
 		return Collector_tilt::ready(status.collector_tilt,g.collector_tilt) && 
 			Injector::ready(status.injector,g.injector) && 
 			Injector_arms::ready(status.injector_arms,g.injector_arms) && 
-			Ejector::ready(status.ejector,g.ejector) && 
 			ready(status.shooter_wheels,g.shooter_wheels);
 	}
 	
@@ -229,7 +211,6 @@ namespace Toplevel{
 		X(collector_tilt)
 		X(injector)
 		X(injector_arms)
-		X(ejector)
 		X(shooter_wheels)
 		#undef X
 		return r;
@@ -249,7 +230,6 @@ bool approx_equal(Toplevel::Status a,Toplevel::Status b){
 	X(collector_tilt)
 	X(injector)
 	X(injector_arms)
-	X(ejector)
 	X(shooter_wheels)
 	#undef X
 	return approx_equal(a.orientation,b.orientation);
@@ -278,6 +258,6 @@ int main(){
 	/*
 	if we choose one of the modes and use all the built-in controls then we should after some time get to a status where we're ready.  
 	*/
-	assert(approx_equal(status,parse_status(as_string(status))));
+	//assert(approx_equal(status,parse_status(as_string(status))));
 }
 #endif

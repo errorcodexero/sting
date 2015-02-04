@@ -42,7 +42,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 	r.solenoid[1]=(a.collector_tilt==Collector_tilt::OUTPUT_UP);
 	r.solenoid[2]=r.solenoid[3]=(a.injector==Injector::OUTPUT_DOWN);
 	r.solenoid[4]=r.solenoid[5]=(a.injector==Injector::OUTPUT_UP);
-	r.solenoid[6]=(a.ejector==Ejector::OUTPUT_UP);
 	r.solenoid[7]=(a.injector_arms!=Injector_arms::OUTPUT_CLOSE);
 
 	//pressure switch
@@ -105,7 +104,6 @@ Toplevel::Output panel_override(Panel p,Toplevel::Output out){
 	X(collector_tilt)
 	X(injector)
 	//X(injector_arms)
-	X(ejector)
 	#undef X
 	if(p.force_wheels_off){
 		out.shooter_wheels=Shooter_wheels::Output();
@@ -296,7 +294,6 @@ Fire_control::Target to_target(Joystick_section j,Mode_buttons mode_buttons){
 	if(mode_buttons.truss_toss) return Fire_control::TRUSS;
 	if(mode_buttons.shoot_high) return Fire_control::HIGH;
 	if(mode_buttons.auto_shot) return Fire_control::AUTO_SHOT;
-	if(mode_buttons.eject) return Fire_control::EJECT;
 	return Fire_control::NO_TARGET;
 }
 
@@ -484,11 +481,10 @@ Control_status::Control_status next(
 				return EJECT_WHEN_READY;
 			}
 			return EJECT_PREP;
-		case EJECT: return (location_to_status(part_status.ejector)==Ejector::RECOVERY)?DRIVE_WO_BALL:EJECT;
+		case EJECT: return DRIVE_WO_BALL;
 		case EJECT_WHEN_READY:
 		{
-			bool ready_to_eject=(location_to_status(part_status.ejector)==Ejector::IDLE);
-			return ready_to_eject?EJECT:EJECT_WHEN_READY;
+			return EJECT;
 		}
 		case AUTO_SHOT_PREP: 
 			if(fire_now){

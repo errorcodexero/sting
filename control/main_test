@@ -13,7 +13,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	holonomic.cpp \
 	toplevel.cpp \
 	injector.cpp \
-	ejector.cpp \
 	shooter_wheels.cpp \
 	../util/point.cpp \
 	collector_tilt.cpp \

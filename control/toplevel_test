@@ -9,7 +9,6 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_TEST shooter_status.cpp \
 	../util/posedge_trigger.cpp \
 	../util/negedge_trigger.cpp \
 	../util/countup_timer.cpp \
-	ejector.cpp \
 	pump.cpp \
 	../util/point.cpp \
 	holonomic.cpp \

@@ -4,8 +4,6 @@
 #include "../control/fire_control.h"
 #include "../util/maybe.h"
 #include "../control/collector.h"
-#include "../control/collector_tilt.h"
-#include "../control/injector.h"
 #include "../control/injector_arms.h"
 #include "../control/calibration_target.h"
 
@@ -38,8 +36,6 @@ struct Panel{
 	//standard override section
 	
 	Maybe<Collector_mode> collector;
-	Maybe<Collector_tilt::Output> collector_tilt;
-	Maybe<Injector::Output> injector;
 	//Maybe<Injector_arms::Output> injector_arms;
 	
 	bool force_wheels_off;

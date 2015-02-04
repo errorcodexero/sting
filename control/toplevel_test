@@ -2,8 +2,6 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_TEST shooter_status.cpp \
 	wheelrpms.cpp \
 	toplevel.cpp \
 	collector.cpp \
-	collector_tilt.cpp \
-	injector.cpp \
 	injector_arms.cpp \
 	shooter_wheels.cpp \
 	../util/posedge_trigger.cpp \

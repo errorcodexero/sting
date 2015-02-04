@@ -5,10 +5,8 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_MODE_TEST \
 	../util/jag_interface.cpp \
 	../util/util.cpp \
 	toplevel.cpp \
-	injector.cpp \
 	injector_arms.cpp \
 	../util/countup_timer.cpp \
-	collector_tilt.cpp \
 	pump.cpp \
 	wheelrpms.cpp \
 	collector.cpp \

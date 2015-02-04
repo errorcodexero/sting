@@ -101,8 +101,6 @@ ostream& operator<<(ostream& o,Panel p){
 	X(learn)
 	X(force_wheels_off)
 	X(collector)
-	X(collector_tilt)
-	X(injector)
 	//X(injector_arms)
 	X(auto_mode)
 	X(pidselect)
@@ -170,23 +168,6 @@ pair<int,int> demux_3x3(double analog){
 	return make_pair(x%3,x/3);
 }
 
-Maybe<Collector_tilt::Output> interpret_collector_tilt(int x){
-	switch(x){
-		case 0: return Maybe<Collector_tilt::Output>();
-		case 1: return Maybe<Collector_tilt::Output>(Collector_tilt::OUTPUT_UP);
-		case 2: return Maybe<Collector_tilt::Output>(Collector_tilt::OUTPUT_DOWN);
-		default: assert(0);
-	}
-}
-Maybe<Injector::Output> interpret_injector(int x){
-	switch(x){
-		case 0: return Maybe<Injector::Output>();
-		case 1: return Maybe<Injector::Output>(Injector::OUTPUT_DOWN);
-		case 2: return Maybe<Injector::Output>(Injector::OUTPUT_UP);
-		default: assert(0);
-	}
-}
-
 Maybe<Injector_arms::Output> interpret_injector_arms(int x){
 	switch(x){
 		case 0: return Maybe<Injector_arms::Output>();
@@ -223,9 +204,6 @@ Panel interpret(Driver_station_input d){
 	
 	{
 		double x=d.analog[4];
-		if(x>2 && x<2.35) panel.injector=Injector::OUTPUT_UP;
-		if(x>2.7 && x<3.10) panel.collector_tilt=Collector_tilt::OUTPUT_UP;
-		if(x>2.35 && x<2.65) panel.collector_tilt=Collector_tilt::OUTPUT_DOWN;
 		if(x>1.35 && x<1.75) panel.collector=Collector_mode::ON;
 		if(x>1.05 && x<1.35) panel.collector=Collector_mode::REVERSE;
 		if(x>.4 && x<1) panel.learn=1;

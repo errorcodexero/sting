@@ -34,55 +34,41 @@ namespace Toplevel{
 		r.drive=d;
 		switch(m){
 			case DRIVE_WO_BALL:
-				r.collector_tilt=Collector_tilt::GOAL_UP;
 				r.injector_arms=Injector_arms::GOAL_X;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case DRIVE_W_BALL:
-				r.collector_tilt=Collector_tilt::GOAL_UP;
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case COLLECT_SPIN_UP:
 				r.collector=Collector_mode::ON;
-				r.collector_tilt=Collector_tilt::GOAL_DOWN;
 				r.injector_arms=Injector_arms::GOAL_OPEN;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT_NONBLOCK);
 				r.pump=Pump::GOAL_OFF;//to make the spin up faster.
 				break;
 			case COLLECT:
 				r.collector=Collector_mode::ON;
-				r.collector_tilt=Collector_tilt::GOAL_DOWN;
 				r.injector_arms=Injector_arms::GOAL_OPEN;
 				//r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL_NONBLOCK);
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case SHOOT_HIGH_PREP:
 			case SHOOT_HIGH:
-				r.collector_tilt=Collector_tilt::GOAL_UP;
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL);
-				if(m==SHOOT_HIGH){
-					r.injector=Injector::START;
-				}
 				break;
 			case SHOOT_HIGH_PREP_NO_PUMP:
 			case SHOOT_HIGH_NO_PUMP:
 			case AUTO_SHOT_PREP:
 			case AUTO_SHOT:
-				r.collector_tilt=Collector_tilt::GOAL_UP;
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT);
-				if(m==AUTO_SHOT){
-					r.injector=Injector::START;
-				}
 				break;
 			case TRUSS_TOSS_PREP:
 			case TRUSS_TOSS:
-				r.collector_tilt=Collector_tilt::GOAL_UP;
 				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::TRUSS);
-				if(m==TRUSS_TOSS || m==SHOOT_HIGH_NO_PUMP) r.injector=Injector::START;
 				if(m==SHOOT_HIGH_PREP_NO_PUMP || m==SHOOT_HIGH_NO_PUMP){
 									r.pump=Pump::GOAL_OFF;
 				}
@@ -96,7 +82,6 @@ namespace Toplevel{
 				break;*/
 			case EJECT_PREP:
 			case EJECT:
-                r.collector_tilt=Collector_tilt::GOAL_UP;//was down, but with the current ejector geometry works better this way.
                 r.injector_arms=Injector_arms::GOAL_OPEN;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
                 //Copied from a previous commit of the code, basically what it was before modification
@@ -110,7 +95,6 @@ namespace Toplevel{
 				break;
 				*/
 			case CATCH:
-				r.collector_tilt=Collector_tilt::GOAL_DOWN;
 				r.injector_arms=Injector_arms::GOAL_CLOSE;//not sure that this matters
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::STOP);//could also have a reverse mode here
 				break;
@@ -222,8 +206,6 @@ void toplevel_modes(){
 						tag(ss,"tr",
 							tag("td",as_string(mode))+
 							tag("td",g.collector)+
-							tag("td",g.collector_tilt)+
-							tag("td",g.injector)+
 							tag("td",g.injector_arms)+
 							tag("td",g.shooter_wheels.high_level)
 						);

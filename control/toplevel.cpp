@@ -9,8 +9,6 @@ using namespace std;
 namespace Toplevel{
 	Output::Output():
 		collector(Collector_mode::OFF),
-		collector_tilt(Collector_tilt::OUTPUT_UP),
-		injector(Injector::OUTPUT_DOWN),
 		injector_arms(Injector_arms::OUTPUT_CLOSE),
 		pump(Pump::OUTPUT_ON)
 	{}
@@ -18,8 +16,6 @@ namespace Toplevel{
 	ostream& operator<<(ostream& o,Output g){
 		o<<"Output(";
 		o<<"collect:"<<g.collector;
-		o<<" colct_tlt:"<<g.collector_tilt;
-		o<<" inject:"<<g.injector;
 		o<<" inj arm:"<<g.injector_arms;
 		o<<" shoot:"<<g.shooter_wheels;
 		o<<" pump:"<<g.pump;
@@ -29,8 +25,6 @@ namespace Toplevel{
 
 	Subgoals::Subgoals():
 		collector(Collector_mode::OFF),
-		collector_tilt(Collector_tilt::GOAL_UP),
-		injector(Injector::WAIT),
 		injector_arms(Injector_arms::GOAL_X),
 		//shooter_wheels(Shooter_wheels:)
 		pump(Pump::GOAL_AUTO)
@@ -39,8 +33,6 @@ namespace Toplevel{
 	ostream& operator<<(ostream& o,Subgoals g){
 		o<<"Toplevel::Subgoals(";
 		o<<"collect:"<<g.collector;
-		o<<" colct_tlt:"<<g.collector_tilt;
-		o<<" inject:"<<g.injector;
 		o<<" inj_arm:"<<g.injector_arms;
 		o<<" shoot:";
 		o<<g.shooter_wheels;
@@ -52,16 +44,12 @@ namespace Toplevel{
 	}
 
 	Status::Status():
-		collector_tilt(Collector_tilt::STATUS_LOWERING),
-		injector(Injector::Estimator::GOING_DOWN),
 		injector_arms(Injector_arms::STATUS_CLOSING),
 		pump(Pump::NOT_FULL)
 	{}
 
 	bool operator==(Status a,Status b){
 		#define X(name) if(a.name!=b.name) return 0;
-		X(collector_tilt)
-		X(injector)
 		X(injector_arms)
 		X(shooter_wheels)
 		X(pump)
@@ -76,8 +64,6 @@ namespace Toplevel{
 
 	ostream& operator<<(ostream& o,Status s){
 		o<<"Status(";
-		o<<"colct_tlt:"<<s.collector_tilt;
-		o<<" inject:"<<s.injector;
 		o<<" inj_arm:"<<s.injector_arms;
 		o<<" shoot:"<<s.shooter_wheels;
 		o<<" pump:"<<s.pump;
@@ -99,16 +85,6 @@ namespace Toplevel{
 		Status r;
 		//yes, there is a better way to do this; it's called a monad. (or exceptions)
 		#define X(i) remove_till_colon(v[i])
-		{
-			Maybe<Collector_tilt::Status> m=Collector_tilt::parse_status(X(0));
-			if(!m) return Maybe<Status>();
-			r.collector_tilt=*m;
-		}
-		{
-			Maybe<Injector::Estimator::Location> m=Injector::parse_location(X(1));
-			if(!m) return Maybe<Status>();
-			r.injector=*m;
-		}
 		{
 			Maybe<Injector_arms::Status> m=Injector_arms::parse_status(X(2));
 			if(!m) return Maybe<Status>();
@@ -132,9 +108,7 @@ namespace Toplevel{
 
 	Estimator::Estimator():pump(Pump::NOT_FULL), orientation(0){}
 
-	void Estimator::update(Time time,bool enabled,Output out,Pump::Status pump_status, float orientation1,Shooter_wheels::Status wheels_in,bool downsensor){
-		collector_tilt.update(time,enabled?out.collector_tilt:Collector_tilt::OUTPUT_NEITHER);
-		injector.update(time,enabled?out.injector:Injector::OUTPUT_VENT,downsensor);
+	void Estimator::update(Time time,bool enabled,Output out,Pump::Status pump_status, float orientation1,Shooter_wheels::Status wheels_in,bool){
 		injector_arms.update(time,enabled?out.injector_arms:Injector_arms::OUTPUT_OPEN);
 		shooter_wheels=wheels_in;
 		pump=pump_status;
@@ -143,8 +117,6 @@ namespace Toplevel{
 
 	Status Estimator::estimate()const{
 		Status r;
-		r.collector_tilt=collector_tilt.estimate();
-		r.injector=injector.estimate();
 		r.injector_arms=injector_arms.estimate();
 		r.pump=pump;
 		r.shooter_wheels = shooter_wheels;
@@ -153,8 +125,6 @@ namespace Toplevel{
 
 	void Estimator::out(ostream& o)const{
 		o<<"Estimator(";
-		o<<"colct_tlt:"<<collector_tilt;
-		o<<" inject:"<<injector;
 		o<<" inj arm:"<<injector_arms;
 		o<<" shooter_wheels:"<<shooter_wheels;
 		o<<" pump:"<<pump;
@@ -163,8 +133,6 @@ namespace Toplevel{
 
 	bool operator==(Estimator a,Estimator b){
 		#define X(name) if(a.name!=b.name) return 0;
-		X(collector_tilt)
-		X(injector)
 		X(injector_arms)
 		X(shooter_wheels)
 		X(pump)
@@ -189,8 +157,6 @@ namespace Toplevel{
 	Output control(Status status,Subgoals g){
 		Output r;
 		r.collector=g.collector;
-		r.collector_tilt=Collector_tilt::control(g.collector_tilt);
-		r.injector=Injector::control(status.injector,g.injector);
 		r.injector_arms=Injector_arms::control(status.injector_arms,g.injector_arms);
 		r.shooter_wheels=control(status.shooter_wheels,g.shooter_wheels);
 		r.pump=Pump::control(status.pump,g.pump);
@@ -199,17 +165,13 @@ namespace Toplevel{
 	}
 
 	bool ready(Status status,Subgoals g){
-		return Collector_tilt::ready(status.collector_tilt,g.collector_tilt) && 
-			Injector::ready(status.injector,g.injector) && 
-			Injector_arms::ready(status.injector_arms,g.injector_arms) && 
+		return Injector_arms::ready(status.injector_arms,g.injector_arms) && 
 			ready(status.shooter_wheels,g.shooter_wheels);
 	}
 	
 	vector<string> not_ready(Status status,Subgoals g){
 		vector<string> r;
 		#define X(name) if(!ready(status.name,g.name)) r|=as_string(""#name);
-		X(collector_tilt)
-		X(injector)
 		X(injector_arms)
 		X(shooter_wheels)
 		#undef X
@@ -227,8 +189,6 @@ namespace Toplevel{
 #ifdef TOPLEVEL_TEST
 bool approx_equal(Toplevel::Status a,Toplevel::Status b){
 	#define X(name) if(a.name!=b.name) return 0;
-	X(collector_tilt)
-	X(injector)
 	X(injector_arms)
 	X(shooter_wheels)
 	#undef X

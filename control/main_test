@@ -1,5 +1,4 @@
 g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
-	octocanum.cpp \
 	force.cpp \
 	force_interface.cpp \
 	gyro_tracker.cpp \

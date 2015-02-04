@@ -1,5 +1,4 @@
 #include "monitor.h"
-#include "gyro_tracker.h"
 #include "toplevel.h"
 #include "main.h"
 #include "../util/interface.h"
@@ -9,8 +8,6 @@ using namespace std;
 void print_diff(ostream& o,unsigned char a,unsigned char b){
 	print_diff(o,(int)a,(int)b);
 }
-
-void print_diff(ostream& o,Gyro_tracker &a,Gyro_tracker const& b){ print_diff_approx(o,a,b); }
 
 void print_diff(ostream& o,Toplevel::Status &a,Toplevel::Status const& b){
 	#define X(name) print_diff(o,""#name ": ",a.name,b.name);

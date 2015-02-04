@@ -2,7 +2,6 @@
 #define MAIN_H
 
 #include "force_interface.h"
-#include "gyro_tracker.h"
 #include "../util/posedge_toggle.h"
 #include "../util/perf_tracker.h"
 #include "../util/bound_tracker.h"

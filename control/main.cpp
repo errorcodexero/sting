@@ -149,8 +149,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		auto l1=y-theta;
 		auto r1=y+theta;
 		auto lim=max(1.0,max(l1,r1));
-		r.pwm[0]=-(pow((l1/lim),3))*.6;//Chenge these "coefficients" for different movement behavior
-		r.pwm[1]=pow((r1/lim),3)*.6;
+		auto boost=main_joystick.button[Gamepad_button::LB];
+		double multiplier=(boost?1:.6);
+		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
+		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;
 		r.pwm[3]=[&](){
 			if(main_joystick.button[0]) return .5;

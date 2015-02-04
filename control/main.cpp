@@ -145,12 +145,12 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		}
 		auto x=main_joystick.axis[0];
 		auto y=main_joystick.axis[1];
-		auto theta=main_joystick.axis[4]/2; //theta is /2 so rotation is reduced to prevent bin tipping.
+		auto theta=main_joystick.axis[4]; //theta is /2 so rotation is reduced to prevent bin tipping.
 		auto l1=y-theta;
 		auto r1=y+theta;
 		auto lim=max(1.0,max(l1,r1));
-		auto boost=main_joystick.button[Gamepad_button::LB];
-		double multiplier=(boost?1:.6);
+		auto boost=main_joystick.axis[2];
+		double multiplier=.6+.4*boost;
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;

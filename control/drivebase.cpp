@@ -102,7 +102,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 
 Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)const{
 	return Drivebase::Output{
-		from_pwm(robot.pwm[0]),
+		-from_pwm(robot.pwm[0]),
 		from_pwm(robot.pwm[1]),
 		from_pwm(robot.pwm[2])
 	};

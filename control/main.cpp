@@ -1,7 +1,7 @@
 #include "main.h"
-#include<iostream>
-#include<sstream>
-#include<cassert>
+#include <iostream>
+#include <sstream>
+#include <cassert>
 #include <math.h>
 #include "holonomic.h"
 #include "toplevel.h"
@@ -130,17 +130,22 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		for(unsigned i=0;i<r.PWMS;i++){
 			r.pwm[i]=0;
 		}
-		auto x=main_joystick.axis[0];
-		auto y=main_joystick.axis[1];
-		auto theta=main_joystick.axis[4]; //theta is /2 so rotation is reduced to prevent bin tipping.
-		auto l1=y-theta;
-		auto r1=y+theta;
-		auto lim=max(1.0,max(l1,r1));
+		Drivebase::Goal goal;
+		Drivebase::Status_detail status_detail;
 		auto boost=main_joystick.axis[2];
 		double multiplier=.6+.4*boost;
+		goal.x=main_joystick.axis[0];
+		goal.y=pow(main_joystick.axis[1], 3)*multiplier;
+		goal.theta=pow(main_joystick.axis[4], 3)*multiplier; //theta is /2 so rotation is reduced to prevent bin tipping.
+		Drivebase::Output out;
+		out=control(status_detail, goal);
+		r=drivebase.output_applicator(r,out);
+		/*auto l1=y-theta;
+		auto r1=y+theta;
+		auto lim=max(1.0,max(l1,r1));
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
-		r.pwm[2]=x;
+		r.pwm[2]=x;*/
 		r.pwm[3]=[&](){
 			if(gunner_joystick.button[0]) return .5;
 			if(gunner_joystick.button[1]) return -.5;

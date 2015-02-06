@@ -20,7 +20,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	shooter_status.cpp \
 	wheelrpms.cpp \
 	../input/util.cpp \
-	../input/panel2014.cpp \
 	../util/jag_interface.cpp \
 	../util/driver_station_interface.cpp \
 	wheel_sim.cpp \

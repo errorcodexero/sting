@@ -69,7 +69,7 @@ namespace Shooter_wheels{
 		}
 	}
 	
-	Calibration Calibration_manager::update(bool learn_button,double adjust_wheel,Calibration_target t,Panel::PIDselect /*pidselect*/,bool /*pidadjust*/){
+	Calibration Calibration_manager::update(bool learn_button,double adjust_wheel,Calibration_target t,bool /*pidadjust*/){
 		wheelcalib w=calib;
 		{
 			double adjustment=((adjust_wheel/3.3)-.5)*2*100;
@@ -226,8 +226,8 @@ int main(){
 		for(double d:vector<double>{0,1.5,3.3}){
 			cout<<a<<"\n";
 			cout<<7<<endl;
-			c.update(0,d,a,Panel::P,0);
-			cout<<c.update(1,d,a,Panel::P,0).first-rpmsdefault()<<"\n";
+			c.update(0,d,a,0);
+			cout<<c.update(1,d,a,0).first-rpmsdefault()<<"\n";
 			cout<<8<<endl;
 		}
 	}

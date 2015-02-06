@@ -1,5 +1,4 @@
 g++ -Wall -Werror -std=c++0x -DPANEL2014_TEST panel2014.cpp ../control/fire_control.cpp \
-	../control/injector_arms.cpp \
 	../util/countup_timer.cpp \
 	../util/posedge_trigger.cpp \
 	../util/negedge_trigger.cpp \

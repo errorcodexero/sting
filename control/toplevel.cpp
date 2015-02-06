@@ -8,13 +8,11 @@ using namespace std;
 
 namespace Toplevel{
 	Output::Output():
-		injector_arms(Injector_arms::OUTPUT_CLOSE),
 		pump(Pump::OUTPUT_ON)
 	{}
 
 	ostream& operator<<(ostream& o,Output g){
 		o<<"Output(";
-		o<<" inj arm:"<<g.injector_arms;
 		o<<" shoot:"<<g.shooter_wheels;
 		o<<" pump:"<<g.pump;
 		o<<" drive:"<<g.drive;
@@ -22,14 +20,12 @@ namespace Toplevel{
 	}
 
 	Subgoals::Subgoals():
-		injector_arms(Injector_arms::GOAL_X),
 		//shooter_wheels(Shooter_wheels:)
 		pump(Pump::GOAL_AUTO)
 	{}
 
 	ostream& operator<<(ostream& o,Subgoals g){
 		o<<"Toplevel::Subgoals(";
-		o<<" inj_arm:"<<g.injector_arms;
 		o<<" shoot:";
 		o<<g.shooter_wheels;
 		//o<<g.shooter_wheels.second;
@@ -40,13 +36,11 @@ namespace Toplevel{
 	}
 
 	Status::Status():
-		injector_arms(Injector_arms::STATUS_CLOSING),
 		pump(Pump::NOT_FULL)
 	{}
 
 	bool operator==(Status a,Status b){
 		#define X(name) if(a.name!=b.name) return 0;
-		X(injector_arms)
 		X(shooter_wheels)
 		X(pump)
 		X(orientation)
@@ -60,7 +54,6 @@ namespace Toplevel{
 
 	ostream& operator<<(ostream& o,Status s){
 		o<<"Status(";
-		o<<" inj_arm:"<<s.injector_arms;
 		o<<" shoot:"<<s.shooter_wheels;
 		o<<" pump:"<<s.pump;
 		o<<" orientation:"<<s.orientation;
@@ -82,11 +75,6 @@ namespace Toplevel{
 		//yes, there is a better way to do this; it's called a monad. (or exceptions)
 		#define X(i) remove_till_colon(v[i])
 		{
-			Maybe<Injector_arms::Status> m=Injector_arms::parse_status(X(2));
-			if(!m) return Maybe<Status>();
-			r.injector_arms=*m;
-		}
-		{
 			cout<<X(4)<<"\n";
 			Maybe<Shooter_wheels::Status> m=Shooter_wheels::parse_status(X(4));
 			if(!m) return Maybe<Status>();
@@ -104,8 +92,7 @@ namespace Toplevel{
 
 	Estimator::Estimator():pump(Pump::NOT_FULL), orientation(0){}
 
-	void Estimator::update(Time time,bool enabled,Output out,Pump::Status pump_status, float orientation1,Shooter_wheels::Status wheels_in,bool){
-		injector_arms.update(time,enabled?out.injector_arms:Injector_arms::OUTPUT_OPEN);
+	void Estimator::update(Time /*time*/,bool /*enabled*/,Output /*out*/,Pump::Status pump_status, float orientation1,Shooter_wheels::Status wheels_in,bool){
 		shooter_wheels=wheels_in;
 		pump=pump_status;
 		orientation = orientation1;
@@ -113,7 +100,6 @@ namespace Toplevel{
 
 	Status Estimator::estimate()const{
 		Status r;
-		r.injector_arms=injector_arms.estimate();
 		r.pump=pump;
 		r.shooter_wheels = shooter_wheels;
 		return r;
@@ -121,7 +107,6 @@ namespace Toplevel{
 
 	void Estimator::out(ostream& o)const{
 		o<<"Estimator(";
-		o<<" inj arm:"<<injector_arms;
 		o<<" shooter_wheels:"<<shooter_wheels;
 		o<<" pump:"<<pump;
 		o<<")";
@@ -129,7 +114,6 @@ namespace Toplevel{
 
 	bool operator==(Estimator a,Estimator b){
 		#define X(name) if(a.name!=b.name) return 0;
-		X(injector_arms)
 		X(shooter_wheels)
 		X(pump)
 		X(orientation)
@@ -152,7 +136,6 @@ namespace Toplevel{
 
 	Output control(Status status,Subgoals g){
 		Output r;
-		r.injector_arms=Injector_arms::control(status.injector_arms,g.injector_arms);
 		r.shooter_wheels=control(status.shooter_wheels,g.shooter_wheels);
 		r.pump=Pump::control(status.pump,g.pump);
 		r.drive=::control(g.drive, status.orientation);
@@ -160,14 +143,12 @@ namespace Toplevel{
 	}
 
 	bool ready(Status status,Subgoals g){
-		return Injector_arms::ready(status.injector_arms,g.injector_arms) && 
-			ready(status.shooter_wheels,g.shooter_wheels);
+		return ready(status.shooter_wheels,g.shooter_wheels);
 	}
 	
 	vector<string> not_ready(Status status,Subgoals g){
 		vector<string> r;
 		#define X(name) if(!ready(status.name,g.name)) r|=as_string(""#name);
-		X(injector_arms)
 		X(shooter_wheels)
 		#undef X
 		return r;
@@ -184,7 +165,6 @@ namespace Toplevel{
 #ifdef TOPLEVEL_TEST
 bool approx_equal(Toplevel::Status a,Toplevel::Status b){
 	#define X(name) if(a.name!=b.name) return 0;
-	X(injector_arms)
 	X(shooter_wheels)
 	#undef X
 	return approx_equal(a.orientation,b.orientation);

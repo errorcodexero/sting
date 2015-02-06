@@ -152,15 +152,6 @@ pair<int,int> demux_3x3(double analog){
 	return make_pair(x%3,x/3);
 }
 
-Maybe<Injector_arms::Output> interpret_injector_arms(int x){
-	switch(x){
-		case 0: return Maybe<Injector_arms::Output>();
-		case 1: return Maybe<Injector_arms::Output>(Injector_arms::OUTPUT_OPEN);
-		case 2: return Maybe<Injector_arms::Output>(Injector_arms::OUTPUT_CLOSE);
-		default: assert(0);
-	}
-}
-
 Panel interpret(Driver_station_input d){
 	Panel panel;
 	{

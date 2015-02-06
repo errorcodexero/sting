@@ -28,8 +28,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 	
 	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
 	
-	r.solenoid[7]=(a.injector_arms!=Injector_arms::OUTPUT_CLOSE);
-
 	//pressure switch
 	r.digital_io[0]=Digital_out::INPUT;
 

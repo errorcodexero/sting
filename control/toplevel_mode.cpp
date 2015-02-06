@@ -34,38 +34,31 @@ namespace Toplevel{
 		r.drive=d;
 		switch(m){
 			case DRIVE_WO_BALL:
-				r.injector_arms=Injector_arms::GOAL_X;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case DRIVE_W_BALL:
-				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case COLLECT_SPIN_UP:
-				r.injector_arms=Injector_arms::GOAL_OPEN;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT_NONBLOCK);
 				r.pump=Pump::GOAL_OFF;//to make the spin up faster.
 				break;
 			case COLLECT:
-				r.injector_arms=Injector_arms::GOAL_OPEN;
 				//r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL_NONBLOCK);
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case SHOOT_HIGH_PREP:
 			case SHOOT_HIGH:
-				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL);
 				break;
 			case SHOOT_HIGH_PREP_NO_PUMP:
 			case SHOOT_HIGH_NO_PUMP:
 			case AUTO_SHOT_PREP:
 			case AUTO_SHOT:
-				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT);
 				break;
 			case TRUSS_TOSS_PREP:
 			case TRUSS_TOSS:
-				r.injector_arms=Injector_arms::GOAL_CLOSE;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::TRUSS);
 				if(m==SHOOT_HIGH_PREP_NO_PUMP || m==SHOOT_HIGH_NO_PUMP){
 									r.pump=Pump::GOAL_OFF;
@@ -80,7 +73,6 @@ namespace Toplevel{
 				break;*/
 			case EJECT_PREP:
 			case EJECT:
-                r.injector_arms=Injector_arms::GOAL_OPEN;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
                 //Copied from a previous commit of the code, basically what it was before modification
 				break;
@@ -93,7 +85,6 @@ namespace Toplevel{
 				break;
 				*/
 			case CATCH:
-				r.injector_arms=Injector_arms::GOAL_CLOSE;//not sure that this matters
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::STOP);//could also have a reverse mode here
 				break;
 			/*
@@ -203,7 +194,6 @@ void toplevel_modes(){
 						Toplevel::Subgoals g=subgoals(mode,Drive_goal(),Shooter_wheels::Calibration());
 						tag(ss,"tr",
 							tag("td",as_string(mode))+
-							tag("td",g.injector_arms)+
 							tag("td",g.shooter_wheels.high_level)
 						);
 					}

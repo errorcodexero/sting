@@ -3,8 +3,9 @@
 
 #include "../control/fire_control.h"
 #include "../util/maybe.h"
-#include "../control/injector_arms.h"
 #include "../control/calibration_target.h"
+
+class Driver_station_input;
 
 //these will probably be the things that light up.
 struct Mode_buttons{

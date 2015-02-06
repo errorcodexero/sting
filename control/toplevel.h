@@ -2,7 +2,6 @@
 #define TOPLEVEL_H
 
 #include<vector>
-#include "injector_arms.h"
 #include "shooter_wheels.h"
 #include "pump.h"
 #include "holonomic.h"
@@ -11,7 +10,6 @@ namespace Toplevel{
 	struct Output{
 		Output();
 
-		Injector_arms::Output injector_arms;
 		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
 		Drive_motors drive;
@@ -21,7 +19,6 @@ namespace Toplevel{
 	struct Subgoals{
 		Subgoals();
 
-		Injector_arms::Goal injector_arms;
 		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;
 		Drive_goal drive;
@@ -32,8 +29,6 @@ namespace Toplevel{
 	struct Status{
 		Status();
 
-		//collector has no state
-		Injector_arms::Status injector_arms;
 		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;
 		float orientation;
@@ -45,7 +40,6 @@ namespace Toplevel{
 
 	class Estimator{
 		//no estimate for collector
-		Injector_arms::Estimator injector_arms;
 		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;//for now just taking the sensor's measurement as gospel.
 		float orientation;

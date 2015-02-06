@@ -94,7 +94,7 @@ ostream& operator<<(ostream& o,Drivebase const&){
 void Drivebase::Estimator::update(double,Drivebase::Input,Drivebase::Output){}
 
 Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drivebase::Output b)const{
-	robot.pwm[0]=pwm_convert(b.l);
+	robot.pwm[0]=-pwm_convert(b.l);
 	robot.pwm[1]=pwm_convert(b.r);
 	robot.pwm[2]=pwm_convert(b.c);
 	return robot;

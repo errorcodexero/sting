@@ -218,8 +218,9 @@ class To_crio
 	//NetworkTable *table;
 	//Gyro *gyro;
 	Compressor *compressor;
+	CANTalon test;
 public:
-	To_crio():error_code(0),skipped(0)//,gyro(NULL)
+	To_crio():error_code(0),skipped(0),test(0)//,gyro(NULL)
 	{
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
 		//SendWOL();
@@ -380,7 +381,7 @@ public:
 			/*int r=digital_io[i].set(out.digital_io[i]);
 			if(r) error_code|=512;*/
 		}
-
+		test.Set(1);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){

@@ -4,7 +4,6 @@
 		-add keys on both the roboRIOs for all the machines
 -New Launchpad Controller
 -Try out the new Talon SRX's
-	-PWM
 	-CAN
 		-just power levels
 		-all the sensor-based modes
@@ -18,4 +17,9 @@
 	-Lifter Simulator-Jared
 -Write logging code
 -OI:
-
+	-put in outputs
+		-into framework
+		-figure out how to reprogram the TI launchpad
+-Cleanup stuff:
+	-use enum class more places
+	-use std::array in place of C arrays in several places

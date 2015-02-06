@@ -32,9 +32,9 @@ Digital_in DIO_control::get()const{
 	//return DI_0;
 	if(!in){
 		//cerr<<"Mode is actually: "<<mode<<"\n";
-		return DI_OUTPUT;
+		return Digital_in::OUTPUT;
 	}
-	return in->Get()?DI_1:DI_0;
+	return in->Get()?Digital_in::_1:Digital_in::_0;
 }
 
 DIO_control::Mode DIO_control::mode()const{

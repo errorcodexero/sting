@@ -53,13 +53,13 @@ int read_file(string const& filename,string &out){
 	return 0;
 }
 
-double sum(std::vector<double> v){
+double sum(std::vector<double> const& v){
 	double total=0;
 	for(unsigned i=0;i<v.size();i++) total+=v[i];
 	return total;
 }
 
-double mean(vector<double> v){
+double mean(vector<double> const& v){
 	if(v.size()==0) return strtod("NAN",NULL);
 	return sum(v)/v.size();
 }
@@ -78,7 +78,7 @@ vector<double> square(vector<double> v){
 	return v;
 }
 
-double stddev(vector<double> v){
+double stddev(vector<double> const& v){
 	//could write a faster version of this.
 	return sqrt(mean(square(
 		v-mean(v)

@@ -281,10 +281,10 @@ ostream& operator<<(ostream& o,Robot_mode m){
 
 ostream& operator<<(ostream& o,Digital_in d){
 	switch(d){
-		#define X(name) case name: return o<<""#name;
-		X(DI_OUTPUT)
-		X(DI_0)
-		X(DI_1)
+		#define X(name) case Digital_in::name: return o<<""#name;
+		X(OUTPUT)
+		X(_0)
+		X(_1)
 		#undef X
 		default: return o<<"error";
 	}
@@ -292,13 +292,13 @@ ostream& operator<<(ostream& o,Digital_in d){
 
 void terse(ostream& o,Digital_in d){
 	switch(d){
-		case DI_OUTPUT:
+		case Digital_in::OUTPUT:
 			o<<'.';
 			break;
-		case DI_0:
+		case Digital_in::_0:
 			o<<'0';
 			break;
-		case DI_1:
+		case Digital_in::_1:
 			o<<'1';
 			break;
 		default:
@@ -308,9 +308,9 @@ void terse(ostream& o,Digital_in d){
 
 vector<Digital_in> digital_ins(){
 	vector<Digital_in> r;
-	r|=DI_OUTPUT;
-	r|=DI_0;
-	r|=DI_1;
+	r|=Digital_in::OUTPUT;
+	r|=Digital_in::_0;
+	r|=Digital_in::_1;
 	return r;
 }
 
@@ -323,7 +323,7 @@ Robot_inputs::Robot_inputs():
 	now(0),orientation(0)
 {
 	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-		digital_io[i]=DI_OUTPUT;
+		digital_io[i]=Digital_in::OUTPUT;
 	}
 	
 	for(unsigned i=0;i<ANALOG_INPUTS;i++){

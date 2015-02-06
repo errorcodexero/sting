@@ -6,7 +6,6 @@
 #include "../util/jag_interface.h"
 #include "calibration_target.h"
 #include "../util/posedge_trigger.h"
-#include "../input/panel2014.h"
 
 namespace Shooter_wheels{
 	enum High_level_goal{
@@ -45,7 +44,7 @@ namespace Shooter_wheels{
 		Calibration_manager();
 		
 		//adjust wheel in 0-3.3
-		Calibration update(bool learn,double adjust_wheel,Calibration_target,Panel::PIDselect,bool pid_adjust);
+		Calibration update(bool learn,double adjust_wheel,Calibration_target,bool pid_adjust);
 	};
 	bool operator==(Calibration_manager,Calibration_manager);
 	std::ostream& operator<<(std::ostream&,Calibration_manager);

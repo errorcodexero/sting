@@ -1,4 +1,5 @@
 #include "lift.h"
+#include <stdlib.h>
 #include "../util/util.h"
 
 using namespace std;

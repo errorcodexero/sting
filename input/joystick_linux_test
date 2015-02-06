@@ -1,4 +1,4 @@
-g++ -Wall -Werror -DJOYSTICK_LINUX_TEST joystick_linux.cpp \
+g++ -std=c++11 -Wall -Werror -DJOYSTICK_LINUX -DJOYSTICK_LINUX_TEST joystick_linux.cpp \
 	../util/interface.cpp \
 	../util/jag_interface.cpp \
 	../util/driver_station_interface.cpp \

@@ -1,9 +1,6 @@
 g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
-	octocanum.cpp \
 	force.cpp \
 	force_interface.cpp \
-	bunny_launcher.cpp \
-	gyro_tracker.cpp \
 	../util/interface.cpp \
 	../util/posedge_trigger.cpp \
 	../util/posedge_toggle.cpp \
@@ -13,14 +10,10 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	../util/bound_tracker.cpp \
 	holonomic.cpp \
 	toplevel.cpp \
-	injector.cpp \
-	ejector.cpp \
 	shooter_wheels.cpp \
 	../util/point.cpp \
-	collector_tilt.cpp \
+	drivebase.cpp \
 	pump.cpp \
-	collector.cpp \
-	injector_arms.cpp \
 	../util/countup_timer.cpp \
 	../util/negedge_trigger.cpp \
 	fire_control.cpp \
@@ -28,7 +21,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	shooter_status.cpp \
 	wheelrpms.cpp \
 	../input/util.cpp \
-	../input/panel2014.cpp \
 	../util/jag_interface.cpp \
 	../util/driver_station_interface.cpp \
 	wheel_sim.cpp \

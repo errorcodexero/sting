@@ -4,7 +4,7 @@
 #include<iosfwd>
 #include "../util/interface.h"
 
-enum Joystick_section{JOY_LEFT,JOY_RIGHT,JOY_UP,JOY_DOWN,JOY_CENTER};
+enum class Joystick_section{LEFT,RIGHT,UP,DOWN,CENTER};
 std::ostream& operator<<(std::ostream&,Joystick_section);
 
 Joystick_section joystick_section(double x,double y);

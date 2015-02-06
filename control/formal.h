@@ -5,6 +5,7 @@
 #include<set>
 #include<sstream>
 #include<vector>
+#include <stdlib.h>
 #include "../util/interface.h"
 #include "../util/util.h"
 

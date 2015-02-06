@@ -42,13 +42,11 @@ namespace Toplevel{
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case COLLECT_SPIN_UP:
-				r.collector=Collector_mode::ON;
 				r.injector_arms=Injector_arms::GOAL_OPEN;
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT_NONBLOCK);
 				r.pump=Pump::GOAL_OFF;//to make the spin up faster.
 				break;
 			case COLLECT:
-				r.collector=Collector_mode::ON;
 				r.injector_arms=Injector_arms::GOAL_OPEN;
 				//r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL_NONBLOCK);
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
@@ -205,7 +203,6 @@ void toplevel_modes(){
 						Toplevel::Subgoals g=subgoals(mode,Drive_goal(),Shooter_wheels::Calibration());
 						tag(ss,"tr",
 							tag("td",as_string(mode))+
-							tag("td",g.collector)+
 							tag("td",g.injector_arms)+
 							tag("td",g.shooter_wheels.high_level)
 						);

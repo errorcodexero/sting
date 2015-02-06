@@ -13,7 +13,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	shooter_wheels.cpp \
 	../util/point.cpp \
 	pump.cpp \
-	collector.cpp \
 	injector_arms.cpp \
 	../util/countup_timer.cpp \
 	../util/negedge_trigger.cpp \

@@ -2,7 +2,6 @@
 #define TOPLEVEL_H
 
 #include<vector>
-#include "collector.h"
 #include "injector_arms.h"
 #include "shooter_wheels.h"
 #include "pump.h"
@@ -12,7 +11,6 @@ namespace Toplevel{
 	struct Output{
 		Output();
 
-		Collector_mode collector;
 		Injector_arms::Output injector_arms;
 		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
@@ -23,7 +21,6 @@ namespace Toplevel{
 	struct Subgoals{
 		Subgoals();
 
-		Collector_mode collector;
 		Injector_arms::Goal injector_arms;
 		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;

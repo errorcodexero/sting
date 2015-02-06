@@ -8,14 +8,12 @@ using namespace std;
 
 namespace Toplevel{
 	Output::Output():
-		collector(Collector_mode::OFF),
 		injector_arms(Injector_arms::OUTPUT_CLOSE),
 		pump(Pump::OUTPUT_ON)
 	{}
 
 	ostream& operator<<(ostream& o,Output g){
 		o<<"Output(";
-		o<<"collect:"<<g.collector;
 		o<<" inj arm:"<<g.injector_arms;
 		o<<" shoot:"<<g.shooter_wheels;
 		o<<" pump:"<<g.pump;
@@ -24,7 +22,6 @@ namespace Toplevel{
 	}
 
 	Subgoals::Subgoals():
-		collector(Collector_mode::OFF),
 		injector_arms(Injector_arms::GOAL_X),
 		//shooter_wheels(Shooter_wheels:)
 		pump(Pump::GOAL_AUTO)
@@ -32,7 +29,6 @@ namespace Toplevel{
 
 	ostream& operator<<(ostream& o,Subgoals g){
 		o<<"Toplevel::Subgoals(";
-		o<<"collect:"<<g.collector;
 		o<<" inj_arm:"<<g.injector_arms;
 		o<<" shoot:";
 		o<<g.shooter_wheels;
@@ -156,7 +152,6 @@ namespace Toplevel{
 
 	Output control(Status status,Subgoals g){
 		Output r;
-		r.collector=g.collector;
 		r.injector_arms=Injector_arms::control(status.injector_arms,g.injector_arms);
 		r.shooter_wheels=control(status.shooter_wheels,g.shooter_wheels);
 		r.pump=Pump::control(status.pump,g.pump);

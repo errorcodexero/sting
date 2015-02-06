@@ -100,7 +100,6 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<"spd:"<<((int)(p.speed)*10)/10<<" ";
 	X(learn)
 	X(force_wheels_off)
-	X(collector)
 	//X(injector_arms)
 	X(auto_mode)
 	X(pidselect)
@@ -147,21 +146,6 @@ Calibration_target interpret_target(double f){
 	return r;
 }
 
-Maybe<Collector_mode> interpret_collector(double analog){
-	//assuming that analog goes from 0 to 1.  This is likely not right, I think it may be actual voltages.
-	int x=analog*4;
-	if(analog==4) analog=3;
-	switch(x){
-		case 0: return Maybe<Collector_mode>();
-		case 1: return Maybe<Collector_mode>(Collector_mode::ON);
-		case 2: return Maybe<Collector_mode>(Collector_mode::OFF);
-		case 3: return Maybe<Collector_mode>(Collector_mode::REVERSE);
-		default:
-			//may want to add error detection here.
-			return Maybe<Collector_mode>();
-	}
-}
-
 pair<int,int> demux_3x3(double analog){
 	int x=(int)analog;//todo: fix scaling.
 	if(x==9) x=8;
@@ -204,8 +188,6 @@ Panel interpret(Driver_station_input d){
 	
 	{
 		double x=d.analog[4];
-		if(x>1.35 && x<1.75) panel.collector=Collector_mode::ON;
-		if(x>1.05 && x<1.35) panel.collector=Collector_mode::REVERSE;
 		if(x>.4 && x<1) panel.learn=1;
 		if(x>.2&&x<.4)panel.pidadjust=1;
 	}

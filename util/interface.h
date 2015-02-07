@@ -26,7 +26,7 @@ struct Talon_srx_input{
 
 struct Talon_srx_output{
 	double power_level;
-	Talon_srx_output():power_level(0.0){}
+	Talon_srx_output():power_level(0){}
 };
 
 bool operator==(Talon_srx_output,Talon_srx_output);

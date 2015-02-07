@@ -135,6 +135,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
+		r.talon_srx[0].power_level=[&](){
+			if(gunner_joystick.button[2]) return .05;
+			if(gunner_joystick.button[3]) return -.05;
+			return 0.0;
+		}();
+		r.talon_srx[1].power_level=[&](){
+			if(gunner_joystick.button[4]) return .05;
+			if(gunner_joystick.button[5]) return -.05;
+			return 0.0;
+		}();
 		r.pwm[3]=[&](){
 			if(gunner_joystick.button[0]) return .5;
 			if(gunner_joystick.button[1]) return -.5;

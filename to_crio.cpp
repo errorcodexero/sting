@@ -222,7 +222,7 @@ class To_crio
 	CANTalon test1;
 	CANTalon test2;
 public:
-	To_crio():error_code(0),skipped(0),test(0)//,gyro(NULL)
+	To_crio():error_code(0),skipped(0),test(0),test1(0),test2(0)//,gyro(NULL)
 	{
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
 		//SendWOL();

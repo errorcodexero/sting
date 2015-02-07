@@ -218,11 +218,11 @@ class To_crio
 	//NetworkTable *table;
 	//Gyro *gyro;
 	Compressor *compressor;
-	CANTalon test;
+	//CANTalon test;
 	CANTalon test1;
 	CANTalon test2;
 public:
-	To_crio():error_code(0),skipped(0),test(0),test1(0),test2(0)//,gyro(NULL)
+	To_crio():error_code(0),skipped(0),test1(0),test2(1)//,gyro(NULL)
 	{
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
 		//SendWOL();
@@ -383,7 +383,7 @@ public:
 			/*int r=digital_io[i].set(out.digital_io[i]);
 			if(r) error_code|=512;*/
 		}
-		test.Set(1);
+		//test.Set(1);
 		test1.Set(out.talon_srx[0].power_level);
 		test2.Set(out.talon_srx[1].power_level);
 		{

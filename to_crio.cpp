@@ -384,8 +384,8 @@ public:
 			if(r) error_code|=512;*/
 		}
 		test.Set(1);
-		test1.Set(out.talon_srx_output[0]);
-		test2.Set(out.talon_srx_output[1]);
+		test1.Set(out.talon_srx[0]);
+		test2.Set(out.talon_srx[1]);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){

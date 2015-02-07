@@ -17,6 +17,16 @@ std::ostream& operator<<(std::ostream& o,Digital_out a){
 	}
 }
 
+std::ostream& operator<<(std::ostream& o, Talon_srx_input in){
+	o<<"encoder_position: "<<in.encoder_position<<" fwd_limit_switch: "<<in.fwd_limit_switch<<" rev_limit_switch: "<<in.rev_limit_switch;
+	return o;
+}
+
+std::ostream& operator<<(std::ostream& o, Talon_srx_output in){
+	o<<"power_level: "<<in.power_level;
+	return o;
+}
+
 void terse(ostream& o,Digital_out d){
 	switch(d){
 		case Digital_out::INPUT:
@@ -78,6 +88,30 @@ Maybe<Relay_output> parse_relay_output(string s){
 	return parse_enum<Relay_output>(relay_outputs(),s);
 }
 
+bool operator==(Talon_srx_input a,Talon_srx_input b){
+	return a.encoder_position==b.encoder_position && a.fwd_limit_switch==b.fwd_limit_switch && a.rev_limit_switch==b.rev_limit_switch;
+}
+
+bool operator!=(Talon_srx_input a,Talon_srx_input b){
+	return !(a==b);
+}
+
+bool operator<(Talon_srx_input a, Talon_srx_input b){
+	return a.encoder_position<b.encoder_position && a.fwd_limit_switch<b.fwd_limit_switch && a.rev_limit_switch<b.rev_limit_switch;
+}
+
+bool operator==(Talon_srx_output a,Talon_srx_output b){
+	return a.power_level==b.power_level;
+}
+
+bool operator!=(Talon_srx_output a,Talon_srx_output b){
+	return !(a==b);
+}
+
+bool operator<(Talon_srx_output a, Talon_srx_output b){
+	return a.power_level<b.power_level;
+}
+
 Robot_outputs::Robot_outputs(){
 	for(unsigned i=0;i<PWMS;i++){
 		pwm[i]=0;
@@ -111,6 +145,11 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 	}
 	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 		if(a.digital_io[i]!=b.digital_io[i]){
+			return 0;
+		}
+	}
+	for(unsigned int i=0;i<Robot_outputs::TALON_SRX_OUTPUTS; i++){
+		if(a.talon_srx[i]!=b.talon_srx[i]){
 			return 0;
 		}
 	}
@@ -148,7 +187,12 @@ bool operator<(Robot_outputs a,Robot_outputs b){
 		if(a1<b1) return 1;
 		if(b1<a1) return 0;
 	}
-
+	
+	for(unsigned i=0;i<Robot_outputs::TALON_SRX_OUTPUTS;i++){
+		if(a.talon_srx[i]<b.talon_srx[i])return 1;
+		if(b.talon_srx[i]<a.talon_srx[i])return 0;
+	}
+	
 	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		auto a1=a.jaguar[i];
 		auto b1=b.jaguar[i];
@@ -178,6 +222,10 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	for(unsigned i=0;i<a.DIGITAL_IOS;i++){
 		//o<<a.digital_io[i];
 		terse(o,a.digital_io[i]);
+	}
+	o<<" talon_srx:";
+	for(unsigned i=0;i<a.Robot_outputs::TALON_SRX_OUTPUTS;i++){
+		o<<a.talon_srx[i];
 	}
 	o<<" jaguar:";
 	for(unsigned i=0;i<a.CAN_JAGUARS;i++){
@@ -353,6 +401,11 @@ bool operator==(Robot_inputs a,Robot_inputs b){
 			return 0;
 		}
 	}
+	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+		if(a.talon_srx[i]!=b.talon_srx[i]){
+			return 0;
+		}
+	}
 	if(a.driver_station!=b.driver_station) return 0;
 	return a.orientation==b.orientation;
 }
@@ -376,6 +429,10 @@ ostream& operator<<(ostream& o,Robot_inputs a){
 	o<<" analog:";
 	for(unsigned i=0;i<a.ANALOG_INPUTS;i++){
 		o<<(i)<<" "<<a.analog[i]<<' ';
+	}
+	o<<" talon_srx:";
+	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+		o<<a.talon_srx[i];
 	}
 	o<<" jaguar:";
 	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){

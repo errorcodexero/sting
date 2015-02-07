@@ -17,6 +17,25 @@ std::ostream& operator<<(std::ostream&,Digital_out);
 enum class Relay_output{_00,_01,_10,_11};
 std::ostream& operator<<(std::ostream&,Relay_output);
 
+struct Talon_srx_input{
+	int encoder_position;
+	int fwd_limit_switch;
+	int rev_limit_switch;
+	Talon_srx_input():encoder_position(0),fwd_limit_switch(0),rev_limit_switch(0){}
+};
+
+struct Talon_srx_output{
+	double power_level;
+	Talon_srx_output():power_level(0){}
+};
+
+bool operator==(Talon_srx_output,Talon_srx_output);
+bool operator!=(Talon_srx_output,Talon_srx_output);
+bool operator<(Talon_srx_output,Talon_srx_output);
+bool operator==(Talon_srx_input,Talon_srx_input);
+bool operator!=(Talon_srx_input,Talon_srx_input);
+bool operator<(Talon_srx_input,Talon_srx_input);
+
 struct Robot_outputs{
 	static const unsigned PWMS=10;//Number of ports on the digital sidecar; roboRIO headers say 20 but there aren't that many ports on the board.
 	std::array<Pwm_output,PWMS> pwm;
@@ -30,6 +49,9 @@ struct Robot_outputs{
 	static const unsigned DIGITAL_IOS=4;//there are really 14 on the cRIO and the roboRIO headers say 26.
 	std::array<Digital_out,DIGITAL_IOS> digital_io;
 	
+	static const unsigned TALON_SRX_OUTPUTS=2;
+	std::array<Talon_srx_output, TALON_SRX_OUTPUTS> talon_srx;
+	
 	static const unsigned CAN_JAGUARS=4;
 	std::array<Jaguar_output,CAN_JAGUARS> jaguar;
 	
@@ -39,6 +61,10 @@ struct Robot_outputs{
 
 	Robot_outputs();
 };
+
+std::ostream& operator<<(std::ostream& o, Talon_srx_output);
+
+std::ostream& operator<<(std::ostream& o, Talon_srx_input);
 
 bool operator<(Robot_outputs,Robot_outputs);
 bool operator==(Robot_outputs,Robot_outputs);
@@ -90,6 +116,9 @@ struct Robot_inputs{
 	static const unsigned ANALOG_INPUTS=8;
 	std::array<Volt,ANALOG_INPUTS> analog;
 
+	static const unsigned TALON_SRX_INPUTS=2;
+	std::array<Talon_srx_input, TALON_SRX_INPUTS> talon_srx;
+	
 	std::array<Jaguar_input,Robot_outputs::CAN_JAGUARS> jaguar;
 	Driver_station_input driver_station;
 	Rad orientation;

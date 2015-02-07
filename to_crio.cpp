@@ -219,6 +219,8 @@ class To_crio
 	//Gyro *gyro;
 	Compressor *compressor;
 	CANTalon test;
+	CANTalon test1;
+	CANTalon test2;
 public:
 	To_crio():error_code(0),skipped(0),test(0)//,gyro(NULL)
 	{
@@ -382,6 +384,8 @@ public:
 			if(r) error_code|=512;*/
 		}
 		test.Set(1);
+		test1.Set(out.talon_srx_output[0]);
+		test2.Set(out.talon_srx_output[1]);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){

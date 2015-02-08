@@ -245,7 +245,7 @@ struct Lift_sim{
 		return Lift::Input{
 			height>=MAX_HEIGHT-LIMIT_SWITCH_RANGE,
 			height<=MIN_HEIGHT+LIMIT_SWITCH_RANGE,
-			height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION
+			(unsigned int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION)
 		};
 	}
 };
@@ -256,9 +256,43 @@ ostream& operator<<(ostream& o,Lift_sim const& a){
 	return o<<")";
 }
 
+static const double GEAR_RATIO=10;//to 1
+
+//returns motor speed
+double linear_to_rpm(double in_per_sec){
+	return (in_per_sec*60)/SPROCKET_RADIUS*GEAR_RATIO;
+}
+
+//returns in/s^2
+pair<double,double> acceleration_range(double load/*lb - including lifter parts*/,double current_speed/*in inches/s*/){
+	static const double CIM_STALL_TORQUE=343.4/16;//lb*in
+	static const double CIM_FREE_SPEED=5310;//rpm
+	double current_rpm=linear_to_rpm(current_speed);//rpm
+	//cout<<"current_rpm:"<<current_rpm<<"\n";
+	static const double PLANETARY_EFFICIENCY=.8;
+	static const double CHAIN_EFFICIENCY=.9;
+	double current_available_torque=CIM_STALL_TORQUE*PLANETARY_EFFICIENCY*CHAIN_EFFICIENCY*(1-current_rpm/CIM_FREE_SPEED);//lb-in
+	//cout<<"oz in avail:"<<current_available_torque<<"\n";
+
+	//assume going up:
+	double force=current_available_torque*GEAR_RATIO/SPROCKET_RADIUS;//lb
+	//cout<<"\tforce:"<<force<<"\n";
+	double net_force=force-load;//lb
+	static const double G_IN_IN_PER_S=32.2*12;
+	double max_accel=net_force/load*G_IN_IN_PER_S;
+
+	//assume going down:
+	double reverse_available_torque=CIM_STALL_TORQUE*PLANETARY_EFFICIENCY*CHAIN_EFFICIENCY*(-1-current_rpm/CIM_FREE_SPEED);//lb-in
+	double force_min=reverse_available_torque*GEAR_RATIO/SPROCKET_RADIUS;//lb
+	double min_net_force=force_min-load;//lb
+	double min_accel=min_net_force/load*G_IN_IN_PER_S;//lb
+
+	return make_pair(min_accel,max_accel);
+}
+
 int main(){
 	//need to calculate the speed at which need to stop in order to avoid throwing totes
-	32 ft/s/s
+	/*32 ft/s/s
 	12*32=384 in/s/s
 	estimated speed to robot, acceleration & rotation -> lift accel limits?
 	desired lift accel
@@ -266,7 +300,7 @@ int main(){
 	priorities:
 	1) required deceleration of lifter (due to end of rails)
 	2) robot movement
-	3) acceleration of lifter/deceleration due to destination approaching in a way that's open
+	3) acceleration of lifter/deceleration due to destination approaching in a way that's open*/
 
 	cout<<free_speed_linear()<<"\n";
 	for(int i=0;i<=7;i++){
@@ -281,5 +315,9 @@ int main(){
 	Lift a;
 	tester(a);
 	run(a,0,Lift::Input{0,0,0},Lift::Output{},Lift::Goal::MAX);
+
+	for(unsigned i=0;i<30;i++){
+		cout<<i<<"\t"<<acceleration_range(60,i)<<"\n";
+	}
 }
 #endif

@@ -218,9 +218,11 @@ class To_crio
 	//NetworkTable *table;
 	//Gyro *gyro;
 	Compressor *compressor;
-	CANTalon test;
+	//CANTalon test;
+	CANTalon test1;
+	CANTalon test2;
 public:
-	To_crio():error_code(0),skipped(0),test(0)//,gyro(NULL)
+	To_crio():error_code(0),skipped(0),test1(0),test2(1)//,gyro(NULL)
 	{
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
 		//SendWOL();
@@ -381,7 +383,9 @@ public:
 			/*int r=digital_io[i].set(out.digital_io[i]);
 			if(r) error_code|=512;*/
 		}
-		test.Set(1);
+		//test.Set(1);
+		test1.Set(out.talon_srx[0].power_level);
+		test2.Set(out.talon_srx[1].power_level);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){
@@ -495,6 +499,15 @@ public:
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			//in.digital_io[i]=digital_io[i].get();
 		}
+		//for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+		in.talon_srx[0].fwd_limit_switch=test1.IsFwdLimitSwitchClosed();
+		in.talon_srx[0].rev_limit_switch=test1.IsRevLimitSwitchClosed();
+		in.talon_srx[0].encoder_position=test1.GetEncPosition();
+		in.talon_srx[1].fwd_limit_switch=test2.IsFwdLimitSwitchClosed();
+		in.talon_srx[1].rev_limit_switch=test2.IsRevLimitSwitchClosed();
+		in.talon_srx[1].encoder_position=test2.GetEncPosition();
+		cout<<"in:"<<in<<"\n";
+		//}
 		/*if(gyro){
 			in.orientation=gyro->GetAngle();
 		}*/

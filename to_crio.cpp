@@ -499,6 +499,15 @@ public:
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			//in.digital_io[i]=digital_io[i].get();
 		}
+		//for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+		in.talon_srx[0].fwd_limit_switch=test1.IsFwdLimitSwitchClosed();
+		in.talon_srx[0].rev_limit_switch=test1.IsRevLimitSwitchClosed();
+		in.talon_srx[0].encoder_position=test1.GetEncPosition();
+		in.talon_srx[1].fwd_limit_switch=test2.IsFwdLimitSwitchClosed();
+		in.talon_srx[1].rev_limit_switch=test2.IsRevLimitSwitchClosed();
+		in.talon_srx[1].encoder_position=test2.GetEncPosition();
+		cout<<"in:"<<in<<"\n";
+		//}
 		/*if(gyro){
 			in.orientation=gyro->GetAngle();
 		}*/

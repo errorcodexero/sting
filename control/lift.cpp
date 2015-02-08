@@ -191,6 +191,41 @@ bool ready(Lift::Status status,Lift::Goal goal){
 #ifdef LIFT_TEST
 #include "formal.h"
 
+static const double SPROCKET_RADIUS=1+11.0/16;//inches
+static const double GEAR_RATIO=10;//to 1
+
+//returns motor speed
+double linear_to_rpm(double in_per_sec){
+	return (in_per_sec*60)/SPROCKET_RADIUS*GEAR_RATIO;
+}
+
+//returns in/s^2
+pair<double,double> acceleration_range(double load/*lb - including lifter parts*/,double current_speed/*in inches/s*/){
+	static const double CIM_STALL_TORQUE=343.4/16;//lb*in
+	static const double CIM_FREE_SPEED=5310;//rpm
+	double current_rpm=linear_to_rpm(current_speed);//rpm
+	//cout<<"current_rpm:"<<current_rpm<<"\n";
+	static const double PLANETARY_EFFICIENCY=.8;
+	static const double CHAIN_EFFICIENCY=.9;
+	double current_available_torque=CIM_STALL_TORQUE*PLANETARY_EFFICIENCY*CHAIN_EFFICIENCY*(1-current_rpm/CIM_FREE_SPEED);//lb-in
+	//cout<<"oz in avail:"<<current_available_torque<<"\n";
+
+	//assume going up:
+	double force=current_available_torque*GEAR_RATIO/SPROCKET_RADIUS;//lb
+	//cout<<"\tforce:"<<force<<"\n";
+	double net_force=force-load;//lb
+	static const double G_IN_IN_PER_S=32.2*12;
+	double max_accel=net_force/load*G_IN_IN_PER_S;
+
+	//assume going down:
+	double reverse_available_torque=CIM_STALL_TORQUE*PLANETARY_EFFICIENCY*CHAIN_EFFICIENCY*(-1-current_rpm/CIM_FREE_SPEED);//lb-in
+	double force_min=reverse_available_torque*GEAR_RATIO/SPROCKET_RADIUS;//lb
+	double min_net_force=force_min-load;//lb
+	double min_accel=min_net_force/load*G_IN_IN_PER_S;//lb
+
+	return make_pair(min_accel,max_accel);
+}
+
 int main(){
 	/*for(double x=-1;x<=1;x+=.1){
 		auto p=pwm_convert(x);
@@ -200,5 +235,9 @@ int main(){
 	Lift a;
 	tester(a);
 	run(a,0,Lift::Input{0,0,0},Lift::Output{},Lift::Goal::MAX);
+
+	for(unsigned i=0;i<30;i++){
+		cout<<i<<"\t"<<acceleration_range(60,i)<<"\n";
+	}
 }
 #endif

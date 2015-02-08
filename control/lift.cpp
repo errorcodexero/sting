@@ -191,7 +191,88 @@ bool ready(Lift::Status status,Lift::Goal goal){
 #ifdef LIFT_TEST
 #include "formal.h"
 
+static const double MAX_HEIGHT=65-5;
+static const double MIN_HEIGHT=6;
+static const double LIMIT_SWITCH_RANGE=.25;
+
+static const unsigned TICKS_PER_REVOLUTION=60;//todo: check this
+
+static const unsigned CIM_FREE_SPEED=5310;//RPM
+static const unsigned CIM_STALL_TORQUE=343.4;//oz-in
+static const unsigned REDUCTION=10;//to 1
+static const double CHAIN_EFFICIENCY=.9;
+static const double PLANETARY_EFFICIENCY=.8;
+
+static const double SPROCKET_RADIUS=1+11.0/16;//inches
+
+static const double TOTE_WEIGHT=10.5;//lb
+static const double CAN_WEIGHT=12;//check this
+static const double CARRIAGE_WEIGHT=8;//lb, just a guesss
+
+//rpm->in/s
+double linear_speed(double motor_speed){
+	const double shaft_speed=motor_speed/REDUCTION/60;//rev/sec
+	const double circumference=2*SPROCKET_RADIUS*M_PI;
+	return shaft_speed*circumference;
+}
+
+//returns in/sec
+double free_speed_linear(){
+	return linear_speed(CIM_FREE_SPEED);
+}
+
+//lb->oz in
+double torque_required(double load){
+	const double load_oz=load*16/REDUCTION;
+	return load_oz*SPROCKET_RADIUS;
+}
+
+//load in ppounds, returns in/sec
+double speed_with_load(double load){
+	auto t=torque_required(load);
+	const double torque_portion_left=CHAIN_EFFICIENCY*PLANETARY_EFFICIENCY-t/CIM_STALL_TORQUE;
+	//note that torque portion left might be negative
+	const double motor_speed=torque_portion_left*CIM_FREE_SPEED;
+	return linear_speed(motor_speed);
+}
+
+struct Lift_sim{
+	double height;//in inches off the ground for the end effector
+
+	Lift_sim():height(10){}
+
+	Lift::Input now(){
+		return Lift::Input{
+			height>=MAX_HEIGHT-LIMIT_SWITCH_RANGE,
+			height<=MIN_HEIGHT+LIMIT_SWITCH_RANGE,
+			height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION
+		};
+	}
+};
+
+ostream& operator<<(ostream& o,Lift_sim const& a){
+	o<<"Lift_sim(";
+	o<<a.height;
+	return o<<")";
+}
+
 int main(){
+	//need to calculate the speed at which need to stop in order to avoid throwing totes
+	32 ft/s/s
+	12*32=384 in/s/s
+	estimated speed to robot, acceleration & rotation -> lift accel limits?
+	desired lift accel
+	required lift accel/decel
+	priorities:
+	1) required deceleration of lifter (due to end of rails)
+	2) robot movement
+	3) acceleration of lifter/deceleration due to destination approaching in a way that's open
+
+	cout<<free_speed_linear()<<"\n";
+	for(int i=0;i<=7;i++){
+		double d=CARRIAGE_WEIGHT+i*TOTE_WEIGHT;
+		cout<<i<<"\t"<<d<<"\t"<<speed_with_load(d)<<"\n";
+	}
 	/*for(double x=-1;x<=1;x+=.1){
 		auto p=pwm_convert(x);
 		auto rec=from_pwm(p);

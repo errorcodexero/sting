@@ -28,3 +28,4 @@
 	-use std::array in place of C arrays in several places
 -Try out serial console cable
 -Figure out how fast we can turn before we throw totes off
+-Fix the "rm ~/.ssh/known_hosts" problem

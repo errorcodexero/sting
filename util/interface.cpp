@@ -7,14 +7,22 @@
 using namespace std;
 
 std::ostream& operator<<(std::ostream& o,Digital_out a){
-	switch(a){
-		#define X(name) case Digital_out::name: return o<<""#name;
-		X(INPUT)
-		X(_0)
-		X(_1)
-		#undef X
-		default: return o<<"?";
+	switch(a.type){
+		case a.Type::INPUT:
+			o<<"INPUT";
+			break;
+		case a.Type::_0:
+			o<<"0";
+			break;
+		case a.Type::_1:
+			o<<"1";
+			break;
+		default:
+			o<<"?";
 	}
+	o<<"encoder_index: "<<a.encoder_index;
+	o<<"input_a: "<<a.input_a;
+	return o;
 }
 
 std::ostream& operator<<(std::ostream& o, Talon_srx_input in){
@@ -27,8 +35,9 @@ std::ostream& operator<<(std::ostream& o, Talon_srx_output in){
 	return o;
 }
 
-void terse(ostream& o,Digital_out d){
-	switch(d){
+void terse(/*ostream& o,*/Digital_out d){
+	cout<<d;
+	/*switch(d){
 		case Digital_out::INPUT:
 			o<<'i';
 			break;
@@ -40,7 +49,7 @@ void terse(ostream& o,Digital_out d){
 			break;
 		default:
 			o<<'?';
-	}
+	}*/
 }
 
 std::ostream& operator<<(std::ostream& o,Relay_output a){
@@ -112,6 +121,22 @@ bool operator<(Talon_srx_output a, Talon_srx_output b){
 	return a.power_level<b.power_level;
 }
 
+bool operator==(Digital_out::Type a, Digital_out::Type b){
+	return a==b;
+}
+
+bool operator!=(Digital_out::Type a, Digital_out::Type b){
+	return !(a==b);
+}
+
+bool operator==(Digital_out a, Digital_out b){
+	return a.type==b.type && a.encoder_index==b.encoder_index && a.input_a==b.input_a;
+}
+
+bool operator!=(Digital_out a, Digital_out b){
+	return !(a==b);
+}
+
 Robot_outputs::Robot_outputs(){
 	for(unsigned i=0;i<PWMS;i++){
 		pwm[i]=0;
@@ -123,7 +148,9 @@ Robot_outputs::Robot_outputs(){
 		relay[i]=Relay_output::_00;
 	}
 	for(unsigned i=0;i<DIGITAL_IOS;i++){
-		digital_io[i]=Digital_out::INPUT;
+		Digital_out out;
+		out.type=Digital_out::Type::INPUT;
+		digital_io[i]=out;
 	}
 }
 

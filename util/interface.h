@@ -17,6 +17,14 @@ std::ostream& operator<<(std::ostream&,Digital_out);
 enum class Relay_output{_00,_01,_10,_11};
 std::ostream& operator<<(std::ostream&,Relay_output);
 
+/*struct Digital_out{
+	enum Type{INPUT,_1,_0,ENCODER};
+	Type type;
+	int encode_index;
+	bool input_a;
+	bool input_b;
+};*/
+
 struct Talon_srx_input{
 	int encoder_position;
 	int fwd_limit_switch;

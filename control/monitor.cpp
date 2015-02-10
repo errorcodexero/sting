@@ -100,9 +100,10 @@ void print_diff(ostream& o,Robot_inputs &a,Robot_inputs const& b){
 	for(unsigned i=0;i<Robot_inputs::JOYSTICKS;i++){
 		X(joystick[i])
 	}
-	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 		X(digital_io[i])
-	}
+	}*/
+	X(digital_io)
 	for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
 		X(analog[i])
 	}

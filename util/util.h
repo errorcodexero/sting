@@ -75,4 +75,11 @@ std::vector<std::string> split(std::string);
 double atof(std::string const&);
 std::string inside_parens(std::string const&);
 
+template<typename T,size_t LEN>
+std::ostream& operator<<(std::ostream& o,std::array<T,LEN> const& a){
+	o<<"[ ";
+	for(auto const& elem:a) o<<elem<<" ";
+	return o<<"]";
+}
+
 #endif

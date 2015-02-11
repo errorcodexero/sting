@@ -47,8 +47,6 @@ bool operator==(Talon_srx_input,Talon_srx_input);
 bool operator!=(Talon_srx_input,Talon_srx_input);
 bool operator<(Talon_srx_input,Talon_srx_input);
 bool operator<(Digital_out,Digital_out);
-bool operator==(Digital_out::Type,Digital_out::Type);
-bool operator!=(Digital_out::Type,Digital_out::Type);
 bool operator==(Digital_out,Digital_out);
 bool operator!=(Digital_out,Digital_out);
 

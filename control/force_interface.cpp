@@ -138,9 +138,9 @@ int Force_interface::dio(unsigned loc,int value){
 	}else{
 		force.digital_io[loc]=1;
 		Digital_out v;
-		if(value==0) v=Digital_out::_0;
-		if(value==1) v=Digital_out::_1;
-		if(value==3) v=Digital_out::INPUT;
+		if(value==0) v.type=Digital_out::Type::_0;
+		if(value==1) v.type=Digital_out::Type::_1;
+		if(value==3) v.type=Digital_out::Type::INPUT;
 		force.values.digital_io[loc]=v;
 	}
 	return 0;

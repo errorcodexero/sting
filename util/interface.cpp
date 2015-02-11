@@ -121,14 +121,6 @@ bool operator<(Talon_srx_output a, Talon_srx_output b){
 	return a.power_level<b.power_level;
 }
 
-bool operator==(Digital_out::Type a, Digital_out::Type b){
-	return a==b;
-}
-
-bool operator!=(Digital_out::Type a, Digital_out::Type b){
-	return !(a==b);
-}
-
 bool operator==(Digital_out a, Digital_out b){
 	return a.type==b.type && a.encoder_index==b.encoder_index && a.input_a==b.input_a;
 }

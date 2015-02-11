@@ -35,21 +35,25 @@ std::ostream& operator<<(std::ostream& o, Talon_srx_output in){
 	return o;
 }
 
-void terse(/*ostream& o,*/Digital_out d){
-	cout<<d;
-	/*switch(d){
-		case Digital_out::INPUT:
+void terse(ostream& o, Digital_out d){
+	//o<<d;
+	switch(d.type){
+		case Digital_out::Type::INPUT:
 			o<<'i';
 			break;
-		case Digital_out::_0:
+		case Digital_out::Type::_0:
 			o<<'0';
 			break;
-		case Digital_out::_1:
+		case Digital_out::Type::_1:
 			o<<'1';
+			break;
+		case Digital_out::Type::ENCODER:
+			o<<'e';
 			break;
 		default:
 			o<<'?';
-	}*/
+			break;
+	}
 }
 
 std::ostream& operator<<(std::ostream& o,Relay_output a){
@@ -244,7 +248,7 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	o<<" dio:";
 	for(unsigned i=0;i<a.DIGITAL_IOS;i++){
 		//o<<a.digital_io[i];
-		terse(/*o,*/a.digital_io[i]);
+		terse(o,a.digital_io[i]);
 	}
 	o<<" talon_srx:";
 	for(unsigned i=0;i<a.Robot_outputs::TALON_SRX_OUTPUTS;i++){

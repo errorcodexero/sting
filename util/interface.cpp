@@ -137,6 +137,10 @@ bool operator!=(Digital_out a, Digital_out b){
 	return !(a==b);
 }
 
+bool operator<(Digital_out a, Digital_out b){
+	return a.type<b.type && a.encoder_index<b.encoder_index && a.input_a<b.input_a;
+}
+
 Robot_outputs::Robot_outputs(){
 	for(unsigned i=0;i<PWMS;i++){
 		pwm[i]=0;

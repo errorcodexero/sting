@@ -252,7 +252,7 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	o<<" dio:";
 	for(unsigned i=0;i<a.DIGITAL_IOS;i++){
 		//o<<a.digital_io[i];
-		terse(o,a.digital_io[i]);
+		terse(/*o,*/a.digital_io[i]);
 	}
 	o<<" talon_srx:";
 	for(unsigned i=0;i<a.Robot_outputs::TALON_SRX_OUTPUTS;i++){

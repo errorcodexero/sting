@@ -28,7 +28,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
 	
 	//pressure switch
-	r.digital_io[0]=Digital_out::INPUT;
+	r.digital_io[0].type=Digital_out::Type::INPUT;
 
 	//cerr<<a.shooter_wheels<<"\r\n";
 	r.jaguar[JAG_TOP_FEEDBACK]=a.shooter_wheels.top[Shooter_wheels::Output::FEEDBACK];

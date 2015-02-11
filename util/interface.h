@@ -11,19 +11,18 @@ typedef double Time;
 typedef double Pwm_output;
 typedef bool Solenoid_output;
 
-enum class Digital_out{INPUT,_1,_0};
-std::ostream& operator<<(std::ostream&,Digital_out);
+//enum class Digital_out{INPUT,_1,_0};
+//std::ostream& operator<<(std::ostream&,Digital_out);
 
 enum class Relay_output{_00,_01,_10,_11};
 std::ostream& operator<<(std::ostream&,Relay_output);
 
-/*struct Digital_out{
-	enum Type{INPUT,_1,_0,ENCODER};
+struct Digital_out{
+	enum class Type{INPUT,_1,_0,ENCODER};
 	Type type;
-	int encode_index;
+	int encoder_index;
 	bool input_a;
-	bool input_b;
-};*/
+};
 
 struct Talon_srx_input{
 	int encoder_position;
@@ -37,12 +36,20 @@ struct Talon_srx_output{
 	Talon_srx_output():power_level(0){}
 };
 
+std::ostream& operator<<(std::ostream&,Digital_out);
+std::ostream& operator<<(std::ostream&,Talon_srx_input);
+std::ostream& operator<<(std::ostream&,Talon_srx_output);
 bool operator==(Talon_srx_output,Talon_srx_output);
 bool operator!=(Talon_srx_output,Talon_srx_output);
 bool operator<(Talon_srx_output,Talon_srx_output);
 bool operator==(Talon_srx_input,Talon_srx_input);
 bool operator!=(Talon_srx_input,Talon_srx_input);
 bool operator<(Talon_srx_input,Talon_srx_input);
+bool operator<(Digital_out,Digital_out);
+bool operator==(Digital_out::Type,Digital_out::Type);
+bool operator!=(Digital_out::Type,Digital_out::Type);
+bool operator==(Digital_out,Digital_out);
+bool operator!=(Digital_out,Digital_out);
 
 struct Robot_outputs{
 	static const unsigned PWMS=10;//Number of ports on the digital sidecar; roboRIO headers say 20 but there aren't that many ports on the board.

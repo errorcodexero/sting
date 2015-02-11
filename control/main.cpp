@@ -156,7 +156,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	}
 
 	ball_collecter.update(main_joystick.button[5]);
-	bool tanks_full=(in.digital_io[0]==Digital_in::_1);
+	bool tanks_full=(in.digital_io.in[0]==Digital_in::_1);
 
 	Shooter_wheels::Calibration calib=wheel_calibration.update(0,0,Calibration_target(),0);
 	//Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,Time since_switch){
@@ -198,7 +198,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Shooter_wheels::Status wheel;
 		wheel.top=in.jaguar[JAG_TOP_FEEDBACK].speed;
 		wheel.bottom=in.jaguar[JAG_BOTTOM_FEEDBACK].speed;
-		bool downsensor=in.digital_io[1]==Digital_in::_1;
+		bool downsensor=in.digital_io.in[1]==Digital_in::_1;
 		est.update(in.now,in.robot_mode.enabled,high_level_outputs,tanks_full?Pump::FULL:Pump::NOT_FULL,in.orientation,wheel,downsensor);
 	}
 

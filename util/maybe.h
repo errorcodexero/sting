@@ -34,13 +34,11 @@ class Maybe{
 	}
 
 	Maybe& operator=(T const& a){
-		std::cout<<"a\n";
 		if(t){
 			*t=a;
 		}else{
 			t=new T(a);
 		}
-		std::cout<<"b\n";
 		return *this;
 	}
 

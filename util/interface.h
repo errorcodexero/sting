@@ -6,6 +6,7 @@
 #include<array>
 #include "jag_interface.h"
 #include "driver_station_interface.h"
+#include "maybe_inline.h"
 
 typedef double Time;
 typedef double Pwm_output;
@@ -91,7 +92,7 @@ std::ostream& operator<<(std::ostream& o,Robot_outputs);
 #define JOY_BUTTONS 12
 
 struct Joystick_data{
-	double axis[JOY_AXES];
+	std::array<double,JOY_AXES> axis;
 	std::bitset<JOY_BUTTONS> button;
 	
 	Joystick_data();
@@ -113,8 +114,21 @@ bool operator==(Robot_mode,Robot_mode);
 bool operator!=(Robot_mode,Robot_mode);
 std::ostream& operator<<(std::ostream&,Robot_mode);
 
-enum class Digital_in{OUTPUT,_0,_1};
+enum class Digital_in{OUTPUT,_0,_1,ENCODER};
 std::ostream& operator<<(std::ostream&,Digital_in);
+
+typedef int Encoder_output;
+
+struct Digital_inputs{
+	std::array<Digital_in,Robot_outputs::DIGITAL_IOS> in;
+	static const unsigned ENCODERS=Robot_outputs::DIGITAL_IOS/2;
+	std::array<Maybe_inline<Encoder_output>,ENCODERS> encoder;
+
+	Digital_inputs();
+};
+bool operator==(Digital_inputs const&,Digital_inputs const&);
+bool operator!=(Digital_inputs const&,Digital_inputs const&);
+std::ostream& operator<<(std::ostream&,Digital_inputs const&);
 
 typedef float Volt;
 typedef double Rad; //radians, clockwise
@@ -123,11 +137,12 @@ struct Robot_inputs{
 	Robot_mode robot_mode;
 	Time now;//time since boot.
 
-	static const unsigned JOYSTICKS=2; //limitation of FRC coms
+	static const unsigned JOYSTICKS=2; //limitation of FRC coms was 4, now highter
 	std::array<Joystick_data,JOYSTICKS> joystick;
 
-	std::array<Digital_in,Robot_outputs::DIGITAL_IOS> digital_io;
-	
+	//std::array<Digital_in,Robot_outputs::DIGITAL_IOS> digital_io;
+	Digital_inputs digital_io;	
+
 	static const unsigned ANALOG_INPUTS=8;
 	std::array<Volt,ANALOG_INPUTS> analog;
 

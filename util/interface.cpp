@@ -398,13 +398,30 @@ Maybe<Digital_in> parse_digital_in(string s){
 	return parse_enum(digital_ins(),s);
 }
 
+Digital_inputs::Digital_inputs(){
+	for(auto&a:in){
+		a=Digital_in::OUTPUT;
+	}
+}
+
+bool operator==(Digital_inputs const& a,Digital_inputs const& b){
+	return a.in==b.in && a.encoder==b.encoder;
+}
+
+bool operator!=(Digital_inputs const& a,Digital_inputs const& b){
+	return !(a==b);
+}
+
+ostream& operator<<(ostream& o,Digital_inputs const& a){
+	o<<"Digital_inputs(";
+	o<<a.in;
+	o<<a.encoder;
+	return o<<")";
+}
+
 Robot_inputs::Robot_inputs():
 	now(0),orientation(0)
 {
-	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-		digital_io[i]=Digital_in::OUTPUT;
-	}
-	
 	for(unsigned i=0;i<ANALOG_INPUTS;i++){
 		//could make this be NAN instead
 		analog[i]=0;
@@ -417,11 +434,7 @@ bool operator==(Robot_inputs a,Robot_inputs b){
 	for(unsigned i=0;i<Robot_inputs::JOYSTICKS;i++){
 		if(a.joystick[i]!=b.joystick[i]) return 0;
 	}
-	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-		if(a.digital_io[i]!=b.digital_io[i]){
-			return 0;
-		}
-	}
+	if(a.digital_io!=b.digital_io) return 0;
 	for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
 		if(a.analog[i]!=b.analog[i]){
 			return 0;
@@ -454,9 +467,10 @@ ostream& operator<<(ostream& o,Robot_inputs a){
 		o<<"  "<<a.joystick[i]<<"\n";
 	}
 	o<<" dio:";
-	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
+	o<<a.digital_io;
+	/*for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 		terse(o,a.digital_io[i]);
-	}
+	}*/
 	o<<" analog:";
 	for(unsigned i=0;i<a.ANALOG_INPUTS;i++){
 		o<<(i)<<" "<<a.analog[i]<<' ';

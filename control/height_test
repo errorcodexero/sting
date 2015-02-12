@@ -1,0 +1,1 @@
+g++ -std=c++11 -Wall -Werror -DHEIGHT_TEST height.cpp -o height 2>&1 && ./height 2>&1

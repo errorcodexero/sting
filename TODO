@@ -1,5 +1,6 @@
 -Laptop configuration
 	-ssh config:
+		-Fix the "rm ~/.ssh/known_hosts" problem
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 -Try out the new Talon SRX's
 	-CAN
@@ -24,5 +25,4 @@
 	-use enum class more places
 	-use std::array in place of C arrays in several places
 -Try out serial console cable
--Fix the "rm ~/.ssh/known_hosts" problem
 -Update Driver Station and look into other software updates in the manual

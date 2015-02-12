@@ -39,6 +39,7 @@ struct Encoder_control{
 	int channel_a,channel_b;
 
 	Encoder_control();
+	~Encoder_control();
 };
 
 class DIO_controls{

@@ -95,6 +95,10 @@ ostream& operator<<(ostream& o,DIO_control const& a){
 
 Encoder_control::Encoder_control():encoder(nullptr){}
 
+Encoder_control::~Encoder_control(){
+	delete encoder;
+}
+
 DIO_controls::DIO_controls(){
 	for(unsigned i=0;i<channel.size();i++){
 		channel[i].set_channel(i);

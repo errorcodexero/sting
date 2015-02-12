@@ -100,6 +100,10 @@ string abbreviate_text(string s){
 	return ss.str();
 }
 
+double set_drive_speed(Joystick_data joystick, int axis, double boost){
+	return pow(joystick.axis[axis], 3)*(.6+.4*boost);
+}
+
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
@@ -121,11 +125,11 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		}
 		Drivebase::Goal goal;
 		Drivebase::Status_detail status_detail;
-		auto boost=main_joystick.axis[2];
-		double multiplier=.6+.4*boost;
+		//auto boost=main_joystick.axis[2];
+		//double multiplier=.6+.4*boost;
 		goal.x=main_joystick.axis[0];
-		goal.y=pow(main_joystick.axis[1], 3)*multiplier;
-		goal.theta=pow(main_joystick.axis[4], 3)*multiplier; //theta is /2 so rotation is reduced to prevent bin tipping.
+		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);//pow(main_joystick.axis[1], 3)*multiplier;
+		goal.theta=set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//pow(main_joystick.axis[4], 3)*multiplier//theta is /2 so rotation is reduced to prevent bin tipping.
 		Drivebase::Output out;
 		out=control(status_detail, goal);
 		r=drivebase.output_applicator(r,out);

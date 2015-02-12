@@ -38,6 +38,12 @@ std::vector<T>& operator|=(std::vector<T>& v,T t){
 	return v;
 }
 
+template<typename T,size_t LEN>
+std::vector<T>& operator|=(std::vector<T>& v,std::array<T,LEN> const& a){
+	for(auto elem:a) v|=elem;
+	return v;
+}
+
 template<typename T>
 std::ostream& operator<<(std::ostream& o,std::vector<T> const& v){
 	o<<"[";

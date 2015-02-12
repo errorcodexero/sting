@@ -45,12 +45,18 @@ struct Lift{
 	Estimator estimator;
 
 	struct Output_applicator{
+		int motor_pwm;
+
+		explicit Output_applicator(int);
+
 		Robot_outputs operator()(Robot_outputs,Output)const;
 		Output operator()(Robot_outputs)const;
 	};
 	Output_applicator output_applicator;
 
 	enum class Goal{MIN,MAX,STOP};
+
+	explicit Lift(int);
 };
 
 std::ostream& operator<<(std::ostream&,Lift::Input const&);

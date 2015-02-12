@@ -26,6 +26,8 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 
 Lift::Status_detail Lift::Estimator::get()const{ return last; }
 
+Lift::Output_applicator::Output_applicator(int a):motor_pwm(a){}
+
 Robot_outputs Lift::Output_applicator::operator()(Robot_outputs robot,Lift::Output lift)const{
 	//just making up which pwm it is
 	robot.pwm[4]=pwm_convert(lift);
@@ -178,6 +180,8 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 
 set<Lift::Goal> examples(Lift::Goal*){ return {Lift::Goal::MIN,Lift::Goal::MAX,Lift::Goal::STOP}; }
 
+Lift::Lift(int motor_pwm):output_applicator(motor_pwm){}
+
 bool ready(Lift::Status status,Lift::Goal goal){
 	switch(goal){
 		case Lift::Goal::MIN: return status.type()==Lift::Status::Type::BOTTOM;
@@ -312,7 +316,7 @@ int main(){
 		auto rec=from_pwm(p);
 		cout<<x<<"\t"<<(int)p<<"\t"<<rec<<"\n";
 	}*/
-	Lift a;
+	Lift a(4);
 	tester(a);
 	run(a,0,Lift::Input{0,0,0},Lift::Output{},Lift::Goal::MAX);
 

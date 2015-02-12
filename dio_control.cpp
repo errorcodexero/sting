@@ -2,6 +2,8 @@
 #include <iostream>
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "Encoder.h"
+
 using namespace std;
 
 //Unfortunately, there's not a good way to test all this without WPIlib since it's just an interface to WPIlib.
@@ -89,4 +91,60 @@ ostream& operator<<(ostream& o,DIO_control const& a){
 	o<<a.mode()<<" ";
 	o<<a.channel;
 	return o<<")";
+}
+
+Encoder_control::Encoder_control():encoder(nullptr){}
+
+DIO_controls::DIO_controls(){
+	for(unsigned i=0;i<channel.size();i++){
+		channel[i].set_channel(i);
+	}
+}
+
+void DIO_controls::set(array<Digital_out,Robot_outputs::DIGITAL_IOS> const& a){
+	array<int,Digital_inputs::ENCODERS> channel_a,channel_b;
+	for(auto& a:channel_a) a=-1;
+	for(auto& b:channel_b) b=-1;
+
+	//free encoders
+	for(unsigned i=0;i<Digital_inputs::ENCODERS;i++){
+		auto ca=channel_a[i];
+		auto cb=channel_b[i];
+		auto &d=encoder[i];
+		if(ca!=d.channel_a || cb!=d.channel_b){
+			delete d.encoder;
+			d.encoder=nullptr;
+		}
+	}
+
+	//set all the dios
+	for(unsigned i=0;i<channel.size();i++){
+		channel[i].set(a[i]);
+	}
+	
+	//create new encoders
+	for(unsigned i=0;i<Digital_inputs::ENCODERS;i++){
+		auto ca=channel_a[i];
+		auto cb=channel_b[i];
+		auto& d=encoder[i];
+		if(ca!=d.channel_a || cb!=d.channel_b){
+			assert(!d.encoder);
+			d.encoder=new Encoder(ca,cb);
+			d.channel_a=ca;
+			d.channel_b=cb;
+		}
+	}
+}
+
+Digital_inputs DIO_controls::get(){
+	Digital_inputs r;
+	for(unsigned i=0;i<channel.size();i++){
+		r.in[i]=channel[i].get();
+	}
+	for(unsigned i=0;i<encoder.size();i++){
+		if(encoder[i].encoder){
+			r.encoder[i]=encoder[i].encoder->Get();//fixme
+		}
+	}
+	return r;
 }

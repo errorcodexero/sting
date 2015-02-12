@@ -206,7 +206,7 @@ class To_crio
 {
 	//todo: see if these still have to all be pointers or if there's some alternative w/ the roboRIO
 	//Solenoid *solenoid[Robot_outputs::SOLENOIDS];
-	//DIO_control digital_io[Robot_outputs::DIGITAL_IOS];
+	DIO_controls digital_io;
 	VictorSP *pwm[Robot_outputs::PWMS];
 	//Relay *relay[Robot_outputs::RELAYS];
 	//AnalogInput *analog_in[Robot_inputs::ANALOG_INPUTS];

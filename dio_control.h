@@ -5,6 +5,7 @@
 
 class DigitalInput;
 class DigitalOutput;
+class Encoder;
 
 class DIO_control{
 	public:
@@ -31,7 +32,28 @@ class DIO_control{
 	
 	friend std::ostream& operator<<(std::ostream&,DIO_control const&);
 };
-
 std::ostream& operator<<(std::ostream&,DIO_control const&);
+
+struct Encoder_control{
+	Encoder *encoder;
+	int channel_a,channel_b;
+
+	Encoder_control();
+};
+
+class DIO_controls{
+	std::array<DIO_control,Robot_outputs::DIGITAL_IOS> channel;
+	std::array<Encoder_control,Digital_inputs::ENCODERS> encoder;
+
+	DIO_controls(DIO_controls const&);
+	DIO_controls& operator=(DIO_controls const&);
+
+	public:
+	DIO_controls();
+
+	void set(std::array<Digital_out,Robot_outputs::DIGITAL_IOS> const&);
+	Digital_inputs get();
+};
+std::ostream& operator<<(std::ostream&,DIO_controls const&);
 
 #endif

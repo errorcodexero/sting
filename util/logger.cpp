@@ -1,10 +1,11 @@
 //Author(s): Logan Traffas
 #include <iostream>
-#include <ifstream>
+#include <fstream>
 
-using namespace std;
+/*using namespace std;
 
-int main(){
+/int main(){
 	
 	return 0;
 }
+*/

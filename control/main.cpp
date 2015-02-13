@@ -127,7 +127,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Drivebase::Status_detail status_detail;
 		goal.x=main_joystick.axis[0];
 		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
-		goal.theta=set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
+		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 		Drivebase::Output out;
 		out=control(status_detail, goal);
 		r=drivebase.output_applicator(r,out);
@@ -137,7 +137,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
-		const double POWER=0.05;
+		const double POWER=0.45;
 		r.talon_srx[0].power_level=[&](){
 			if(gunner_joystick.button[2]) return POWER;
 			if(gunner_joystick.button[3]) return -POWER;

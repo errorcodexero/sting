@@ -9,7 +9,7 @@ struct Drivebase{
 	struct Input{};
 	
 	struct Output{
-		double l,r,c;
+		double l,r,c; //power levels for the left, right, and center wheels
 
 		Output();
 		Output(double,double,double);
@@ -31,8 +31,10 @@ struct Drivebase{
 	Output_applicator output_applicator;
 
 	struct Goal{
-		//sppeds
+		//speeds
 		double x,y,theta;
+		bool start_nudge_left;
+		bool start_nudge_right;
 	};
 };
 

@@ -26,16 +26,16 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 
 Lift::Status_detail Lift::Estimator::get()const{ return last; }
 
-Lift::Output_applicator::Output_applicator(int a):motor_pwm(a){}
+Lift::Output_applicator::Output_applicator(int a):can_address(a){}
 
 Robot_outputs Lift::Output_applicator::operator()(Robot_outputs robot,Lift::Output lift)const{
 	//just making up which pwm it is
-	robot.pwm[4]=pwm_convert(lift);
+	robot.talon_srx[can_address].power_level=lift;
 	return robot;
 }
 
 Lift::Output Lift::Output_applicator::operator()(Robot_outputs in)const{
-	return from_pwm(in.pwm[4]);
+	return in.talon_srx[can_address].power_level;
 }
 
 std::ostream& operator<<(std::ostream& o,Lift::Input const& a){
@@ -180,7 +180,7 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 
 set<Lift::Goal> examples(Lift::Goal*){ return {Lift::Goal::MIN,Lift::Goal::MAX,Lift::Goal::STOP}; }
 
-Lift::Lift(int motor_pwm):output_applicator(motor_pwm){}
+Lift::Lift(int can_address):output_applicator(can_address){}
 
 bool ready(Lift::Status status,Lift::Goal goal){
 	switch(goal){

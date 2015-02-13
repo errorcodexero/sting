@@ -45,7 +45,7 @@ struct Lift{
 	Estimator estimator;
 
 	struct Output_applicator{
-		int motor_pwm;
+		int can_address;
 
 		explicit Output_applicator(int);
 

@@ -7,7 +7,6 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_TEST shooter_status.cpp \
 	../util/countup_timer.cpp \
 	pump.cpp \
 	../util/point.cpp \
-	holonomic.cpp \
 	../util/interface.cpp \
 	../util/jag_interface.cpp \
 	../util/driver_station_interface.cpp \

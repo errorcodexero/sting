@@ -23,7 +23,7 @@ namespace Toplevel{
 	};
 	std::ostream& operator<<(std::ostream& o,Mode);
 
-	Subgoals subgoals(Mode,Drive_goal,Shooter_wheels::Calibration);
+	Subgoals subgoals(Mode,Shooter_wheels::Calibration);
 	Toplevel::Mode to_mode(Control_status::Control_status);
 }
 

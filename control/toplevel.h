@@ -4,7 +4,7 @@
 #include<vector>
 #include "shooter_wheels.h"
 #include "pump.h"
-#include "holonomic.h"
+#include "drivebase.h"
 
 namespace Toplevel{
 	struct Output{
@@ -12,7 +12,6 @@ namespace Toplevel{
 
 		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
-		Drive_motors drive;
 	};
 	std::ostream& operator<<(std::ostream&,Output);
 
@@ -21,7 +20,7 @@ namespace Toplevel{
 
 		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;
-		Drive_goal drive;
+		Drivebase::Goal drive;
 		//pump omitted because it currently only has one goal.
 	};
 	std::ostream& operator<<(std::ostream&,Subgoals);

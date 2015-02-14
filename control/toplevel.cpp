@@ -15,7 +15,6 @@ namespace Toplevel{
 		o<<"Output(";
 		o<<" shoot:"<<g.shooter_wheels;
 		o<<" pump:"<<g.pump;
-		o<<" drive:"<<g.drive;
 		return o<<")";
 	}
 
@@ -31,7 +30,6 @@ namespace Toplevel{
 		//o<<g.shooter_wheels.second;
 		//o<<g.shooter_wheels; not sure why this line doesn't work.
 		o<<" pump:"<<g.pump;
-		o<<" drive:"<<g.drive;
 		return o<<")";
 	}
 
@@ -138,7 +136,6 @@ namespace Toplevel{
 		Output r;
 		r.shooter_wheels=control(status.shooter_wheels,g.shooter_wheels);
 		r.pump=Pump::control(status.pump,g.pump);
-		r.drive=::control(g.drive, status.orientation);
 		return r;
 	}
 
@@ -163,6 +160,10 @@ namespace Toplevel{
 }
 
 #ifdef TOPLEVEL_TEST
+bool approx_equal(float a, float b){
+	return a==b;
+}
+
 bool approx_equal(Toplevel::Status a,Toplevel::Status b){
 	#define X(name) if(a.name!=b.name) return 0;
 	X(shooter_wheels)

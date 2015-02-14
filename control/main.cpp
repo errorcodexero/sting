@@ -105,8 +105,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			
 			bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::LB]);
 			bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::RB]);
-			if (start_nudge_left) nudge_left_timer.set(.5);
-			if (start_nudge_right) nudge_right_timer.set(.5);
+			if (start_nudge_left) nudge_left_timer.set(.1);
+			if (start_nudge_right) nudge_right_timer.set(.1);
 			nudge_left_timer.update(in.now,1);
 			nudge_right_timer.update(in.now,1);
 			goals.drive=goal;

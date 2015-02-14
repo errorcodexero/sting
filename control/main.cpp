@@ -124,46 +124,44 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			r.pwm[i]=0;
 		}
 		Drivebase::Goal goal;
-		Drivebase::Status_detail status_detail;
-		goal.x=main_joystick.axis[0];
+		Drivebase::Status_detail status_detail = drivebase.estimator.get();
+		if (!nudge_left_timer.done()) goal.x=.1;
+		else goal.x=main_joystick.axis[Gamepad_button::A];
 		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
 		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
+		
+		bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::X]);
+		bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::Y]);
+		if (start_nudge_left) nudge_left_timer.set(.5);
+		if (start_nudge_right) nudge_right_timer.set(.5);
+		
 		Drivebase::Output out;
 		out=control(status_detail, goal);
 		r=drivebase.output_applicator(r,out);
 		Lift::Output lift_output;
 		const double POWER=0.45;
 		lift_output=[&](){
-			if(gunner_joystick.button[2]) return POWER;
-			if(gunner_joystick.button[3]) return -POWER;
+			if(gunner_joystick.button[Gamepad_button::X]) return POWER;
+			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;
 			return 0.0;
 		}();
 		r=can.output_applicator(r,lift_output);
 		lift_output=[&](){
-			if(gunner_joystick.button[4]) return POWER;
-			if(gunner_joystick.button[5]) return -POWER;
+			if(gunner_joystick.button[Gamepad_button::LB]) return POWER;
+			if(gunner_joystick.button[Gamepad_button::RB]) return -POWER;
 			return 0.0;
 		}();
 		r=tote.output_applicator(r,lift_output);
+		
 		/*auto l1=y-theta;
 		auto r1=y+theta;
 		auto lim=max(1.0,max(l1,r1));
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
-		r.talon_srx[0].power_level=[&](){
-			if(gunner_joystick.button[2]) return POWER;
-			if(gunner_joystick.button[3]) return -POWER;
-			return 0.0;
-		}();
-		r.talon_srx[1].power_level=[&](){
-			if(gunner_joystick.button[4]) return POWER;
-			if(gunner_joystick.button[5]) return -POWER;
-			return 0.0;
-		}();
 		r.pwm[3]=[&](){
-			if(gunner_joystick.button[0]) return .5;
-			if(gunner_joystick.button[1]) return -.5;
+			if(gunner_joystick.button[Gamepad_button::A]) return .5;
+			if(gunner_joystick.button[Gamepad_button::B]) return -.5;
 			return 0.0;
 		}();
 		r=force(r);

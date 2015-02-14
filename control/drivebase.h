@@ -33,8 +33,6 @@ struct Drivebase{
 	struct Goal{
 		//speeds
 		double x,y,theta;
-		bool start_nudge_left;
-		bool start_nudge_right;
 	};
 };
 

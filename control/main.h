@@ -6,6 +6,7 @@
 #include "../util/perf_tracker.h"
 #include "../util/bound_tracker.h"
 #include "control_status.h"
+#include "../util/countdown_timer.h"
 #include "../util/countup_timer.h"
 #include "toplevel.h"
 #include "drivebase.h"
@@ -30,6 +31,12 @@ struct Main{
 	
 	Lift can;
 	Lift tote;
+	
+	Posedge_trigger nudge_left;
+	Posedge_trigger nudge_right;
+	
+	Countdown_timer nudge_left_timer;
+	Countdown_timer nudge_right_timer;
 
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);

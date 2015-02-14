@@ -18,8 +18,8 @@ ostream& operator<<(ostream& o,Drivebase::Status const&){
 
 set<Drivebase::Goal> examples(Drivebase::Goal*){
 	return {
-		Drivebase::Goal{0,0,0,0,0},
-		Drivebase::Goal{0,1,0,0,0}
+		Drivebase::Goal{0,0,0},
+		Drivebase::Goal{0,1,0}
 	};
 }
 

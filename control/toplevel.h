@@ -5,6 +5,7 @@
 #include "shooter_wheels.h"
 #include "pump.h"
 #include "drivebase.h"
+#include "lift.h"
 
 namespace Toplevel{
 	struct Output{
@@ -17,7 +18,8 @@ namespace Toplevel{
 
 	struct Subgoals{
 		Subgoals();
-
+		Lift::Goal lift_goal_tote;
+		Lift::Goal lift_goal_can;
 		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;
 		Drivebase::Goal drive;

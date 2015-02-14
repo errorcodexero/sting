@@ -54,7 +54,7 @@ struct Lift{
 	};
 	Output_applicator output_applicator;
 
-	enum class Goal{MIN,MAX,STOP};
+	enum class Goal{UP,DOWN,STOP};
 
 	explicit Lift(int);
 };
@@ -77,7 +77,7 @@ std::set<Lift::Goal> examples(Lift::Goal*);
 std::ostream& operator<<(std::ostream&,Lift const&);
 
 Lift::Status status(Lift::Status_detail const&);
-Lift::Output control(Lift::Status_detail const&,Lift::Goal const&);
+Lift::Output control(/*Lift::Status_detail const&,*/Lift::Goal const&);
 bool ready(Lift::Status,Lift::Goal);
 
 #endif

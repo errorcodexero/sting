@@ -1,3 +1,6 @@
 Author(s): Logan Traffas
 Description: A file that lists all possible actions the robot can take during autonomous
--
+-by the end of auto robot can go in auto zone to get points
+-robot could stack three of its yellow totes and put them into auto to get a stacked set
+-robot could move three totes without being stacted into the auto for points
+-robot could 

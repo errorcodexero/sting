@@ -88,18 +88,18 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
 		if(autonomous_start_now) mode=Mode::AUTO_MOVE;
 		since_auto_start.update(in.now,autonomous_start_now);
-		static const Time AUTONOMOUS_MODE_LENGTH=10;
+		//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
 		Drivebase::Output out;
 		Toplevel::Subgoals goals;
+		Drivebase::Status_detail status_detail = drivebase.estimator.get();
 		out=control(status_detail, goal);
 		goals.drive=goal;
 		//Lift::Output lift_output;
-		const double POWER=0.45;
 		if(mode==Mode::TELEOP){
-			Drivebase::Status_detail status_detail = drivebase.estimator.get();
 			if (!nudge_left_timer.done()) goal.x=.45;
-			else goal.x=main_joystick.axis[Gamepad_button::A];
+			else if (!nudge_right_timer.done()) goal.x=-.45;
+			else goal.x=main_joystick.axis[0];
 			goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
 			goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
@@ -129,9 +129,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}();
 		} 
 		else if(mode==Mode::AUTO_MOVE){
-			goal.x=
-			goal.y=
-			goal.theta=
+			goal.x=0;
+			goal.y=0;
+			goal.theta=0;
 		}
 		Toplevel::Status r_status;
 		/*r_status.drive_status=;
@@ -148,7 +148,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
-		/*r.talon_srx[0].power_level=[&](){		
+		/*const double POWER=0.45;
+		r.talon_srx[0].power_level=[&](){		
 			if(gunner_joystick.button[Gamepad_button::X]) return POWER;		
 			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;		
 			return 0.0;		
@@ -166,7 +167,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r=force(r);
 		return r;
 	}
-
+	/*
 	ball_collecter.update(main_joystick.button[5]);
 	bool tanks_full=(in.digital_io.in[0]==Digital_in::_1);
 
@@ -227,7 +228,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		cout<<"\r\n";
 	}
 	//log_line(cout,in,*this,r);
-	return r;
+	return r;*/
 }
 
 bool operator==(Main a,Main b){

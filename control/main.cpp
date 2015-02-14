@@ -91,10 +91,12 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
 		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 		
-		bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::X]);
-		bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::Y]);
+		bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::LB]);
+		bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::RB]);
 		if (start_nudge_left) nudge_left_timer.set(.5);
 		if (start_nudge_right) nudge_right_timer.set(.5);
+		nudge_left_timer.update(in.now,1);
+		nudge_right_timer.update(in.now,1);
 		
 		Drivebase::Output out;
 		Toplevel::Subgoals goals;

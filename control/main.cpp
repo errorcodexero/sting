@@ -85,18 +85,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			r.pwm[i]=0;
 		}
 		Drivebase::Goal goal;
-		Drivebase::Status_detail status_detail = drivebase.estimator.get();
-		if (!nudge_left_timer.done()) goal.x=.45;
-		else goal.x=main_joystick.axis[Gamepad_button::A];
-		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
-		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
-		
-		bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::LB]);
-		bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::RB]);
-		if (start_nudge_left) nudge_left_timer.set(.5);
-		if (start_nudge_right) nudge_right_timer.set(.5);
-		nudge_left_timer.update(in.now,1);
-		nudge_right_timer.update(in.now,1);
+		bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
+		if(autonomous_start_now) mode=Mode::AUTO_MOVE;
+		since_auto_start.update(in.now,autonomous_start_now);
+		static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
 		Drivebase::Output out;
 		Toplevel::Subgoals goals;
@@ -104,25 +96,43 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		goals.drive=goal;
 		//Lift::Output lift_output;
 		const double POWER=0.45;
-		[&](){
-			if(gunner_joystick.button[Gamepad_button::X]){
-				goals.lift_goal_can=Lift::Goal::UP;
-			}	
-			if(gunner_joystick.button[Gamepad_button::Y]){
-				goals.lift_goal_can=Lift::Goal::DOWN;
-			}
-			goals.lift_goal_can=Lift::Goal::STOP;
-		}();
-		[&](){
-			if(gunner_joystick.button[Gamepad_button::LB]){
-				goals.lift_goal_tote=Lift::Goal::UP;
-			}	
-			if(gunner_joystick.button[Gamepad_button::RB]){
-				goals.lift_goal_tote=Lift::Goal::DOWN;
-			}
-			goals.lift_goal_tote=Lift::Goal::STOP;
-		}();
-		
+		if(mode==Mode::TELEOP){
+			Drivebase::Status_detail status_detail = drivebase.estimator.get();
+			if (!nudge_left_timer.done()) goal.x=.45;
+			else goal.x=main_joystick.axis[Gamepad_button::A];
+			goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
+			goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
+			
+			bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::LB]);
+			bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::RB]);
+			if (start_nudge_left) nudge_left_timer.set(.5);
+			if (start_nudge_right) nudge_right_timer.set(.5);
+			nudge_left_timer.update(in.now,1);
+			nudge_right_timer.update(in.now,1);
+			[&](){
+				if(gunner_joystick.button[Gamepad_button::X]){
+					goals.lift_goal_can=Lift::Goal::UP;
+				}	
+				if(gunner_joystick.button[Gamepad_button::Y]){
+					goals.lift_goal_can=Lift::Goal::DOWN;
+				}
+				goals.lift_goal_can=Lift::Goal::STOP;
+			}();
+			[&](){
+				if(gunner_joystick.button[Gamepad_button::LB]){
+					goals.lift_goal_tote=Lift::Goal::UP;
+				}	
+				if(gunner_joystick.button[Gamepad_button::RB]){
+					goals.lift_goal_tote=Lift::Goal::DOWN;
+				}
+				goals.lift_goal_tote=Lift::Goal::STOP;
+			}();
+		} 
+		else if(mode==Mode::AUTO_MOVE){
+			goal.x=
+			goal.y=
+			goal.theta=
+		}
 		Toplevel::Status r_status;
 		/*r_status.drive_status=;
 		r_status.lift_status_can=;
@@ -138,7 +148,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
-		r.talon_srx[0].power_level=[&](){		
+		/*r.talon_srx[0].power_level=[&](){		
 			if(gunner_joystick.button[Gamepad_button::X]) return POWER;		
 			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;		
 			return 0.0;		
@@ -152,7 +162,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			if(gunner_joystick.button[Gamepad_button::A]) return .5;
 			if(gunner_joystick.button[Gamepad_button::B]) return -.5;
 			return 0.0;
-		}();
+		}();*/
 		r=force(r);
 		return r;
 	}
@@ -165,9 +175,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Toplevel::Status toplevel_status=est.estimate();
 	
 	//Autonomous 
-	bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
-	since_auto_start.update(in.now,autonomous_start_now);
-	static const Time AUTONOMOUS_MODE_LENGTH=10;
 	Control_status::Control_status control_status_next=next(
 		control_status,toplevel_status,gunner_joystick,
 		in.robot_mode.autonomous,

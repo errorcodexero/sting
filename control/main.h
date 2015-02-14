@@ -9,6 +9,7 @@
 #include "../util/countup_timer.h"
 #include "toplevel.h"
 #include "drivebase.h"
+#include "lift.h"
 
 struct Main{
 	Force_interface force;
@@ -26,6 +27,9 @@ struct Main{
 
 	Shooter_wheels::Calibration_manager wheel_calibration;
 	Drivebase drivebase;
+	
+	Lift can;
+	Lift tote;
 
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);

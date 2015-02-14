@@ -42,7 +42,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 }
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():control_status(Control_status::DRIVE_W_BALL),autonomous_start(0){}
+Main::Main():control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),can(1),tote(0){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
 
@@ -131,13 +131,26 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Drivebase::Output out;
 		out=control(status_detail, goal);
 		r=drivebase.output_applicator(r,out);
+		Lift::Output lift_output;
+		const double POWER=0.45;
+		lift_output=[&](){
+			if(gunner_joystick.button[2]) return POWER;
+			if(gunner_joystick.button[3]) return -POWER;
+			return 0.0;
+		}();
+		r=can.output_applicator(r,lift_output);
+		lift_output=[&](){
+			if(gunner_joystick.button[4]) return POWER;
+			if(gunner_joystick.button[5]) return -POWER;
+			return 0.0;
+		}();
+		r=tote.output_applicator(r,lift_output);
 		/*auto l1=y-theta;
 		auto r1=y+theta;
 		auto lim=max(1.0,max(l1,r1));
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
-		const double POWER=0.45;
 		r.talon_srx[0].power_level=[&](){
 			if(gunner_joystick.button[2]) return POWER;
 			if(gunner_joystick.button[3]) return -POWER;

@@ -18,8 +18,8 @@
 -Write logging code
 -OI:
 	-put in outputs
-		-into framework-Adrain
-		-figure out if need to reprogram the TI launchpad-Adrain
+		-into framework-Adrian
+		-figure out if need to reprogram the TI launchpad-Adrian
 -Cleanup stuff:
 	-use enum class more places
 	-use std::array in place of C arrays in several places

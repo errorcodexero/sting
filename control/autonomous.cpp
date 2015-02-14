@@ -7,7 +7,6 @@
 #include <cmath>
 #include <string>
 #include <utility>
-#include <fstream>
 #include <assert.h>
 
 using namespace std;

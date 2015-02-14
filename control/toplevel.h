@@ -4,31 +4,36 @@
 #include<vector>
 #include "shooter_wheels.h"
 #include "pump.h"
-#include "holonomic.h"
+#include "drivebase.h"
+#include "lift.h"
 
 namespace Toplevel{
 	struct Output{
 		Output();
-
+		Lift::Output lift_can;
+		Lift::Output lift_tote;
+		Drivebase::Output drive;
 		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
-		Drive_motors drive;
 	};
 	std::ostream& operator<<(std::ostream&,Output);
 
 	struct Subgoals{
 		Subgoals();
-
+		Lift::Goal lift_goal_tote;
+		Lift::Goal lift_goal_can;
 		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;
-		Drive_goal drive;
+		Drivebase::Goal drive;
 		//pump omitted because it currently only has one goal.
 	};
 	std::ostream& operator<<(std::ostream&,Subgoals);
 
 	struct Status{
 		Status();
-
+		Drivebase::Status_detail drive_status;
+		Lift::Status lift_status_can;
+		Lift::Status lift_status_tote;
 		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;
 		float orientation;

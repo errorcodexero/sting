@@ -3,7 +3,6 @@
 #include <sstream>
 #include <cassert>
 #include <math.h>
-#include "holonomic.h"
 #include "toplevel.h"
 #include "fire_control.h"
 #include "control_status.h"
@@ -21,9 +20,6 @@ static const int JAG_BOTTOM_OPEN_LOOP=2;
 
 Robot_outputs convert_output(Toplevel::Output a){
 	Robot_outputs r;
-	r.pwm[0]=pwm_convert(a.drive.a);
-	r.pwm[1]=pwm_convert(a.drive.b);
-	r.pwm[2]=pwm_convert(a.drive.c);
 	
 	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
 	
@@ -45,41 +41,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 Main::Main():control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),can(1),tote(0){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
-
-Drive_goal teleop_drive_goal(double joy_x,double joy_y,double joy_theta,double joy_throttle,bool field_relative){
-	double throttle = .7+.3*fabs(joy_throttle); //Robot always drives at 70% power when throttle is not engaged //Adds the final 30% as a percentage of the throttle
-	joy_x = clip(joy_x) * throttle;
-	joy_y = -clip(joy_y) * throttle;//Invert Y
-	joy_theta = clip(joy_theta) * 0.75; //Twist is only ever goes at 75% speed and is unaffected by throttle
-	return Drive_goal(Pt(joy_x,joy_y,joy_theta),field_relative);
-}
-
-Drive_goal drive_goal(Control_status::Control_status control_status,
-		double joy_x,
-		double joy_y,
-		double joy_theta,
-		double joy_throttle,
-		bool field_relative)
-{
-	if(teleop(control_status)){
-		return teleop_drive_goal(joy_x,joy_y,joy_theta,joy_throttle,field_relative);
-	}
-	Drive_goal r;
-	switch(control_status){
-		case Control_status::AUTO_COLLECT:
-		case Control_status::A2_MOVE:
-			r.direction.y=-1; //Full power backwards
-			r.direction.theta = -0.1; //Slight twist to coutner the natrual twist from Holonomic drive base
-			break;
-		case Control_status::A2_TO_COLLECT:
-			r.direction.y=.4;
-			break;
-		default:
-			//otherwise leave at the default, which is 0.
-			break;
-	}
-	return r;
-}
 
 bool vowel(char c){
 	c=tolower(c);
@@ -136,22 +97,38 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		if (start_nudge_right) nudge_right_timer.set(.5);
 		
 		Drivebase::Output out;
+		Toplevel::Subgoals goals;
 		out=control(status_detail, goal);
+		goals.drive=goal;
+		//Lift::Output lift_output;
+		//const double POWER=0.45;
+		[&](){
+			if(gunner_joystick.button[Gamepad_button::X]){
+				goals.lift_goal_can=Lift::Goal::UP;
+			}	
+			if(gunner_joystick.button[Gamepad_button::Y]){
+				goals.lift_goal_can=Lift::Goal::DOWN;
+			}
+			goals.lift_goal_can=Lift::Goal::STOP;
+		}();
+		[&](){
+			if(gunner_joystick.button[Gamepad_button::LB]){
+				goals.lift_goal_tote=Lift::Goal::UP;
+			}	
+			if(gunner_joystick.button[Gamepad_button::RB]){
+				goals.lift_goal_tote=Lift::Goal::DOWN;
+			}
+			goals.lift_goal_tote=Lift::Goal::STOP;
+		}();
+		
+		Toplevel::Status r_status;
+		/*r_status.drive_status=;
+		r_status.lift_status_can=;
+		r_status.lift_status_tote=;*/
+		Toplevel::Output r_out=control(r_status,goals); 
 		r=drivebase.output_applicator(r,out);
-		Lift::Output lift_output;
-		const double POWER=0.45;
-		lift_output=[&](){
-			if(gunner_joystick.button[Gamepad_button::X]) return POWER;
-			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;
-			return 0.0;
-		}();
-		r=can.output_applicator(r,lift_output);
-		lift_output=[&](){
-			if(gunner_joystick.button[Gamepad_button::LB]) return POWER;
-			if(gunner_joystick.button[Gamepad_button::RB]) return -POWER;
-			return 0.0;
-		}();
-		r=tote.output_applicator(r,lift_output);
+		r=can.output_applicator(r,r_out.lift_can);
+		r=tote.output_applicator(r,r_out.lift_tote);
 		
 		/*auto l1=y-theta;
 		auto r1=y+theta;
@@ -195,15 +172,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	field_relative.update(main_joystick.button[Gamepad_button::X]);
 	
 	Toplevel::Mode mode=Toplevel::to_mode(control_status);
-	Drive_goal drive_goal1=drive_goal(
-		control_status,
-		main_joystick.axis[Gamepad_axis::LEFTX],
-		main_joystick.axis[Gamepad_axis::LEFTY],
-		main_joystick.axis[Gamepad_axis::RIGHTX],
-		main_joystick.axis[Gamepad_axis::TRIGGER],
-		field_relative.get()
-	);
-	Toplevel::Subgoals subgoals_now=subgoals(mode,drive_goal1,calib);
+	Toplevel::Subgoals subgoals_now=subgoals(mode,calib);
 	Toplevel::Output high_level_outputs=control(toplevel_status,subgoals_now);
 	//high_level_outputs=panel_override(panel,high_level_outputs);
 	Robot_outputs r=convert_output(high_level_outputs);
@@ -343,10 +312,10 @@ Control_status::Control_status next(
 		fire_when_ready=(vert==Joystick_section::DOWN); //No equivalent on the switchpanel.
 	}
 
-	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP,Drive_goal(),calib));
-	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP,Drive_goal(),calib));
-	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT,Drive_goal(),calib));
-	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP,Drive_goal(),calib));
+	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP,calib));
+	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP,calib));
+	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT,calib));
+	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP,calib));
 	bool took_shot=1;
 	bool have_collected_question = false;
 

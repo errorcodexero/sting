@@ -101,7 +101,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		out=control(status_detail, goal);
 		goals.drive=goal;
 		//Lift::Output lift_output;
-		//const double POWER=0.45;
+		const double POWER=0.45;
 		[&](){
 			if(gunner_joystick.button[Gamepad_button::X]){
 				goals.lift_goal_can=Lift::Goal::UP;
@@ -136,6 +136,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
+		r.talon_srx[0].power_level=[&](){		
+			if(gunner_joystick.button[Gamepad_button::X]) return POWER;		
+			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;		
+			return 0.0;		
+		}();		
+		r.talon_srx[1].power_level=[&](){		
+			if(gunner_joystick.button[Gamepad_button::LB]) return POWER;		
+			if(gunner_joystick.button[Gamepad_button::RB]) return -POWER;		
+			return 0.0;		
+		}();
 		r.pwm[3]=[&](){
 			if(gunner_joystick.button[Gamepad_button::A]) return .5;
 			if(gunner_joystick.button[Gamepad_button::B]) return -.5;

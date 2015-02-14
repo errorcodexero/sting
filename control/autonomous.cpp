@@ -7,7 +7,6 @@
 #include <cmath>
 #include <string>
 #include <utility>
-#include <fstream>
 #include <assert.h>
 
 using namespace std;
@@ -203,6 +202,7 @@ vector<Action> get_instructions(Environment_state a, Environment_state b){//Sear
 	return instructions;
 }
 
+#ifndef AUTONOMOUS_TEST
 int main(){//This is main. If you don't know what this is, then you probably shouldn't be looking at any of this (probably)
 	Environment_state current, target;//Sets current and target environments for testing
 	current.robot.location=make_pair(0,0);
@@ -214,3 +214,4 @@ int main(){//This is main. If you don't know what this is, then you probably sho
 	get_instructions(current, target);
 	return 0;
 }
+#endif

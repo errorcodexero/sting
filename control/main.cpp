@@ -86,7 +86,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		}
 		Drivebase::Goal goal;
 		Drivebase::Status_detail status_detail = drivebase.estimator.get();
-		if (!nudge_left_timer.done()) goal.x=.1;
+		if (!nudge_left_timer.done()) goal.x=.45;
 		else goal.x=main_joystick.axis[Gamepad_button::A];
 		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
 		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.

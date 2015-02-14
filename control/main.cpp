@@ -90,37 +90,39 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
 		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 		Drivebase::Output out;
-		out=control(status_detail, goal);
-		r=drivebase.output_applicator(r,out);
-		Lift::Output lift_output;
 		Toplevel::Subgoals goals;
+		out=control(status_detail, goal);
+		goals.drive=goal;
+		//Lift::Output lift_output;
 		const double POWER=0.45;
-		lift_output=[&](){
+		[&](){
 			if(gunner_joystick.button[2]){
 				goals.lift_goal_can=Lift::Goal::UP;
-				return POWER;
 			}	
 			if(gunner_joystick.button[3]){
 				goals.lift_goal_can=Lift::Goal::DOWN;
-				return -POWER;
 			}
 			goals.lift_goal_can=Lift::Goal::STOP;
-			return 0.0;
 		}();
-		r=can.output_applicator(r,lift_output);
-		lift_output=[&](){
+		[&](){
 			if(gunner_joystick.button[4]){
-				goals.lift_goal_can=Lift::Goal::UP;
-				return POWER;
+				goals.lift_goal_tote=Lift::Goal::UP;
 			}	
 			if(gunner_joystick.button[5]){
-				goals.lift_goal_can=Lift::Goal::DOWN;
-				return -POWER;
+				goals.lift_goal_tote=Lift::Goal::DOWN;
 			}
-			goals.lift_goal_can=Lift::Goal::STOP;
-			return 0.0;
+			goals.lift_goal_tote=Lift::Goal::STOP;
 		}();
-		r=tote.output_applicator(r,lift_output);
+		
+		Toplevel::Status r_status;
+		/*r_status.drive_status=;
+		r_status.lift_status_can=;
+		r_status.lift_status_tote=;*/
+		Toplevel::Output r_out=control(r_status,goals); 
+		r=drivebase.output_applicator(r,out);
+		r=can.output_applicator(r,r_out.lift_can);
+		r=tote.output_applicator(r,r_out.lift_tote);
+		
 		/*auto l1=y-theta;
 		auto r1=y+theta;
 		auto lim=max(1.0,max(l1,r1));

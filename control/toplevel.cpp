@@ -34,6 +34,8 @@ namespace Toplevel{
 	}
 
 	Status::Status():
+		lift_status_can(Lift::Status::error()),
+		lift_status_tote(Lift::Status::error()),
 		pump(Pump::NOT_FULL)
 	{}
 
@@ -135,6 +137,9 @@ namespace Toplevel{
 	Output control(Status status,Subgoals g){
 		Output r;
 		r.shooter_wheels=control(status.shooter_wheels,g.shooter_wheels);
+		r.lift_can=control(status.lift_status_can,g.lift_goal_can);
+		r.lift_tote=control(status.lift_status_tote,g.lift_goal_tote);
+		r.drive=control(status.drive_status,g.drive);
 		r.pump=Pump::control(status.pump,g.pump);
 		return r;
 	}

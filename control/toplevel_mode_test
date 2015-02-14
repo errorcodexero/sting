@@ -5,6 +5,8 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_MODE_TEST \
 	../util/jag_interface.cpp \
 	../util/util.cpp \
 	toplevel.cpp \
+	lift.cpp \
+	drivebase.cpp \
 	../util/countup_timer.cpp \
 	pump.cpp \
 	wheelrpms.cpp \

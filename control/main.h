@@ -24,6 +24,9 @@ struct Main{
 
 	Posedge_toggle field_relative;
 	Posedge_trigger autonomous_start;
+	
+	Posedge_trigger nudge_left;
+	Posedge_trigger nudge_right;
 
 	Shooter_wheels::Calibration_manager wheel_calibration;
 	Drivebase drivebase;

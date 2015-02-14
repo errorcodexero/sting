@@ -10,7 +10,9 @@
 namespace Toplevel{
 	struct Output{
 		Output();
-
+		Lift::Output lift_can;
+		Lift::Output lift_tote;
+		Drivebase::Output drive;
 		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
 	};
@@ -29,7 +31,9 @@ namespace Toplevel{
 
 	struct Status{
 		Status();
-
+		Drivebase::Status_detail drive_status;
+		Lift::Status lift_status_can;
+		Lift::Status lift_status_tote;
 		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;
 		float orientation;

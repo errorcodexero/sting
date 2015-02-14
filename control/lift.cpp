@@ -73,7 +73,7 @@ double Lift::Status_detail::inches_off_ground()const{
 
 Lift::Status_detail Lift::Status_detail::error(){
 	Status_detail r;
-	r.type_=Lift::Status_detail::Type::ERROR;
+	r.type_=Lift::Status_detail::Type::ERRORS;
 	return r;
 }
 
@@ -98,7 +98,7 @@ Lift::Status_detail Lift::Status_detail::mid(double d){
 
 ostream& operator<<(ostream& o,Lift::Status_detail::Type a){
 	#define X(name) if(a==Lift::Status_detail::Type::name) return o<<""#name;
-	X(ERROR) X(TOP) X(BOTTOM) X(MID)
+	X(ERRORS) X(TOP) X(BOTTOM) X(MID)
 	#undef X
 	nyi
 }

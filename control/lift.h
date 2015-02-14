@@ -14,7 +14,7 @@ struct Lift{
 
 	class Status_detail{
 		public:
-		enum class Type{TOP,BOTTOM,MID,ERROR};
+		enum class Type{TOP,BOTTOM,MID,ERRORS};
 
 		private:
 		Status_detail();

@@ -5,7 +5,6 @@
 -Try out the new Talon SRX's
 	-CAN
 		-sensor-based closed-loop modes
--Vision stuff - Thomas
 -Autonomous mode stuff-Logan&Matthew
 -Drivebase code
 	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel)-Logan
@@ -19,8 +18,8 @@
 -Write logging code
 -OI:
 	-put in outputs
-		-into framework-Adrain
-		-figure out if need to reprogram the TI launchpad-Adrain
+		-into framework-Adrian
+		-figure out if need to reprogram the TI launchpad-Adrian
 -Cleanup stuff:
 	-use enum class more places
 	-use std::array in place of C arrays in several places

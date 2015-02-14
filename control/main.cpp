@@ -38,7 +38,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 }
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),can(1),tote(0){}
+Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
 
@@ -86,22 +86,24 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		}
 		Drivebase::Goal goal;
 		Drivebase::Status_detail status_detail = drivebase.estimator.get();
-		if (!nudge_left_timer.done()) goal.x=.1;
+		if (!nudge_left_timer.done()) goal.x=.45;
 		else goal.x=main_joystick.axis[Gamepad_button::A];
 		goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
 		goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 		
-		bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::X]);
-		bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::Y]);
+		bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::LB]);
+		bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::RB]);
 		if (start_nudge_left) nudge_left_timer.set(.5);
 		if (start_nudge_right) nudge_right_timer.set(.5);
+		nudge_left_timer.update(in.now,1);
+		nudge_right_timer.update(in.now,1);
 		
 		Drivebase::Output out;
 		Toplevel::Subgoals goals;
 		out=control(status_detail, goal);
 		goals.drive=goal;
 		//Lift::Output lift_output;
-		//const double POWER=0.45;
+		const double POWER=0.45;
 		[&](){
 			if(gunner_joystick.button[Gamepad_button::X]){
 				goals.lift_goal_can=Lift::Goal::UP;
@@ -127,8 +129,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r_status.lift_status_tote=;*/
 		Toplevel::Output r_out=control(r_status,goals); 
 		r=drivebase.output_applicator(r,out);
-		r=can.output_applicator(r,r_out.lift_can);
-		r=tote.output_applicator(r,r_out.lift_tote);
+		r=lift_can.output_applicator(r,r_out.lift_can);
+		r=lift_tote.output_applicator(r,r_out.lift_tote);
 		
 		/*auto l1=y-theta;
 		auto r1=y+theta;
@@ -136,6 +138,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
 		r.pwm[1]=pow((r1/lim),3)*multiplier;
 		r.pwm[2]=x;*/
+		r.talon_srx[0].power_level=[&](){		
+			if(gunner_joystick.button[Gamepad_button::X]) return POWER;		
+			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;		
+			return 0.0;		
+		}();		
+		r.talon_srx[1].power_level=[&](){		
+			if(gunner_joystick.button[Gamepad_button::LB]) return POWER;		
+			if(gunner_joystick.button[Gamepad_button::RB]) return -POWER;		
+			return 0.0;		
+		}();
 		r.pwm[3]=[&](){
 			if(gunner_joystick.button[Gamepad_button::A]) return .5;
 			if(gunner_joystick.button[Gamepad_button::B]) return -.5;

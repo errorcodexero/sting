@@ -94,9 +94,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Toplevel::Subgoals goals;
 		Drivebase::Status_detail status_detail = drivebase.estimator.get();
 		out=control(status_detail, goal);
-		goals.drive=goal;
+		
 		//Lift::Output lift_output;
-		if(mode==Mode::TELEOP){
+		if(1 || mode==Mode::TELEOP){
 			if (!nudge_left_timer.done()) goal.x=.45;
 			else if (!nudge_right_timer.done()) goal.x=-.45;
 			else goal.x=main_joystick.axis[0];
@@ -109,23 +109,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			if (start_nudge_right) nudge_right_timer.set(.5);
 			nudge_left_timer.update(in.now,1);
 			nudge_right_timer.update(in.now,1);
-			[&](){
-				if(gunner_joystick.button[Gamepad_button::X]){
-					goals.lift_goal_can=Lift::Goal::UP;
-				}	
-				if(gunner_joystick.button[Gamepad_button::Y]){
-					goals.lift_goal_can=Lift::Goal::DOWN;
-				}
-				goals.lift_goal_can=Lift::Goal::STOP;
+			goals.drive=goal;
+			goals.lift_goal_can=[&](){
+				if(gunner_joystick.button[Gamepad_button::X]) return Lift::Goal::UP;
+				if(gunner_joystick.button[Gamepad_button::Y]) return Lift::Goal::DOWN;
+				return Lift::Goal::STOP;
 			}();
-			[&](){
-				if(gunner_joystick.button[Gamepad_button::LB]){
-					goals.lift_goal_tote=Lift::Goal::UP;
-				}	
-				if(gunner_joystick.button[Gamepad_button::RB]){
-					goals.lift_goal_tote=Lift::Goal::DOWN;
-				}
-				goals.lift_goal_tote=Lift::Goal::STOP;
+			goals.lift_goal_tote=[&](){
+				if(gunner_joystick.button[Gamepad_button::LB])	return Lift::Goal::UP;
+				if(gunner_joystick.button[Gamepad_button::RB]) return Lift::Goal::DOWN;
+				return Lift::Goal::STOP;
 			}();
 		} 
 		else if(mode==Mode::AUTO_MOVE){
@@ -138,7 +131,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r_status.lift_status_can=;
 		r_status.lift_status_tote=;*/
 		Toplevel::Output r_out=control(r_status,goals); 
-		r=drivebase.output_applicator(r,out);
+		r=drivebase.output_applicator(r,r_out.drive);
 		r=lift_can.output_applicator(r,r_out.lift_can);
 		r=lift_tote.output_applicator(r,r_out.lift_tote);
 		

@@ -517,7 +517,7 @@ public:
 		in.talon_srx[1].fwd_limit_switch=test2.IsFwdLimitSwitchClosed();
 		in.talon_srx[1].rev_limit_switch=test2.IsRevLimitSwitchClosed();
 		in.talon_srx[1].encoder_position=test2.GetEncPosition();
-		cout<<"in:"<<in<<"\n";
+		//cout<<"in:"<<in<<"\n";
 		//}
 		/*if(gyro){
 			in.orientation=gyro->GetAngle();

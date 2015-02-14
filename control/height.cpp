@@ -39,13 +39,14 @@ vector<Lift_position> lift_positions(){
 }
 
 //returns inches
+//everything is in inches
 //std::array<float,3> findHeight(bool pickup,bool is_can, bool on_step,bool placed_on_scoring,int stacked_bins){
 std::array<float,3> findHeight(Lift_position const& a){
 	const float HEIGHT_OF_SCORING_PLATFORM = 1.96;
 	const float HEIGHT_OF_BIN = 12.1;
 	//const float HEIGHT_OF_CAN = 29;//18
 	const float HEIGHT_OF_STEP = 6.25;
-	const float TO_CAN_RIB=20;//total guess
+	const float TO_CAN_RIB=21;//used ratio of picture pixels to get height
 	float target = 0;
 	if(a.placed_on_scoring){
 		target += HEIGHT_OF_SCORING_PLATFORM;

@@ -13,6 +13,9 @@
 #include "lift.h"
 
 struct Main{
+	enum class Mode{TELEOP,AUTO_MOVE};
+	Mode mode;
+	
 	Force_interface force;
 	Perf_tracker perf;
 	Toplevel::Estimator est;
@@ -29,8 +32,8 @@ struct Main{
 	Shooter_wheels::Calibration_manager wheel_calibration;
 	Drivebase drivebase;
 	
-	Lift can;
-	Lift tote;
+	Lift lift_can;
+	Lift lift_tote;
 	
 	Posedge_trigger nudge_left;
 	Posedge_trigger nudge_right;

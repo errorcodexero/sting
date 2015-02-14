@@ -38,7 +38,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 }
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),can(1),tote(0){}
+Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
 
@@ -130,8 +130,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		r_status.lift_status_tote=;*/
 		Toplevel::Output r_out=control(r_status,goals); 
 		r=drivebase.output_applicator(r,out);
-		r=can.output_applicator(r,r_out.lift_can);
-		r=tote.output_applicator(r,r_out.lift_tote);
+		r=lift_can.output_applicator(r,r_out.lift_can);
+		r=lift_tote.output_applicator(r,r_out.lift_tote);
 		
 		/*auto l1=y-theta;
 		auto r1=y+theta;

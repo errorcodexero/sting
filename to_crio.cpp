@@ -109,6 +109,17 @@ int read_joysticks(Robot_inputs &r){
 	return 0;
 }
 
+/*
+void setoutputs_joysticks(Robot_inputs &r){
+	DriverStation *ds=DriverStation::GetInstance();
+	if(<insert lifter limit/encoder data here>){
+		Joystick::setOutput( 
+	}
+
+
+}
+*/
+
 /*for cRIO
 int read_analog(Robot_inputs& r){
 	AnalogModule *am=AnalogModule::GetInstance(1);

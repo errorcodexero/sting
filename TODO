@@ -7,19 +7,19 @@
 		-sensor-based closed-loop modes
 -Autonomous mode stuff-Logan&Matthew
 -Drivebase code
-	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel)
-	-put in nudge buttons
+	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel)-Logan
+	-put in nudge buttons-Matthew
 -Lifter Code
 	-UI
-	-Motor and Encoders
-	-Gripper 
+	-Motor and Encoders-Matthew
+	-Gripper? 
 	-Lifter Simulator-Jared
 	-figure out the limits of when we throw totes (e.i.how fast we can turn before we throw them off)
 -Write logging code
 -OI:
 	-put in outputs
-		-into framework
-		-figure out if need to reprogram the TI launchpad
+		-into framework-Adrain
+		-figure out if need to reprogram the TI launchpad-Adrain
 -Cleanup stuff:
 	-use enum class more places
 	-use std::array in place of C arrays in several places

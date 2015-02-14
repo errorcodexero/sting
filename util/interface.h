@@ -8,7 +8,7 @@
 #include "driver_station_interface.h"
 #include "maybe_inline.h"
 
-typedef double Time;
+typedef double Time;//Seconds
 typedef double Pwm_output;
 typedef bool Solenoid_output;
 

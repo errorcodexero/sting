@@ -60,7 +60,7 @@ std::set<Lift::Input> examples(Lift::Input*){
 	};
 }
 
-std::set<Lift::Output> examples(Lift::Output*){ return {0,1,-1}; }
+std::set<Lift::Output> examples(Lift::Output*){ return {0,.45,-.45}; }
 
 Lift::Status_detail::Status_detail(){}
 
@@ -73,7 +73,7 @@ double Lift::Status_detail::inches_off_ground()const{
 
 Lift::Status_detail Lift::Status_detail::error(){
 	Status_detail r;
-	r.type_=Lift::Status_detail::Type::ERROR;
+	r.type_=Lift::Status_detail::Type::ERRORS;
 	return r;
 }
 
@@ -98,7 +98,7 @@ Lift::Status_detail Lift::Status_detail::mid(double d){
 
 ostream& operator<<(ostream& o,Lift::Status_detail::Type a){
 	#define X(name) if(a==Lift::Status_detail::Type::name) return o<<""#name;
-	X(ERROR) X(TOP) X(BOTTOM) X(MID)
+	X(ERRORS) X(TOP) X(BOTTOM) X(MID)
 	#undef X
 	nyi
 }
@@ -136,7 +136,7 @@ std::set<Lift::Status_detail> examples(Lift::Status_detail*){
 
 std::ostream& operator<<(std::ostream& o,Lift::Goal a){
 	#define X(name) if(a==Lift::Goal::name) return o<<""#name;
-	X(MIN) X(MAX) X(STOP)
+	X(DOWN) X(UP) X(STOP)
 	#undef X
 	nyi
 }
@@ -150,9 +150,13 @@ Lift::Status status(Lift::Status_detail const& a){
 	return a;
 }
 
-Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	switch(goal){
-		case Lift::Goal::MIN:
+Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goal){
+	const double POWER=0.45;
+	if(goal==Lift::Goal::UP) return POWER; 
+	if(goal==Lift::Goal::DOWN) return -POWER;
+	return 0.0;
+	/*switch(goal){
+		case Lift::Goal::DOWN:
 			switch(status.type()){
 				case Lift::Status_detail::Type::BOTTOM:
 				case Lift::Status_detail::Type::ERROR:
@@ -162,7 +166,7 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 					return -1;
 				default: assert(0);
 			}
-		case Lift::Goal::MAX:
+		case Lift::Goal::UP:
 			switch(status.type()){
 				case Lift::Status_detail::Type::TOP:
 				case Lift::Status_detail::Type::ERROR:
@@ -175,17 +179,17 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 		case Lift::Goal::STOP: return 0;
 		default:
 			nyi
-	}
+	}*/
 }
 
-set<Lift::Goal> examples(Lift::Goal*){ return {Lift::Goal::MIN,Lift::Goal::MAX,Lift::Goal::STOP}; }
+set<Lift::Goal> examples(Lift::Goal*){ return {Lift::Goal::DOWN,Lift::Goal::UP,Lift::Goal::STOP}; }
 
 Lift::Lift(int can_address):output_applicator(can_address){}
 
 bool ready(Lift::Status status,Lift::Goal goal){
 	switch(goal){
-		case Lift::Goal::MIN: return status.type()==Lift::Status::Type::BOTTOM;
-		case Lift::Goal::MAX: return status.type()==Lift::Status::Type::TOP;
+		case Lift::Goal::DOWN: return status.type()==Lift::Status::Type::BOTTOM;
+		case Lift::Goal::UP: return status.type()==Lift::Status::Type::TOP;
 		case Lift::Goal::STOP: return 1;
 		default:
 			nyi
@@ -318,7 +322,7 @@ int main(){
 	}*/
 	Lift a(4);
 	tester(a);
-	run(a,0,Lift::Input{0,0,0},Lift::Output{},Lift::Goal::MAX);
+	run(a,0,Lift::Input{0,0,0},Lift::Output{},Lift::Goal::UP);
 
 	for(unsigned i=0;i<30;i++){
 		cout<<i<<"\t"<<acceleration_range(60,i)<<"\n";

@@ -29,9 +29,8 @@ namespace Toplevel{
 		assert(0);
 	}
 
-	Subgoals subgoals(Mode m,Drive_goal d,Shooter_wheels::Calibration calib){
+	Subgoals subgoals(Mode m,Shooter_wheels::Calibration calib){
 		Subgoals r;
-		r.drive=d;
 		switch(m){
 			case DRIVE_WO_BALL:
 				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
@@ -191,7 +190,7 @@ void toplevel_modes(){
 					}
 					ss<<"</tr>";	
 					for(auto mode:Toplevel::MODES){
-						Toplevel::Subgoals g=subgoals(mode,Drive_goal(),Shooter_wheels::Calibration());
+						Toplevel::Subgoals g=subgoals(mode,Shooter_wheels::Calibration());
 						tag(ss,"tr",
 							tag("td",as_string(mode))+
 							tag("td",g.shooter_wheels.high_level)
@@ -210,7 +209,7 @@ int main(){
 	Status status;
 	for(auto mode:MODES){
 		cout<<mode<<":\n";
-		auto g=subgoals(mode,Drive_goal(),Shooter_wheels::Calibration());
+		auto g=subgoals(mode,Shooter_wheels::Calibration());
 		cout<<"\t"<<g<<"\n";
 		cout<<"\t"<<control(status,g)<<"\n";
 		cout<<"\t"<<ready(status,g)<<"\n";

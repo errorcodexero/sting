@@ -112,11 +112,9 @@ int read_joysticks(Robot_inputs &r){
 /*
 void setoutputs_joysticks(Robot_inputs &r){
 	DriverStation *ds=DriverStation::GetInstance();
-	if(<insert lifter limit/encoder data here>){
-		Joystick::setOutput( 
+	if(unsigned i=0;i<r.JOYSTICKS;i++){
+		r.joystick[i]=SetOutput(1,1);			 
 	}
-
-
 }
 */
 

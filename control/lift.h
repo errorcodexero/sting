@@ -7,7 +7,7 @@
 struct Lift{
 	struct Input{
 		bool top,bottom;
-		unsigned ticks;//this might not be the right thing here
+		int ticks;
 	};
 
 	typedef double Output;//motor power, in -1 to 1, assume 1=up

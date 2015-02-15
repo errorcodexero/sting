@@ -4,11 +4,10 @@
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 -Try out the new Talon SRX's
 	-CAN
-		-sensor-based closed-loop modes
+	-sensor-based closed-loop modes
 -Autonomous mode stuff-Logan and Matthew
 -Drivebase code
 	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel)-Logan
-	-put in nudge buttons for theta and maybe forward and backward-Matthew
 -Lifter Code
 	-UI
 	-Motor and Encoders-Matthew

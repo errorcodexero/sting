@@ -38,7 +38,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 }
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0){}
+Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0),sticky_lift_goal(Sticky_goal::MID){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
 
@@ -116,8 +116,26 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				return Lift::Goal::STOP;
 			}();
 			goals.lift_goal_tote=[&](){
-				if(gunner_joystick.button[Gamepad_button::LB])	return Lift::Goal::UP;
-				if(gunner_joystick.button[Gamepad_button::RB]) return Lift::Goal::DOWN;
+				if(gunner_joystick.button[Gamepad_button::LB]){
+					sticky_lift_goal=Sticky_goal::MID;
+					return Lift::Goal::UP;
+				}
+				if(gunner_joystick.button[Gamepad_button::RB]){
+					sticky_lift_goal=Sticky_goal::MID;
+					return Lift::Goal::DOWN;
+				}
+				if(gunner_joystick.button[Gamepad_button::A]){
+					sticky_lift_goal=Sticky_goal::MIN;
+				}
+				if(gunner_joystick.button[Gamepad_button::B]){
+					sticky_lift_goal=Sticky_goal::MID;
+				}
+				if(gunner_joystick.button[Gamepad_button::Y]){
+					sticky_lift_goal=Sticky_goal::MAX;
+				}
+				if(sticky_lift_goal==Sticky_goal::MIN) return Lift::Goal::DOWN;
+				if(sticky_lift_goal==Sticky_goal::MID) return Lift::Goal::STOP;
+				if(sticky_lift_goal==Sticky_goal::MAX) return Lift::Goal::UP;
 				return Lift::Goal::STOP;
 			}();
 		} 

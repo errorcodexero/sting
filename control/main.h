@@ -34,6 +34,9 @@ struct Main{
 	
 	Lift lift_can;
 	Lift lift_tote;
+	enum class Sticky_goal{MIN,MID,MAX};
+	Sticky_goal sticky_lift_goal;	
+	
 	
 	Posedge_trigger nudge_left;
 	Posedge_trigger nudge_right;

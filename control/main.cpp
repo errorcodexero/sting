@@ -6,7 +6,6 @@
 #include "toplevel.h"
 #include "fire_control.h"
 #include "control_status.h"
-#include "../input/util.h"
 #include "../util/util.h"
 #include "toplevel_mode.h"
 #include <stdlib.h>
@@ -65,6 +64,8 @@ double set_drive_speed(Joystick_data joystick, int axis, double boost){
 	return pow(joystick.axis[axis], 3)*(.6+.4*boost);
 }
 
+
+
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
@@ -97,18 +98,21 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		
 		//Lift::Output lift_output;
 		if(1 || mode==Mode::TELEOP){
-			if (!nudge_left_timer.done()) goal.x=.45;
-			else if (!nudge_right_timer.done()) goal.x=-.45;
+			if (!nudges[0].timer.done()) goal.x=.45;
+			else if (!nudges[1].timer.done()) goal.x=-.45;
 			else goal.x=main_joystick.axis[0];
-			goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
-			goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
+			if (!nudges[2].timer.done()) goal.y=.45;
+			else if (!nudges[3].timer.done()) goal.y=-.45;
+			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
+			if (!nudges[4].timer.done()) goal.theta=.45;
+			else if (!nudges[5].timer.done()) goal.theta=-.45;
+			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
-			bool start_nudge_left=nudge_left(main_joystick.button[Gamepad_button::LB]);
-			bool start_nudge_right=nudge_right(main_joystick.button[Gamepad_button::RB]);
-			if (start_nudge_left) nudge_left_timer.set(.1);
-			if (start_nudge_right) nudge_right_timer.set(.1);
-			nudge_left_timer.update(in.now,1);
-			nudge_right_timer.update(in.now,1);
+			for (int i=0;i<6;i++) {
+				nudges[i].start=nudges[i].trigger(main_joystick.button[buttons[i]]);
+				if (nudges[i].start) nudges[i].timer.set(.1);
+				nudges[i].timer.update(in.now,1);
+			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
 				if(gunner_joystick.button[Gamepad_button::X]) return Lift::Goal::UP;

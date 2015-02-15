@@ -11,6 +11,7 @@
 #include "toplevel.h"
 #include "drivebase.h"
 #include "lift.h"
+#include "../input/util.h"
 
 struct Main{
 	enum class Mode{TELEOP,AUTO_MOVE};
@@ -35,12 +36,14 @@ struct Main{
 	Lift lift_can;
 	Lift lift_tote;
 	
-	Posedge_trigger nudge_left;
-	Posedge_trigger nudge_right;
+	struct Nudge{
+		Posedge_trigger trigger;
+		Countdown_timer timer;
+		bool start;
+	};
+	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
+	unsigned int buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
 	
-	Countdown_timer nudge_left_timer;
-	Countdown_timer nudge_right_timer;
-
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };

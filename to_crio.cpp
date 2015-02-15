@@ -464,7 +464,7 @@ public:
 	}
 	
 	void run(Robot_inputs in){
-		//cout<<"in:"<<in<<"\n";
+		cout<<"in:"<<in<<"\n";
 		Robot_outputs out=main(in);
 		//cout<<"out:"<<out<<"\n";
 		int x=set_outputs(out,in.robot_mode.enabled);

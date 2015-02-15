@@ -151,8 +151,8 @@ Lift::Status status(Lift::Status_detail const& a){
 }
 
 Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goal){
-	const double POWER=0.45;
-	if(goal==Lift::Goal::UP) return POWER; 
+	const double POWER=-0.45;
+	if(goal==Lift::Goal::UP) return  POWER; 
 	if(goal==Lift::Goal::DOWN) return -POWER;
 	return 0.0;
 	/*switch(goal){

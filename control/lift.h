@@ -55,7 +55,7 @@ struct Lift{
 	Output_applicator output_applicator;
 
 	enum class Goal{UP,DOWN,STOP};
-
+	
 	explicit Lift(int);
 };
 

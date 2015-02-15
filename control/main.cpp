@@ -68,8 +68,8 @@ double set_drive_speed(Joystick_data joystick, int axis, double boost){
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
-	Joystick_data main_joystick=in.joystick[0];
-	Joystick_data gunner_joystick=in.joystick[1];
+	Joystick_data main_joystick=in.joystick[Gamepad_axis::LEFTX];
+	Joystick_data gunner_joystick=in.joystick[Gamepad_axis::LEFTY];
 	since_switch.update(in.now,0);
 	force.update(
 		main_joystick.button[Gamepad_button::A],
@@ -115,8 +115,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
-				if(gunner_joystick.button[Gamepad_button::X]) return Lift::Goal::UP;
-				if(gunner_joystick.button[Gamepad_button::Y]) return Lift::Goal::DOWN;
+				if(gunner_joystick.axis[Gamepad_axis::TRIGGER]==-1) return Lift::Goal::UP;
+				if(gunner_joystick.axis[Gamepad_axis::TRIGGER]==1) return Lift::Goal::DOWN;
 				return Lift::Goal::STOP;
 			}();
 			goals.lift_goal_tote=[&](){

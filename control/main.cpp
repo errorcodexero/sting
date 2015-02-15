@@ -98,14 +98,14 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		
 		//Lift::Output lift_output;
 		if(1 || mode==Mode::TELEOP){
-			if (!nudges[0].timer.done()) goal.x=.45;
-			else if (!nudges[1].timer.done()) goal.x=-.45;
+			if (!nudges[0].timer.done()) goal.x=-.45;
+			else if (!nudges[1].timer.done()) goal.x=.45;
 			else goal.x=main_joystick.axis[0];
-			if (!nudges[2].timer.done()) goal.y=.45;
-			else if (!nudges[3].timer.done()) goal.y=-.45;
+			if (!nudges[2].timer.done()) goal.y=-.2;
+			else if (!nudges[3].timer.done()) goal.y=.2;
 			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
-			if (!nudges[4].timer.done()) goal.theta=.45;
-			else if (!nudges[5].timer.done()) goal.theta=-.45;
+			if (!nudges[4].timer.done()) goal.theta=-.2;
+			else if (!nudges[5].timer.done()) goal.theta=.2;
 			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
 			for (int i=0;i<6;i++) {

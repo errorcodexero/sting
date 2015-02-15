@@ -62,7 +62,7 @@ string abbreviate_text(string s){
 }
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost){
-	return pow(joystick.axis[axis], 3)*(.6+.4*boost);
+	return pow(joystick.axis[axis], 3)*(.6+.4*-boost);
 }
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){

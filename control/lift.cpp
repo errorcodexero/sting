@@ -211,7 +211,7 @@ Lift::Status status(Lift::Status_detail const& a){
 }
 
 Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goal){
-	const double POWER=-0.45;
+	const double POWER=0.45;
 	if(goal.mode()==Lift::Goal::Mode::UP) return  POWER; 
 	if(goal.mode()==Lift::Goal::Mode::DOWN) return -POWER;
 	return 0.0;

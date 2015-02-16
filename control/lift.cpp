@@ -26,6 +26,7 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 
 Lift::Status_detail Lift::Estimator::get()const{ return last; }
 
+
 Lift::Output_applicator::Output_applicator(int a):can_address(a){}
 
 Robot_outputs Lift::Output_applicator::operator()(Robot_outputs robot,Lift::Output lift)const{
@@ -63,6 +64,8 @@ std::set<Lift::Input> examples(Lift::Input*){
 std::set<Lift::Output> examples(Lift::Output*){ return {0,.45,-.45}; }
 
 Lift::Status_detail::Status_detail(){}
+
+Lift::Goal::Goal(){}
 
 Lift::Status_detail::Type Lift::Status_detail::type()const{ return type_; }
 
@@ -241,8 +244,7 @@ Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goa
 
 set<Lift::Goal> examples(Lift::Goal*){ 
 	set<Lift::Goal> goals;
-	Lift::Goal goal;
-	goal=goal.go_to_height(0);
+	Lift::Goal goal=goal.go_to_height(0);
 	goals.insert(goal);
 	goal=goal.down();
 	goals.insert(goal);
@@ -392,8 +394,7 @@ int main(){
 	}*/
 	Lift a(4);
 	tester(a);
-	Lift::Goal goal;
-	goal=goal.up();
+	Lift::Goal goal=goal.up();
 	run(a,0,Lift::Input{0,0,0},Lift::Output{},goal);
 
 	for(unsigned i=0;i<30;i++){

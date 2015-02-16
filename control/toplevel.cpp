@@ -20,6 +20,8 @@ namespace Toplevel{
 
 	Subgoals::Subgoals():
 		//shooter_wheels(Shooter_wheels:)
+		lift_goal_tote(Lift::Goal::stop()),
+		lift_goal_can(Lift::Goal::stop()),
 		pump(Pump::GOAL_AUTO)
 	{}
 

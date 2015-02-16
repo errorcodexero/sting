@@ -180,7 +180,7 @@ Joystick_data_linux const& Joystick_linux::read(){
 }
 #endif
 
-ostream& operator<<(ostream& o,Joystick_linux const& a){
+ostream& operator<<(ostream& o,Joystick_linux const& /*a*/){
 	//todo:FIXME
 	return o<<"Joystick_linux";
 }

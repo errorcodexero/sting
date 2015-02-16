@@ -14,6 +14,7 @@ class Maybe_inline{
 	Maybe_inline& operator=(T t1){
 		t=t1;
 		valid=1;
+		return *this;
 	}
 
 	operator bool()const{ return valid; }

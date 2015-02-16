@@ -104,9 +104,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		tote_input.ticks=in.talon_srx[1].encoder_position;
 		
 		if(1 || mode==Mode::TELEOP){
-			if (!nudges[0].timer.done()) goal.x=-.45;
+			/*if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;
-			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
+			else*/ goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 			if (!nudges[2].timer.done()) goal.y=-.2;
 			else if (!nudges[3].timer.done()) goal.y=.2;
 			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER]);
@@ -114,7 +114,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			else if (!nudges[5].timer.done()) goal.theta=.2;
 			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
-			for (int i=0;i<6;i++) {
+			for (int i=2;i<6;i++) {
 				nudges[i].start=nudges[i].trigger(main_joystick.button[buttons[i]]);
 				if (nudges[i].start) nudges[i].timer.set(.1);
 				nudges[i].timer.update(in.now,1);

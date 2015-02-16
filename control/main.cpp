@@ -121,18 +121,18 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
-				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::UP;
-				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::DOWN;
-				return Lift::Goal::STOP;
+				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::up();
+				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::down();
+				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
 				if(gunner_joystick.button[Gamepad_button::RB]){
 					sticky_lift_goal=Sticky_goal::MID;
-					return Lift::Goal::Mode::UP;
+					return Lift::Goal::up();
 				}
 				if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_lift_goal=Sticky_goal::MID;
-					return Lift::Goal::Mode::DOWN;
+					return Lift::Goal::down();
 				}
 				if(gunner_joystick.button[Gamepad_button::A]){
 					sticky_lift_goal=Sticky_goal::MIN;
@@ -143,10 +143,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(gunner_joystick.button[Gamepad_button::Y]){
 					sticky_lift_goal=Sticky_goal::MAX;
 				}
-				if(sticky_lift_goal==Sticky_goal::MIN) return Lift::Goal::DOWN;
-				if(sticky_lift_goal==Sticky_goal::MID) return Lift::Goal::STOP;
-				if(sticky_lift_goal==Sticky_goal::MAX) return Lift::Goal::UP;
-				return Lift::Goal::STOP;
+				if(sticky_lift_goal==Sticky_goal::MIN) return Lift::Goal::down();
+				if(sticky_lift_goal==Sticky_goal::MID) return Lift::Goal::stop();
+				if(sticky_lift_goal==Sticky_goal::MAX) return Lift::Goal::up();
+				return Lift::Goal::stop();
 			}();
 		} 
 		else if(mode==Mode::AUTO_MOVE){

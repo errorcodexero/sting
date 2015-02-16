@@ -216,9 +216,16 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 		switch (status.type()) {
 			case Lift::Status_detail::Type::MID:
-				if (status.inches_off_ground()<goal.height()) return POWER;
-				else if (status.inches_off_ground()>goal.height()) return -POWER;
-				return 0.0;
+				{	
+					double error = status.inches_off_ground()-goal.height();
+					error *= (POWER/10);
+					if (error>POWER) return POWER;
+					if (error<-POWER) return -POWER;
+					return error;
+					/*if (status.inches_off_ground()<goal.height()) return POWER;
+					else if (status.inches_off_ground()>goal.height()) return -POWER;
+					return 0.0;*/
+				}
 			case Lift::Status_detail::Type::TOP:
 				return -POWER;
 			case Lift::Status_detail::Type::BOTTOM:

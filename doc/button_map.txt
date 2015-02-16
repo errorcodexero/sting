@@ -1,0 +1,21 @@
+Driver Controller
+-------------------
+Left Joystick - Forward/Backward/Left/Right
+Right Joystick - Stationary Rotation
+A - Nudge Down
+B - Nudge Right
+X - Nudge Left
+Y - Nudge Up
+Left Button - Nudge Counter-clockwise
+Right Button - Nudge Clockwise
+Right Trigger - Boost
+
+Gunner Controller
+-------------------
+A - Tote Bottom Preset
+B - Tote Middle Preset
+Y - Tote Top  Preset
+Left Button - Tote Arm Up
+Right Button - Tote Arm Down
+Left Trigger - Can Arm Up
+Right Trigger - Can Arm Down

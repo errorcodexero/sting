@@ -253,7 +253,7 @@ struct Lift_sim{
 		return Lift::Input{
 			height>=MAX_HEIGHT-LIMIT_SWITCH_RANGE,
 			height<=MIN_HEIGHT+LIMIT_SWITCH_RANGE,
-			(unsigned int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION)
+			(int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION)
 		};
 	}
 };

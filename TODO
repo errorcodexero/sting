@@ -13,7 +13,7 @@
 	-Motor and Encoders-Matthew
 	-Gripper? 
 	-Lifter Simulator-Jared
-	-figure out the limits of when we throw totes (e.i.how fast we can turn before we throw them off)
+	-figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
 -Write logging code
 -OI:
 	-put in outputs
@@ -27,4 +27,3 @@
 
 NICE THINGS TO HAVE:
 -Drive to Wall
-

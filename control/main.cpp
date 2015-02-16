@@ -97,7 +97,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		tote_input.top=in.talon_srx[0].fwd_limit_switch;
 		tote_input.bottom=in.talon_srx[0].rev_limit_switch;
 		tote_input.ticks=in.talon_srx[0].encoder_position;
-		
+		if(in.robot_mode.enabled && !in.robot_mode.autonomous) sticky_lift_goal=Sticky_goal::MID;
 		if(1 || mode==Mode::TELEOP){
 			if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;
@@ -139,9 +139,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(gunner_joystick.button[Gamepad_button::Y]){
 					sticky_lift_goal=Sticky_goal::MAX;
 				}
-				if(sticky_lift_goal==Sticky_goal::MIN && in.robot_mode.enabled && !in.robot_mode.autonomous) return Lift::Goal::down();
-				if(sticky_lift_goal==Sticky_goal::MID && in.robot_mode.enabled && !in.robot_mode.autonomous) return Lift::Goal::stop();
-				if(sticky_lift_goal==Sticky_goal::MAX && in.robot_mode.enabled && !in.robot_mode.autonomous) return Lift::Goal::up();
+				if(sticky_lift_goal==Sticky_goal::MIN) return Lift::Goal::down();
+				if(sticky_lift_goal==Sticky_goal::MID) return Lift::Goal::stop();
+				if(sticky_lift_goal==Sticky_goal::MAX) return Lift::Goal::up();
 				return Lift::Goal::stop();
 			}();
 		} 

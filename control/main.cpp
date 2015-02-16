@@ -117,6 +117,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
+				if(gunner_joystick.button[Gamepad_button::X]){
+					sticky_lift_goal=Sticky_goal::MID;
+					return Lift::Goal::go_to_height(50);
+				}
 				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::up();
 				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::down();
 				return Lift::Goal::stop();
@@ -129,10 +133,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(gunner_joystick.button[Gamepad_button::RB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::down();
-				}
-				if(gunner_joystick.button[Gamepad_button::X]){
-					sticky_lift_goal=Sticky_goal::MID;
-					return Lift::Goal::go_to_height(50);
 				}
 				if(gunner_joystick.button[Gamepad_button::A]){
 					sticky_lift_goal=Sticky_goal::MIN;

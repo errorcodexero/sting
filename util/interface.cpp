@@ -1,7 +1,7 @@
 #include "interface.h"
-#include<iostream>
-#include<cassert>
-#include<stdlib.h>
+#include <iostream>
+#include <cassert>
+#include <stdlib.h>
 #include "util.h"
 
 using namespace std;

@@ -1,6 +1,6 @@
 #include "jag_interface.h"
-#include<iostream>
-#include<cmath>
+#include <iostream>
+#include <cmath>
 #include "util.h"
 
 using namespace std;

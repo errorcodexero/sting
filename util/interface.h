@@ -34,6 +34,7 @@ struct Talon_srx_input{
 
 struct Talon_srx_output{
 	double power_level;
+	bool invert_encoder;
 	Talon_srx_output():power_level(0){}
 };
 

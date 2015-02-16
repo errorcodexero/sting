@@ -395,6 +395,7 @@ public:
 		//test.Set(1);
 		test1.Set(out.talon_srx[0].power_level);
 		test2.Set(out.talon_srx[1].power_level);
+		
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){

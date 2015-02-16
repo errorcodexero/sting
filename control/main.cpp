@@ -110,13 +110,15 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		if(1 || mode==Mode::TELEOP){
 			if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;
-			else goal.x=main_joystick.axis[0];
+			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 			if (!nudges[2].timer.done()) goal.y=-.2;
 			else if (!nudges[3].timer.done()) goal.y=.2;
-			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
+			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::TRIGGER]);
 			if (!nudges[4].timer.done()) goal.theta=-.2;
 			else if (!nudges[5].timer.done()) goal.theta=.2;
-			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
+			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::TRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
+			
+			cout<<endl<<"Number: "<<main_joystick.axis[Gamepad_axis::TRIGGER]<<endl<<endl;
 			
 			for (int i=0;i<6;i++) {
 				nudges[i].start=nudges[i].trigger(main_joystick.button[buttons[i]]);
@@ -130,11 +132,11 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				return Lift::Goal::STOP;
 			}();
 			goals.lift_goal_tote=[&](){
-				if(gunner_joystick.button[Gamepad_button::LB]){
+				if(gunner_joystick.button[Gamepad_button::RB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::UP;
 				}
-				if(gunner_joystick.button[Gamepad_button::RB]){
+				if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::DOWN;
 				}

@@ -41,7 +41,6 @@ bool operator<(Drivebase::Goal const& a,Drivebase::Goal const& b){
 Drivebase::Output::Output():l(0),r(0),c(0){}
 Drivebase::Output::Output(double a,double b,double c1):l(a),r(b),c(c1){}
 
-Drivebase::Goal::Goal():x(0),y(0),theta(0){}
 
 set<Drivebase::Output> examples(Drivebase::Output*){
 	return {

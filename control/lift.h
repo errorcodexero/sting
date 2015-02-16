@@ -41,6 +41,8 @@ struct Lift{
 
 		void update(Time,Input,Output);
 		Status_detail get()const;
+		
+		double bottom_location;
 	};
 	Estimator estimator;
 

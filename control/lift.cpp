@@ -6,7 +6,7 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
-Lift::Estimator::Estimator():last(Lift::Status_detail::error()){}
+Lift::Estimator::Estimator():last(Lift::Status_detail::error()),bottom_location(0){}
 
 void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 	if(in.top){
@@ -18,14 +18,15 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 	}else{
 		if(in.bottom){
 			last=Lift::Status_detail::bottom();
+			bottom_location=in.ticks;
 		}else{
-			last=Lift::Status_detail::mid(6+in.ticks/30.0);
+			static const float CLICKS_PER_INCH = 11.7892550438441;
+			last=Lift::Status_detail::mid(6+(in.ticks-bottom_location)/CLICKS_PER_INCH);
 		}
 	}
 }
 
 Lift::Status_detail Lift::Estimator::get()const{ return last; }
-
 
 Lift::Output_applicator::Output_applicator(int a):can_address(a){}
 
@@ -210,11 +211,28 @@ Lift::Status status(Lift::Status_detail const& a){
 	return a;
 }
 
-Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goal){
+Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 	const double POWER=-0.45;
+	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
+		switch (status.type()) {
+			case Lift::Status_detail::Type::MID:
+				if (status.inches_off_ground()<goal.height()) return POWER;
+				else if (status.inches_off_ground()>goal.height()) return -POWER;
+				return 0.0;
+			case Lift::Status_detail::Type::TOP:
+				return -POWER;
+			case Lift::Status_detail::Type::BOTTOM:
+				return POWER;
+			case Lift::Status_detail::Type::ERRORS:
+				return 0.0;
+			default:
+				assert(0);
+		}
+	}
 	if(goal.mode()==Lift::Goal::Mode::UP) return  POWER; 
 	if(goal.mode()==Lift::Goal::Mode::DOWN) return -POWER;
-	return 0.0;
+	if(goal.mode()==Lift::Goal::Mode::STOP) return 0.0;
+	assert(0);
 	/*switch(goal){
 		case Lift::Goal::Mode::DOWN:
 			switch(status.type()){

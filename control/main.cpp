@@ -97,7 +97,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		tote_input.top=in.talon_srx[0].fwd_limit_switch;
 		tote_input.bottom=in.talon_srx[0].rev_limit_switch;
 		tote_input.ticks=in.talon_srx[0].encoder_position;
-		if(in.robot_mode.enabled && !in.robot_mode.autonomous) sticky_lift_goal=Sticky_goal::MID;
+		if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_lift_goal=Sticky_goal::MID;
 		if(1 || mode==Mode::TELEOP){
 			if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;

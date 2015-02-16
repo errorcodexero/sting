@@ -212,7 +212,7 @@ Lift::Status status(Lift::Status_detail const& a){
 }
 
 Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	const double POWER=-0.45;
+	const double POWER=0.45;//The sign of this variable changes which direction the lifters go
 	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 		switch (status.type()) {
 			case Lift::Status_detail::Type::MID:

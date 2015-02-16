@@ -46,7 +46,6 @@ struct Main{
 		bool start;
 	};
 	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
-	unsigned int buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
 	
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);

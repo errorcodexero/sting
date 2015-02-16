@@ -79,34 +79,29 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	);
 
 	{
-		Robot_outputs r;
-		for(unsigned i=0;i<r.PWMS;i++){
-			r.pwm[i]=0;
-		}
+		
 		Drivebase::Goal goal;
 		bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
 		if(autonomous_start_now) mode=Mode::AUTO_MOVE;
 		since_auto_start.update(in.now,autonomous_start_now);
 		//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
-		Drivebase::Output out;
 		Toplevel::Subgoals goals;
-		Drivebase::Status_detail status_detail = drivebase.estimator.get();
-		out=control(status_detail, goal);
+		//Drivebase::Status_detail status_detail = drivebase.estimator.get();
 		
 		Lift::Input can_input;
-		can_input.top=in.talon_srx[0].fwd_limit_switch;
-		can_input.bottom=in.talon_srx[0].rev_limit_switch;
-		can_input.ticks=in.talon_srx[0].encoder_position;
+		can_input.top=in.talon_srx[1].fwd_limit_switch;
+		can_input.bottom=in.talon_srx[1].rev_limit_switch;
+		can_input.ticks=in.talon_srx[1].encoder_position;
 		Lift::Input tote_input;
-		tote_input.top=in.talon_srx[1].fwd_limit_switch;
-		tote_input.bottom=in.talon_srx[1].rev_limit_switch;
-		tote_input.ticks=in.talon_srx[1].encoder_position;
-		
+		tote_input.top=in.talon_srx[0].fwd_limit_switch;
+		tote_input.bottom=in.talon_srx[0].rev_limit_switch;
+		tote_input.ticks=in.talon_srx[0].encoder_position;
+		if(in.robot_mode.enabled && !in.robot_mode.autonomous) sticky_lift_goal=Sticky_goal::MID;
 		if(1 || mode==Mode::TELEOP){
-			/*if (!nudges[0].timer.done()) goal.x=-.45;
+			if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;
-			else*/ goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
+			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 			if (!nudges[2].timer.done()) goal.y=-.2;
 			else if (!nudges[3].timer.done()) goal.y=.2;
 			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER]);
@@ -114,23 +109,28 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			else if (!nudges[5].timer.done()) goal.theta=.2;
 			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
-			for (int i=2;i<6;i++) {
+			const unsigned int buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
+			for (int i=0;i<6;i++) {
 				nudges[i].start=nudges[i].trigger(main_joystick.button[buttons[i]]);
 				if (nudges[i].start) nudges[i].timer.set(.1);
 				nudges[i].timer.update(in.now,1);
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
+				if(gunner_joystick.button[Gamepad_button::X]){
+					sticky_lift_goal=Sticky_goal::MID;
+					return Lift::Goal::go_to_height(50);
+				}
 				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::up();
 				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::down();
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
-				if(gunner_joystick.button[Gamepad_button::RB]){
+				if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::up();
 				}
-				if(gunner_joystick.button[Gamepad_button::LB]){
+				if(gunner_joystick.button[Gamepad_button::RB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::down();
 				}
@@ -154,11 +154,19 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goal.y=0;
 			goal.theta=0;
 		}
+		
+		//Drivebase::Output out = control(status_detail, goal);
+
 		Toplevel::Status r_status;
 		//r_status.drive_status=;
 		r_status.lift_status_can=lift_can.estimator.get();
 		r_status.lift_status_tote=lift_tote.estimator.get();
 		Toplevel::Output r_out=control(r_status,goals); 
+
+		Robot_outputs r;
+		for(unsigned i=0;i<r.PWMS;i++){
+			r.pwm[i]=0;
+		}
 		r=drivebase.output_applicator(r,r_out.drive);
 		r=lift_can.output_applicator(r,r_out.lift_can);
 		r=lift_tote.output_applicator(r,r_out.lift_tote);

@@ -257,7 +257,7 @@ Lift::Lift(int can_address):output_applicator(can_address){}
 
 bool ready(Lift::Status status,Lift::Goal goal){
 	switch(goal.mode()){
-		case Lift::Goal::Mode::GO_TO_HEIGHT: return status.type()==Lift::Status::Type::ERRORS;
+		case Lift::Goal::Mode::GO_TO_HEIGHT: return 1;
 		case Lift::Goal::Mode::DOWN: return status.type()==Lift::Status::Type::BOTTOM;
 		case Lift::Goal::Mode::UP: return status.type()==Lift::Status::Type::TOP;
 		case Lift::Goal::Mode::STOP: return 1;

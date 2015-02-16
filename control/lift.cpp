@@ -96,6 +96,57 @@ Lift::Status_detail Lift::Status_detail::mid(double d){
 	return r;
 }
 
+Lift::Goal::Mode Lift::Goal::mode()const{
+	return mode_;
+}
+
+double Lift::Goal::height()const{
+	assert(mode_==Lift::Goal::Mode::GO_TO_HEIGHT);
+	return height_;
+}
+
+Lift::Goal Lift::Goal::up(){
+	Lift::Goal r;
+	r.mode_=Lift::Goal::Mode::UP;
+	return r;
+}
+
+Lift::Goal Lift::Goal::down(){
+	Lift::Goal r;
+	r.mode_=Lift::Goal::Mode::DOWN;
+	return r;
+}
+
+Lift::Goal Lift::Goal::stop(){
+	Lift::Goal r;
+	r.mode_=Lift::Goal::Mode::STOP;
+	return r;
+}
+
+Lift::Goal Lift::Goal::go_to_height(double d){
+	Lift::Goal r;
+	r.mode_=Lift::Goal::Mode::GO_TO_HEIGHT;
+	r.height_=d;
+	return r;
+}
+
+bool operator==(Lift::Goal a,Lift::Goal b){
+	if(a.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) return a.mode()==b.mode() && a.height()==b.height();
+	return a.mode()==b.mode();
+}
+
+bool operator!=(Lift::Goal a,Lift::Goal b){
+	return !(a==b);
+}
+
+bool operator<(Lift::Goal a,Lift::Goal b){
+	if(a.mode()==b.mode()){
+		if(a.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) return a.height()<b.height();
+		return 0;
+	}
+	return a.mode()<b.mode();
+}
+
 ostream& operator<<(ostream& o,Lift::Status_detail::Type a){
 	#define X(name) if(a==Lift::Status_detail::Type::name) return o<<""#name;
 	X(ERRORS) X(TOP) X(BOTTOM) X(MID)
@@ -134,11 +185,17 @@ std::set<Lift::Status_detail> examples(Lift::Status_detail*){
 	};
 }
 
-std::ostream& operator<<(std::ostream& o,Lift::Goal a){
-	#define X(name) if(a==Lift::Goal::name) return o<<""#name;
-	X(DOWN) X(UP) X(STOP)
+std::ostream& operator<<(std::ostream& o,Lift::Goal::Mode a){
+	#define X(name) if(a==Lift::Goal::Mode::name) return o<<""#name;
+	X(GO_TO_HEIGHT) X(DOWN) X(UP) X(STOP)
 	#undef X
 	nyi
+}
+
+std::ostream& operator<<(std::ostream& o,Lift::Goal a){
+	o<<"mode: "<<a.mode();
+	if(a.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) o<<" height:"<<a.height();
+	return o;
 }
 
 std::ostream& operator<<(std::ostream& o,Lift const&){
@@ -152,11 +209,11 @@ Lift::Status status(Lift::Status_detail const& a){
 
 Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goal){
 	const double POWER=-0.45;
-	if(goal==Lift::Goal::UP) return  POWER; 
-	if(goal==Lift::Goal::DOWN) return -POWER;
+	if(goal.mode()==Lift::Goal::Mode::UP) return  POWER; 
+	if(goal.mode()==Lift::Goal::Mode::DOWN) return -POWER;
 	return 0.0;
 	/*switch(goal){
-		case Lift::Goal::DOWN:
+		case Lift::Goal::Mode::DOWN:
 			switch(status.type()){
 				case Lift::Status_detail::Type::BOTTOM:
 				case Lift::Status_detail::Type::ERROR:
@@ -166,7 +223,7 @@ Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goa
 					return -1;
 				default: assert(0);
 			}
-		case Lift::Goal::UP:
+		case Lift::Goal::Mode::UP:
 			switch(status.type()){
 				case Lift::Status_detail::Type::TOP:
 				case Lift::Status_detail::Type::ERROR:
@@ -176,21 +233,34 @@ Lift::Output control(Lift::Status_detail const& /*status*/,Lift::Goal const& goa
 					return 1;
 				default: assert(0);
 			}
-		case Lift::Goal::STOP: return 0;
+		case Lift::Goal::Mode::STOP: return 0;
 		default:
 			nyi
 	}*/
 }
 
-set<Lift::Goal> examples(Lift::Goal*){ return {Lift::Goal::DOWN,Lift::Goal::UP,Lift::Goal::STOP}; }
+set<Lift::Goal> examples(Lift::Goal*){ 
+	set<Lift::Goal> goals;
+	Lift::Goal goal;
+	goal=goal.go_to_height(0);
+	goals.insert(goal);
+	goal=goal.down();
+	goals.insert(goal);
+	goal=goal.up();
+	goals.insert(goal);
+	goal=goal.stop();
+	goals.insert(goal);
+	return goals;//{Lift::Goal::Mode::GO_TO_HEIGHT,Lift::Goal::Mode::DOWN,Lift::Goal::Mode::UP,Lift::Goal::Mode::STOP}; 
+}
 
 Lift::Lift(int can_address):output_applicator(can_address){}
 
 bool ready(Lift::Status status,Lift::Goal goal){
-	switch(goal){
-		case Lift::Goal::DOWN: return status.type()==Lift::Status::Type::BOTTOM;
-		case Lift::Goal::UP: return status.type()==Lift::Status::Type::TOP;
-		case Lift::Goal::STOP: return 1;
+	switch(goal.mode()){
+		case Lift::Goal::Mode::GO_TO_HEIGHT: return status.type()==Lift::Status::Type::ERRORS;
+		case Lift::Goal::Mode::DOWN: return status.type()==Lift::Status::Type::BOTTOM;
+		case Lift::Goal::Mode::UP: return status.type()==Lift::Status::Type::TOP;
+		case Lift::Goal::Mode::STOP: return 1;
 		default:
 			nyi
 	}
@@ -322,7 +392,9 @@ int main(){
 	}*/
 	Lift a(4);
 	tester(a);
-	run(a,0,Lift::Input{0,0,0},Lift::Output{},Lift::Goal::UP);
+	Lift::Goal goal;
+	goal=goal.up();
+	run(a,0,Lift::Input{0,0,0},Lift::Output{},goal);
 
 	for(unsigned i=0;i<30;i++){
 		cout<<i<<"\t"<<acceleration_range(60,i)<<"\n";

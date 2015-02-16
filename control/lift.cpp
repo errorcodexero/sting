@@ -1,6 +1,7 @@
 #include "lift.h"
 #include <stdlib.h>
 #include "../util/util.h"
+#include "../util/interface.h"
 
 using namespace std;
 
@@ -355,6 +356,16 @@ ostream& operator<<(ostream& o,Lift_sim const& a){
 }
 
 static const double GEAR_RATIO=10;//to 1
+
+Talon_srx_output set_Talon_inverse(bool input, Talon_srx_output out){
+	if(input==1){
+		out=1;
+	}
+	else{
+		out=0;
+	}	
+	return out;
+}
 
 //returns motor speed
 double linear_to_rpm(double in_per_sec){

@@ -61,7 +61,7 @@ string abbreviate_text(string s){
 }
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost){
-	return pow(joystick.axis[axis], 3)*(.6+.4*-boost);
+	return pow(joystick.axis[axis], 3)*(.6+.4*boost);
 }
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
@@ -106,13 +106,13 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		if(1 || mode==Mode::TELEOP){
 			if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;
-			else goal.x=main_joystick.axis[0];
+			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 			if (!nudges[2].timer.done()) goal.y=-.2;
 			else if (!nudges[3].timer.done()) goal.y=.2;
-			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[2]);
+			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER]);
 			if (!nudges[4].timer.done()) goal.theta=-.2;
 			else if (!nudges[5].timer.done()) goal.theta=.2;
-			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[2]);//theta is /2 so rotation is reduced to prevent bin tipping.
+			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
 			for (int i=0;i<6;i++) {
 				nudges[i].start=nudges[i].trigger(main_joystick.button[buttons[i]]);
@@ -121,16 +121,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
-				if(gunner_joystick.axis[Gamepad_axis::TRIGGER]==-1) return Lift::Goal::UP;
-				if(gunner_joystick.axis[Gamepad_axis::TRIGGER]==1) return Lift::Goal::DOWN;
+				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::UP;
+				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::DOWN;
 				return Lift::Goal::STOP;
 			}();
 			goals.lift_goal_tote=[&](){
-				if(gunner_joystick.button[Gamepad_button::LB]){
+				if(gunner_joystick.button[Gamepad_button::RB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::Mode::UP;
 				}
-				if(gunner_joystick.button[Gamepad_button::RB]){
+				if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::Mode::DOWN;
 				}

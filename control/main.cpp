@@ -130,6 +130,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 					sticky_lift_goal=Sticky_goal::MID;
 					return Lift::Goal::down();
 				}
+				if(gunner_joystick.button[Gamepad_button::X]){
+					sticky_lift_goal=Sticky_goal::MID;
+					return Lift::Goal::go_to_height(50);
+				}
 				if(gunner_joystick.button[Gamepad_button::A]){
 					sticky_lift_goal=Sticky_goal::MIN;
 				}

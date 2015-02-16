@@ -1,9 +1,9 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include<iosfwd>
-#include<bitset>
-#include<array>
+#include <iosfwd>
+#include <bitset>
+#include <array>
 #include "jag_interface.h"
 #include "driver_station_interface.h"
 #include "maybe_inline.h"

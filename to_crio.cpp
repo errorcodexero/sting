@@ -319,7 +319,7 @@ public:
 		return make_pair(r,error_code);
 	}
 
-	int set_solenoid(unsigned i,Solenoid_output v){
+	int set_solenoid(unsigned /*i*/,Solenoid_output /*v*/){
 		/*if(i>=Robot_outputs::SOLENOIDS) return 1;
 		if(!solenoid[i]) return 2;
 		solenoid[i]->Set(v);*/
@@ -342,7 +342,7 @@ public:
 		return 0;
 	}
 
-	int set_relay(unsigned i,Relay_output out){
+	int set_relay(unsigned i,Relay_output /*out*/){
 		if(i>=Robot_outputs::RELAYS) return 1;
 		/*if(!relay[i]) return 2;
 		relay[i]->Set([=](){
@@ -355,7 +355,7 @@ public:
 		return 0;
 	}
 
-	int set_outputs(Robot_outputs out,bool enabled){
+	int set_outputs(Robot_outputs out,bool /*enabled*/){
 		int error_code=0;
 		for(unsigned i=0;i<Robot_outputs::PWMS;i++){
 			int r=set_pwm(i,out.pwm[i]);

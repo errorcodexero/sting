@@ -139,9 +139,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(gunner_joystick.button[Gamepad_button::Y]){
 					sticky_lift_goal=Sticky_goal::MAX;
 				}
-				if(sticky_lift_goal==Sticky_goal::MIN && in.robot_mode.enabled==1 && in.robot_mode.autonomous==0) return Lift::Goal::down();
-				if(sticky_lift_goal==Sticky_goal::MID && in.robot_mode.enabled==1 && in.robot_mode.autonomous==0) return Lift::Goal::stop();
-				if(sticky_lift_goal==Sticky_goal::MAX && in.robot_mode.enabled==1 && in.robot_mode.autonomous==0) return Lift::Goal::up();
+				if(sticky_lift_goal==Sticky_goal::MIN && in.robot_mode.enabled && !in.robot_mode.autonomous) return Lift::Goal::down();
+				if(sticky_lift_goal==Sticky_goal::MID && in.robot_mode.enabled && !in.robot_mode.autonomous) return Lift::Goal::stop();
+				if(sticky_lift_goal==Sticky_goal::MAX && in.robot_mode.enabled && !in.robot_mode.autonomous) return Lift::Goal::up();
 				return Lift::Goal::stop();
 			}();
 		} 

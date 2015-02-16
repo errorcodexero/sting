@@ -23,7 +23,7 @@
 	-use enum class more places
 	-use std::array in place of C arrays in several places
 -Try out serial console cable
--Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ )
+-Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968)
 
 NICE THINGS TO HAVE:
 -Drive to Wall

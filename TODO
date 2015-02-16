@@ -3,14 +3,14 @@
 		-Fix the "rm ~/.ssh/known_hosts" problem
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 -Try out the new Talon SRX's
-	-CAN
+	-CAN -Logan
 	-sensor-based closed-loop modes
 -Autonomous mode stuff-Logan and Matthew
 -Drivebase code
-	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel)-Logan
+	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel) -Logan
 -Lifter Code
 	-UI
-	-Motor and Encoders-Matthew
+	-Motor and Encoders -Matthew and Logan
 	-Gripper? 
 	-Lifter Simulator-Jared
 	-figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
@@ -18,7 +18,7 @@
 -OI:
 	-put in outputs
 		-into framework-Adrian
-		-figure out if need to reprogram the TI launchpad-Adrian
+		-figure out if need to reprogram the TI launchpad -Adrian
 -Cleanup stuff:
 	-use enum class more places
 	-use std::array in place of C arrays in several places

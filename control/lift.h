@@ -54,7 +54,23 @@ struct Lift{
 	};
 	Output_applicator output_applicator;
 
-	enum class Goal{UP,DOWN,STOP};
+	class Goal{
+		public:
+		enum class Mode{GO_TO_HEIGHT,UP,DOWN,STOP};
+		
+		private:
+		Mode mode_;
+		double height_;
+		
+		public:
+		Mode mode()const;
+		double height()const;
+		
+		static Goal go_to_height(double);
+		static Goal up();
+		static Goal down();
+		static Goal stop();
+	};
 	
 	explicit Lift(int);
 };
@@ -71,13 +87,17 @@ bool operator<(Lift::Status_detail const&,Lift::Status_detail const&);
 bool operator==(Lift::Status_detail const&,Lift::Status_detail const&);
 std::set<Lift::Status_detail> examples(Lift::Status_detail*);
 
+std::ostream& operator<<(std::ostream&,Lift::Goal::Mode);
 std::ostream& operator<<(std::ostream&,Lift::Goal);
+bool operator==(Lift::Goal,Lift::Goal);
+bool operator!=(Lift::Goal,Lift::Goal);
+bool operator<(Lift::Goal,Lift::Goal);
 std::set<Lift::Goal> examples(Lift::Goal*);
 
 std::ostream& operator<<(std::ostream&,Lift const&);
 
 Lift::Status status(Lift::Status_detail const&);
 Lift::Output control(Lift::Status_detail const&, Lift::Goal const&);
-bool ready(Lift::Status,Lift::Goal);
+bool ready(Lift::Status,Lift::Goal::Mode);
 
 #endif

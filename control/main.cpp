@@ -95,17 +95,13 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		out=control(status_detail, goal);
 		
 		Lift::Input can_input;
-		Lift::Output can_output;
 		can_input.top=in.talon_srx[0].fwd_limit_switch;
 		can_input.bottom=in.talon_srx[0].rev_limit_switch;
 		can_input.ticks=in.talon_srx[0].encoder_position;
-		can_output=r.talon_srx[0].power_level;
 		Lift::Input tote_input;
-		Lift::Output tote_output;
 		tote_input.top=in.talon_srx[1].fwd_limit_switch;
 		tote_input.bottom=in.talon_srx[1].rev_limit_switch;
 		tote_input.ticks=in.talon_srx[1].encoder_position;
-		tote_output=r.talon_srx[1].power_level;
 		
 		if(1 || mode==Mode::TELEOP){
 			if (!nudges[0].timer.done()) goal.x=-.45;
@@ -125,18 +121,18 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
-				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::UP;
-				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::DOWN;
-				return Lift::Goal::STOP;
+				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0) return Lift::Goal::up();
+				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0) return Lift::Goal::down();
+				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
 				if(gunner_joystick.button[Gamepad_button::RB]){
 					sticky_lift_goal=Sticky_goal::MID;
-					return Lift::Goal::UP;
+					return Lift::Goal::up();
 				}
 				if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_lift_goal=Sticky_goal::MID;
-					return Lift::Goal::DOWN;
+					return Lift::Goal::down();
 				}
 				if(gunner_joystick.button[Gamepad_button::A]){
 					sticky_lift_goal=Sticky_goal::MIN;
@@ -147,10 +143,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(gunner_joystick.button[Gamepad_button::Y]){
 					sticky_lift_goal=Sticky_goal::MAX;
 				}
-				if(sticky_lift_goal==Sticky_goal::MIN) return Lift::Goal::DOWN;
-				if(sticky_lift_goal==Sticky_goal::MID) return Lift::Goal::STOP;
-				if(sticky_lift_goal==Sticky_goal::MAX) return Lift::Goal::UP;
-				return Lift::Goal::STOP;
+				if(sticky_lift_goal==Sticky_goal::MIN) return Lift::Goal::down();
+				if(sticky_lift_goal==Sticky_goal::MID) return Lift::Goal::stop();
+				if(sticky_lift_goal==Sticky_goal::MAX) return Lift::Goal::up();
+				return Lift::Goal::stop();
 			}();
 		} 
 		else if(mode==Mode::AUTO_MOVE){
@@ -190,8 +186,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			return 0.0;
 		}();*/
 		r=force(r);
-		lift_can.estimator.update(in.now,can_input,can_output);
-		lift_tote.estimator.update(in.now,tote_input,tote_output);
+		lift_can.estimator.update(in.now,can_input,lift_can.output_applicator(r));
+		lift_tote.estimator.update(in.now,tote_input,lift_tote.output_applicator(r));
 		return r;
 	}
 	/*

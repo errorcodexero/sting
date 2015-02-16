@@ -59,6 +59,8 @@ struct Lift{
 		enum class Mode{GO_TO_HEIGHT,UP,DOWN,STOP};
 		
 		private:
+		Goal();
+		
 		Mode mode_;
 		double height_;
 		

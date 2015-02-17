@@ -26,11 +26,23 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 			last=Lift::Status_detail::mid(((in.ticks-bottom_location)/CLICKS_PER_INCH));
 		}
 	}
-	cout<<endl<<"Bottom: "<<bottom_location<<endl<<"Ticks: "<<in.ticks<<endl<<endl;
+	//cout<<endl<<"Bottom: "<<bottom_location<<endl<<"Ticks: "<<in.ticks<<endl<<endl;
 	
 }
 
 Lift::Status_detail Lift::Estimator::get()const{ return last; }
+
+ostream& operator<<(ostream& o, Lift::Estimator estimator) {
+	o<<"Lift::Estimator(";
+	o<<"Last: "<<estimator.last<<"Bottom Location: "<<estimator.bottom_location;
+	return o<<")";
+}
+
+ostream& operator<<(ostream& o, Lift::Output_applicator output_applicator) {
+	o<<"Lift::Output_applicator(";
+	o<<"Can Address: "<<output_applicator.can_address;
+	return o<<")";
+}
 
 Lift::Output_applicator::Output_applicator(int a):can_address(a){}
 
@@ -75,7 +87,7 @@ Lift::Goal::Goal(){}
 Lift::Status_detail::Type Lift::Status_detail::type()const{ return type_; }
 
 double Lift::Status_detail::inches_off_ground()const{
-	//assert(type_==Lift::Status_detail::Type::MID);
+	assert(type_==Lift::Status_detail::Type::MID);
 	return height;
 }
 
@@ -206,8 +218,8 @@ std::ostream& operator<<(std::ostream& o,Lift::Goal a){
 	return o;
 }
 
-std::ostream& operator<<(std::ostream& o,Lift const&){
-	o<<"Lift(";
+std::ostream& operator<<(std::ostream& o,Lift const& lift){
+	o<<"Lift("<<"Estimator: "<<lift.estimator<<" Output Applicator: "<<lift.output_applicator;
 	return o<<")";
 }
 
@@ -219,7 +231,7 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 	const double PRESET_POWER=1.0;//The sign of this variable changes which direction the lifters go
 	const double MANUAL_POWER=0.45;
 	const double P=(PRESET_POWER/5);
-	cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
+	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
 	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 		switch (status.type()) {
 			case Lift::Status_detail::Type::MID:

@@ -161,7 +161,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goal.y=0;
 			goal.theta=0;
 		}
-		
+		cout<<"Can: "<<lift_can<<endl;
+		cout<<"Tote: "<<lift_tote<<endl;	
 		//Drivebase::Output out = control(status_detail, goal);
 
 		Toplevel::Status r_status;

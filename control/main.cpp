@@ -155,10 +155,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 				if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 				if(sticky_can_goal==Sticky_can_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL+4);
-				if(sticky_can_goal==Sticky_can_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL)+4);
-				if(sticky_can_goal==Sticky_can_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL)+4);
-				if(sticky_can_goal==Sticky_can_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL)+4);
-				if(sticky_can_goal==Sticky_can_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL)+4);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL)-6);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL)-6);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL)-6);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL)-6);
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
@@ -199,10 +199,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 				if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL+4);
-				if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL)+4);
-				if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL)+4);
-				if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL)+4);
-				if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL)+4);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL)-6);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL)-6);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL)-6);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL)-6);
 				return Lift::Goal::stop();
 			}();
 		} 

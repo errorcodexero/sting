@@ -15,16 +15,19 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 			last=Lift::Status_detail::error();
 		}else{
 			last=Lift::Status_detail::top();
+			bottom_location=in.ticks-5712;
 		}
 	}else{
 		if(in.bottom){
 			last=Lift::Status_detail::bottom();
 			bottom_location=in.ticks;
 		}else{
-			static const float CLICKS_PER_INCH = 11.7892550438441;
-			last=Lift::Status_detail::mid(6+(in.ticks-bottom_location)/CLICKS_PER_INCH);
+			static const float CLICKS_PER_INCH = 8*11.7892550438441;
+			last=Lift::Status_detail::mid(((in.ticks-bottom_location)/CLICKS_PER_INCH));
 		}
 	}
+	cout<<endl<<"Bottom: "<<bottom_location<<endl<<"Ticks: "<<in.ticks<<endl<<endl;
+	
 }
 
 Lift::Status_detail Lift::Estimator::get()const{ return last; }
@@ -72,7 +75,7 @@ Lift::Goal::Goal(){}
 Lift::Status_detail::Type Lift::Status_detail::type()const{ return type_; }
 
 double Lift::Status_detail::inches_off_ground()const{
-	assert(type_==Lift::Status_detail::Type::MID);
+	//assert(type_==Lift::Status_detail::Type::MID);
 	return height;
 }
 
@@ -213,32 +216,37 @@ Lift::Status status(Lift::Status_detail const& a){
 }
 
 Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	const double POWER=0.45;//The sign of this variable changes which direction the lifters go
+	const double PRESET_POWER=1.0;//The sign of this variable changes which direction the lifters go
+	const double MANUAL_POWER=0.45;
+	const double P=(PRESET_POWER/5);
+	cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
 	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 		switch (status.type()) {
 			case Lift::Status_detail::Type::MID:
-				{	
-					double error = status.inches_off_ground()-goal.height();
-					error *= (POWER/10);
-					if (error>POWER) return POWER;
-					if (error<-POWER) return -POWER;
-					return error;
+				{
+					double error = goal.height()-status.inches_off_ground();
+					//cout<<endl<<"Error: "<<error<<endl<<endl;
+					double desired_output_power =error*P;
+					//cout<<"Desired Output Power: "<<desired_output_power<<endl<<endl;
+					if (desired_output_power>PRESET_POWER) return PRESET_POWER;
+					if (desired_output_power<-PRESET_POWER) return -PRESET_POWER;
+					return desired_output_power;
 					/*if (status.inches_off_ground()<goal.height()) return POWER;
 					else if (status.inches_off_ground()>goal.height()) return -POWER;
 					return 0.0;*/
 				}
 			case Lift::Status_detail::Type::TOP:
-				return -POWER;
+				return -MANUAL_POWER;
 			case Lift::Status_detail::Type::BOTTOM:
-				return POWER;
+				return MANUAL_POWER;
 			case Lift::Status_detail::Type::ERRORS:
 				return 0.0;
 			default:
 				assert(0);
 		}
 	}
-	if(goal.mode()==Lift::Goal::Mode::UP) return  POWER; 
-	if(goal.mode()==Lift::Goal::Mode::DOWN) return -POWER;
+	if(goal.mode()==Lift::Goal::Mode::UP) return  MANUAL_POWER; 
+	if(goal.mode()==Lift::Goal::Mode::DOWN) return -MANUAL_POWER;
 	if(goal.mode()==Lift::Goal::Mode::STOP) return 0.0;
 	assert(0);
 	/*switch(goal){

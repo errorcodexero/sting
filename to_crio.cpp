@@ -395,7 +395,7 @@ public:
 		//test.Set(1);
 		test1.Set(out.talon_srx[0].power_level);
 		test2.Set(out.talon_srx[1].power_level);
-		test2.SetSensorDirection(1);
+		//test2.SetSensorDirection(0);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();
 			if(ds){
@@ -515,7 +515,7 @@ public:
 		in.talon_srx[0].encoder_position=-test1.GetEncPosition();
 		in.talon_srx[1].fwd_limit_switch=test2.IsFwdLimitSwitchClosed();
 		in.talon_srx[1].rev_limit_switch=test2.IsRevLimitSwitchClosed();
-		in.talon_srx[1].encoder_position=test2.GetEncPosition();
+		in.talon_srx[1].encoder_position=-test2.GetEncPosition();
 		//cout<<"in:"<<in<<"\n";
 		//}
 		/*if(gyro){

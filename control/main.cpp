@@ -116,6 +116,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				nudges[i].timer.update(in.now,1);
 			}
 			goals.drive=goal;
+			static const double LEVEL = 14;
 			goals.lift_goal_can=[&](){
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_can_goal=Sticky_can_goal::STOP;
@@ -128,17 +129,42 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 					sticky_can_goal=Sticky_can_goal::STOP;
 					return Lift::Goal::down();
 				}
-				/*if(gunner_joystick.button[Gamepad_button::X]){
-					sticky_can_goal=Sticky_can_goal::HEIGHT;
-				}*/
+				if(gunner_joystick.button[Gamepad_button::R_JOY]){
+					sticky_can_goal=Sticky_can_goal::BOTTOM;
+				}
+				Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
+				switch (section) {
+					case Joystick_section::DOWN:
+						sticky_can_goal=Sticky_can_goal::LEVEL1;
+						break;
+					case Joystick_section::LEFT:
+						sticky_can_goal=Sticky_can_goal::LEVEL2;
+						break;
+					case Joystick_section::RIGHT:
+						sticky_can_goal=Sticky_can_goal::LEVEL3;
+						break;
+					case Joystick_section::UP:
+						sticky_can_goal=Sticky_can_goal::LEVEL4;
+						break;
+					default:
+						sticky_can_goal=Sticky_can_goal::STOP;
+				}
+				if(gunner_joystick.button[Gamepad_button::START]){
+					sticky_can_goal=Sticky_can_goal::LEVEL5;
+				}
 				if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
-				//if(sticky_can_goal==Sticky_can_goal::HEIGHT) return Lift::Goal::go_to_height(13.5);
+				if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
+				if(sticky_can_goal==Sticky_can_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL+4);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL)+4);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL)+4);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL)+4);
+				if(sticky_can_goal==Sticky_can_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL)+4);
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
-				}	
+				}
 				if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 					return Lift::Goal::up();
@@ -147,19 +173,36 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 					return Lift::Goal::down();
 				}
-				if(gunner_joystick.button[Gamepad_button::A]){
-					sticky_tote_goal=Sticky_tote_goal::MIN;
+				if(gunner_joystick.button[Gamepad_button::L_JOY]){
+					sticky_tote_goal=Sticky_tote_goal::BOTTOM;
 				}
-				if(gunner_joystick.button[Gamepad_button::Y]){
-					sticky_tote_goal=Sticky_tote_goal::MAX;
+				Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
+				switch (section) {
+					case Joystick_section::DOWN:
+						sticky_tote_goal=Sticky_tote_goal::LEVEL1;
+						break;
+					case Joystick_section::LEFT:
+						sticky_tote_goal=Sticky_tote_goal::LEVEL2;
+						break;
+					case Joystick_section::RIGHT:
+						sticky_tote_goal=Sticky_tote_goal::LEVEL3;
+						break;
+					case Joystick_section::UP:
+						sticky_tote_goal=Sticky_tote_goal::LEVEL4;
+						break;
+					default:
+						sticky_tote_goal=Sticky_tote_goal::STOP;
 				}
-				if(gunner_joystick.button[Gamepad_button::X]){
-					sticky_tote_goal=Sticky_tote_goal::HEIGHT;
-				}	
+				if(gunner_joystick.button[Gamepad_button::BACK]){
+					sticky_tote_goal=Sticky_tote_goal::LEVEL5;
+				}
 				if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
-				if(sticky_tote_goal==Sticky_tote_goal::MIN) return Lift::Goal::down();
-				if(sticky_tote_goal==Sticky_tote_goal::MAX) return Lift::Goal::up();
-				if(sticky_tote_goal==Sticky_tote_goal::HEIGHT) return Lift::Goal::go_to_height(15.5);
+				if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL+4);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL)+4);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL)+4);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL)+4);
+				if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL)+4);
 				return Lift::Goal::stop();
 			}();
 		} 

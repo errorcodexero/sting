@@ -36,10 +36,10 @@ struct Main{
 	Lift lift_can;
 	Lift lift_tote;
 
-	enum class Sticky_can_goal{STOP,HEIGHT};
+	enum class Sticky_can_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5};
 	Sticky_can_goal sticky_can_goal;
 	
-	enum class Sticky_tote_goal{STOP,MIN,MAX,HEIGHT};
+	enum class Sticky_tote_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5};
 	Sticky_tote_goal sticky_tote_goal;
 	
 	struct Nudge{

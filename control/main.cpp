@@ -37,7 +37,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 }
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0),sticky_tote_goal(Sticky_tote_goal::MID),sticky_can_goal(Sticky_can_goal::MID){}
+Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
 
@@ -97,7 +97,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		tote_input.top=in.talon_srx[0].fwd_limit_switch;
 		tote_input.bottom=in.talon_srx[0].rev_limit_switch;
 		tote_input.ticks=in.talon_srx[0].encoder_position;
-		if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::MID;
+		if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 		if(1 || mode==Mode::TELEOP){
 			if (!nudges[0].timer.done()) goal.x=-.45;
 			else if (!nudges[1].timer.done()) goal.x=.45;
@@ -117,42 +117,49 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			}
 			goals.drive=goal;
 			goals.lift_goal_can=[&](){
+				if(gunner_joystick.button[Gamepad_button::B]){
+					sticky_can_goal=Sticky_can_goal::STOP;
+				}
 				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
-					sticky_can_goal=Sticky_can_goal::MID;
+					sticky_can_goal=Sticky_can_goal::STOP;
 					return Lift::Goal::up();
 				}
 				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
-					sticky_can_goal=Sticky_can_goal::MID;
+					sticky_can_goal=Sticky_can_goal::STOP;
 					return Lift::Goal::down();
 				}
-				if(gunner_joystick.button[Gamepad_button::X]){
+				/*if(gunner_joystick.button[Gamepad_button::X]){
 					sticky_can_goal=Sticky_can_goal::HEIGHT;
-				}	
-				if(sticky_can_goal==Sticky_can_goal::MID) return Lift::Goal::stop();
-				if(sticky_can_goal==Sticky_can_goal::HEIGHT) return Lift::Goal::go_to_height(30);	
+				}*/
+				if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
+				//if(sticky_can_goal==Sticky_can_goal::HEIGHT) return Lift::Goal::go_to_height(13.5);
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
+				if(gunner_joystick.button[Gamepad_button::B]){
+					sticky_tote_goal=Sticky_tote_goal::STOP;
+				}	
 				if(gunner_joystick.button[Gamepad_button::LB]){
-					sticky_tote_goal=Sticky_tote_goal::MID;
+					sticky_tote_goal=Sticky_tote_goal::STOP;
 					return Lift::Goal::up();
 				}
 				if(gunner_joystick.button[Gamepad_button::RB]){
-					sticky_tote_goal=Sticky_tote_goal::MID;
+					sticky_tote_goal=Sticky_tote_goal::STOP;
 					return Lift::Goal::down();
 				}
 				if(gunner_joystick.button[Gamepad_button::A]){
 					sticky_tote_goal=Sticky_tote_goal::MIN;
 				}
-				if(gunner_joystick.button[Gamepad_button::B]){
-					sticky_tote_goal=Sticky_tote_goal::MID;
-				}
 				if(gunner_joystick.button[Gamepad_button::Y]){
 					sticky_tote_goal=Sticky_tote_goal::MAX;
 				}
+				if(gunner_joystick.button[Gamepad_button::X]){
+					sticky_tote_goal=Sticky_tote_goal::HEIGHT;
+				}	
+				if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 				if(sticky_tote_goal==Sticky_tote_goal::MIN) return Lift::Goal::down();
-				if(sticky_tote_goal==Sticky_tote_goal::MID) return Lift::Goal::stop();
 				if(sticky_tote_goal==Sticky_tote_goal::MAX) return Lift::Goal::up();
+				if(sticky_tote_goal==Sticky_tote_goal::HEIGHT) return Lift::Goal::go_to_height(15.5);
 				return Lift::Goal::stop();
 			}();
 		} 

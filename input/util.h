@@ -12,8 +12,7 @@ Joystick_section divide_vertical(double y);
 
 namespace Gamepad_button{
 	//how the logitech gamepads appear in the driver station
-	static const unsigned A=0,B=1,X=2;
-	static const unsigned Y=3,LB=4,RB=5,BACK=6,START=7,L_JOY=8,R_JOY=9;
+	static const unsigned A=0,B=1,X=2,Y=3,LB=4,RB=5,BACK=6,START=7,L_JOY=8,R_JOY=9;
 }
 namespace Gamepad_axis{
 	//How the axes appear in the DS; though

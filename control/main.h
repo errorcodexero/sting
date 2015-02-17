@@ -35,13 +35,13 @@ struct Main{
 	
 	Lift lift_can;
 	Lift lift_tote;
-	
-	enum class Sticky_tote_goal{MIN,MID,MAX};
-	Sticky_tote_goal sticky_tote_goal;
 
-	enum class Sticky_can_goal{MID,HEIGHT};
-	Sticky_can_goal sticky_can_goal;	
-		
+	enum class Sticky_can_goal{STOP,HEIGHT};
+	Sticky_can_goal sticky_can_goal;
+	
+	enum class Sticky_tote_goal{STOP,MIN,MAX,HEIGHT};
+	Sticky_tote_goal sticky_tote_goal;
+	
 	struct Nudge{
 		Posedge_trigger trigger;
 		Countdown_timer timer;

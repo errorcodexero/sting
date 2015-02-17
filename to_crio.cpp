@@ -510,12 +510,15 @@ public:
 			//in.digital_io[i]=digital_io[i].get();
 		}
 		//for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
-		in.talon_srx[0].fwd_limit_switch=test1.IsFwdLimitSwitchClosed();
-		in.talon_srx[0].rev_limit_switch=test1.IsRevLimitSwitchClosed();
-		in.talon_srx[0].encoder_position=-test1.GetEncPosition();
-		in.talon_srx[1].fwd_limit_switch=test2.IsFwdLimitSwitchClosed();
-		in.talon_srx[1].rev_limit_switch=test2.IsRevLimitSwitchClosed();
-		in.talon_srx[1].encoder_position=-test2.GetEncPosition();
+		auto f=[&](int index,CANTalon& test) {
+			in.talon_srx[index].fwd_limit_switch=test.IsFwdLimitSwitchClosed();
+			in.talon_srx[index].rev_limit_switch=test.IsRevLimitSwitchClosed();
+			in.talon_srx[index].encoder_position=-test.GetEncPosition();
+			in.talon_srx[index].a=test.GetPinStateQuadA();
+			in.talon_srx[index].b=test.GetPinStateQuadB();
+		};
+		f(0,test1);
+		f(1,test2);
 		//cout<<"in:"<<in<<"\n";
 		//}
 		/*if(gyro){

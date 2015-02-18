@@ -222,6 +222,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Toplevel::Output r_out=control(r_status,goals); 
 
 		Robot_outputs r;
+		r.solenoid[0] = gunner_joystick.button[Gamepad_button::Y];
+
 		for(unsigned i=0;i<r.PWMS;i++){
 			r.pwm[i]=0;
 		}

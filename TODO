@@ -3,7 +3,6 @@
 		-Fix the "rm ~/.ssh/known_hosts" problem
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 -Try out the new Talon SRX's
-	-CAN -Logan
 	-sensor-based closed-loop modes
 -Autonomous mode stuff-Logan and Matthew
 -Drivebase code
@@ -12,7 +11,6 @@
 	-UI
 	-Motor and Encoders -Matthew and Logan
 	-Gripper? 
-	-Lifter Simulator-Jared
 	-figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
 -Write logging code
 -OI:
@@ -27,3 +25,4 @@
 
 NICE THINGS TO HAVE:
 -Drive to Wall
+

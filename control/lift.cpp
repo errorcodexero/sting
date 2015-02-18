@@ -146,6 +146,7 @@ Lift::Goal Lift::Goal::stop(){
 Lift::Goal Lift::Goal::go_to_height(double d){
 	Lift::Goal r;
 	r.mode_=Lift::Goal::Mode::GO_TO_HEIGHT;
+	cout<<" HEIGHT: "<<d<<endl;
 	r.height_=d;
 	return r;
 }

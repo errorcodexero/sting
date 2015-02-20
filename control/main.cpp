@@ -99,14 +99,17 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		tote_input.ticks=in.talon_srx[0].encoder_position;
 		if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 		if(1 || mode==Mode::TELEOP){
-			if (!nudges[0].timer.done()) goal.x=-.45;
-			else if (!nudges[1].timer.done()) goal.x=.45;
+			static const float X_NUDGE_POWER=.45;
+			static const float Y_NUDGE_POWER=.2;
+			static const float ROTATE_NUDGE_POWER=.2;
+			if (!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
+			else if (!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
 			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
-			if (!nudges[2].timer.done()) goal.y=-.2;
-			else if (!nudges[3].timer.done()) goal.y=.2;
+			if (!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
+			else if (!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
 			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER]);
-			if (!nudges[4].timer.done()) goal.theta=-.2;
-			else if (!nudges[5].timer.done()) goal.theta=.2;
+			if (!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
+			else if (!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
 			const unsigned int buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};

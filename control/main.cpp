@@ -61,7 +61,8 @@ string abbreviate_text(string s){
 }
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost){
-	return pow(joystick.axis[axis], 3)*(.6+.4*boost);
+	static const float DEFAULT_SPEED=.5;//Change these values to change the boost functions
+	return pow(joystick.axis[axis], 3)*(DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost);
 }
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
@@ -99,9 +100,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		tote_input.ticks=in.talon_srx[0].encoder_position;
 		if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 		if(1 || mode==Mode::TELEOP){
-			static const float X_NUDGE_POWER=.45;
+			static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 			static const float Y_NUDGE_POWER=.2;
-			static const float ROTATE_NUDGE_POWER=.2;
+			static const float ROTATE_NUDGE_POWER=.15;
 			if (!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
 			else if (!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
 			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];

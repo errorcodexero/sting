@@ -229,7 +229,7 @@ Lift::Status status(Lift::Status_detail const& a){
 }
 
 Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	const double PRESET_POWER=1.0;//The sign of this variable changes which direction the lifters go
+	const double PRESET_POWER=1.0;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
 	const double MANUAL_POWER=0.45;
 	const double P=(PRESET_POWER/5);
 	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;

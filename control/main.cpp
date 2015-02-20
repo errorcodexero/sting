@@ -230,6 +230,11 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		Robot_outputs r;
 		r.solenoid[0] = gunner_joystick.button[Gamepad_button::Y];
 
+		piston.update(gunner_joystick.button[Gamepad_button::Y]);
+		r.solenoid[0] = piston.get();
+
+
+
 		for(unsigned i=0;i<r.PWMS;i++){
 			r.pwm[i]=0;
 		}

@@ -36,6 +36,10 @@ struct Main{
 	Lift lift_can;
 	Lift lift_tote;
 
+	Posedge_toggle piston;
+	
+
+
 	enum class Sticky_can_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
 	Sticky_can_goal sticky_can_goal;
 	

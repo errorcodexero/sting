@@ -637,7 +637,6 @@ bool approx_equal(Main a,Main b){
 
 #ifdef MAIN_TEST
 #include<fstream>
-#include "wheel_sim.h"
 #include "monitor.h"
 
 Jaguar_input jag_at_speed(double speed){
@@ -661,7 +660,6 @@ vector<Control_status::Control_status> auto_test(ostream& o,double automodeknob)
 	Monitor<Robot_inputs> inputs;
 	Monitor<Main> state;
 	Monitor<Robot_outputs> outputs;
-	Shooter_sim shooter_sim;
 	for(unsigned i=0;i<1500;i++){
 		Robot_inputs in;
 		in.driver_station.analog[0]=automodeknob;
@@ -669,12 +667,9 @@ vector<Control_status::Control_status> auto_test(ostream& o,double automodeknob)
 		in.robot_mode.autonomous=1;
 		in.robot_mode.enabled=1;
 		//in.jaguar[JAG_TOP_OPEN_LOOP]=leave at 0
-		in.jaguar[JAG_TOP_FEEDBACK]=jag_at_speed(shooter_sim.estimate().top);
 		//in.jaguar[JAG_BOTTOM_OPEN_LOOP]=
-		in.jaguar[JAG_BOTTOM_FEEDBACK]=jag_at_speed(shooter_sim.estimate().bottom);
 		stringstream ss;
 		auto out_now=m(in,ss);
-		shooter_sim.update(in.now,shooter_output(out_now),out_now.solenoid[4]);
 		string change;
 		change+=inputs.update(in);
 		change+=state.update(m);

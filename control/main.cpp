@@ -104,14 +104,19 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 			static const float Y_NUDGE_POWER=.2;
 			static const float ROTATE_NUDGE_POWER=.15;
-			static const float BACK_TURN_POWER=.7;
+
+			static const float BACK_TURN_POWER=.2;
+			static const float BACK_MOVE_POWER=.5;
+
 			if (!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
 			else if (!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
 			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
+
 			if (!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
 			else if (!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
-			else if (!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_TURN_POWER;
+			else if (!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_MOVE_POWER;
 			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);
+
 			if (!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
 			else if (!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 			else if (!back_turns[0].timer.done()) goal.theta=BACK_TURN_POWER;
@@ -128,7 +133,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			static const unsigned int back_turn_buttons[2]={Gamepad_button::BACK,Gamepad_button::START};
 			for (int i=0;i<2;i++) {
 				back_turns[i].start=back_turns[i].trigger(main_joystick.button[back_turn_buttons[i]]);
-				if (back_turns[i].start) back_turns[i].timer.set(.5);
+				if (back_turns[i].start) back_turns[i].timer.set(1);
 				back_turns[i].timer.update(in.now,1);
 			}
 			

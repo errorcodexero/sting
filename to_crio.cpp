@@ -214,7 +214,7 @@ template<typename USER_CODE>
 class To_crio
 {
 	//todo: see if these still have to all be pointers or if there's some alternative w/ the roboRIO
-	//Solenoid *solenoid[Robot_outputs::SOLENOIDS];
+	Solenoid *solenoid[Robot_outputs::SOLENOIDS];
 	DIO_controls digital_io;
 	VictorSP *pwm[Robot_outputs::PWMS];
 	//Relay *relay[Robot_outputs::RELAYS];
@@ -242,9 +242,9 @@ public:
 				solenoid[i]=NULL;
 			}else{*/
 				//solenoid[i]=new Solenoid(solenoid_module+1,i+1);
-				//solenoid[i]=new Solenoid(i);//don't know of any way to determine module number, so just take the default one.
+				solenoid[i]=new Solenoid(i);//don't know of any way to determine module number, so just take the default one.
 				//solenoid[i]=new Solenoid(i+1);
-				//if(!solenoid[i]) error_code|=8;
+				if(!solenoid[i]) error_code|=8;
 			//}
 		}
 		
@@ -319,10 +319,10 @@ public:
 		return make_pair(r,error_code);
 	}
 
-	int set_solenoid(unsigned /*i*/,Solenoid_output /*v*/){
-		/*if(i>=Robot_outputs::SOLENOIDS) return 1;
+	int set_solenoid(unsigned i,Solenoid_output v){
+		if(i>=Robot_outputs::SOLENOIDS) return 1;
 		if(!solenoid[i]) return 2;
-		solenoid[i]->Set(v);*/
+		solenoid[i]->Set(v);
 		return 0;
 	}
 
@@ -513,7 +513,8 @@ public:
 		auto f=[&](int index,CANTalon& test) {
 			in.talon_srx[index].fwd_limit_switch=test.IsFwdLimitSwitchClosed();
 			in.talon_srx[index].rev_limit_switch=test.IsRevLimitSwitchClosed();
-			in.talon_srx[index].encoder_position=-test.GetEncPosition();
+			if(index==0) in.talon_srx[index].encoder_position=-test.GetEncPosition();
+			else in.talon_srx[index].encoder_position=test.GetEncPosition();
 			in.talon_srx[index].a=test.GetPinStateQuadA();
 			in.talon_srx[index].b=test.GetPinStateQuadB();
 		};

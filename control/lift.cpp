@@ -146,6 +146,7 @@ Lift::Goal Lift::Goal::stop(){
 Lift::Goal Lift::Goal::go_to_height(double d){
 	Lift::Goal r;
 	r.mode_=Lift::Goal::Mode::GO_TO_HEIGHT;
+	cout<<" HEIGHT: "<<d<<endl;
 	r.height_=d;
 	return r;
 }
@@ -228,7 +229,7 @@ Lift::Status status(Lift::Status_detail const& a){
 }
 
 Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	const double PRESET_POWER=1.0;//The sign of this variable changes which direction the lifters go
+	const double PRESET_POWER=.75;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
 	const double MANUAL_POWER=0.45;
 	const double P=(PRESET_POWER/5);
 	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;

@@ -60,9 +60,9 @@ string abbreviate_text(string s){
 	return ss.str();
 }
 
-double set_drive_speed(Joystick_data joystick, int axis, double boost){
-	static const float DEFAULT_SPEED=.55;//Change these values to change the boost functions
-	return pow(joystick.axis[axis], 3)*(DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost);
+double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
+	static const float DEFAULT_SPEED=.55;//Change these values to change the boost and slow functions
+	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(1-DEFAULT_SPEED)*slow);
 }
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
@@ -108,10 +108,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 			if (!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
 			else if (!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
-			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER]);
+			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);
 			if (!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
 			else if (!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
-			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
+			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
 			const unsigned int buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
 			for (int i=0;i<6;i++) {

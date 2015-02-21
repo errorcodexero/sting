@@ -62,7 +62,7 @@ string abbreviate_text(string s){
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
 	static const float DEFAULT_SPEED=.55;//Change these values to change the boost and slow functions
-	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(1-DEFAULT_SPEED)*slow);
+	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED/2)*slow);
 }
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){

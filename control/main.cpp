@@ -61,8 +61,8 @@ string abbreviate_text(string s){
 }
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
-	static const float DEFAULT_SPEED=.55;//Change these values to change the boost and slow functions
-	static const float SLOW_BY=.5;
+	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
+	static const float SLOW_BY=.5;//Change this value to change the percentage the slow button slows
 	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 

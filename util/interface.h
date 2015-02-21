@@ -31,6 +31,7 @@ struct Talon_srx_input{
 	bool rev_limit_switch;
 	bool a;
 	bool b;
+	int velocity = 0;
 	Talon_srx_input():encoder_position(0),fwd_limit_switch(0),rev_limit_switch(0),a(0),b(0){}
 };
 

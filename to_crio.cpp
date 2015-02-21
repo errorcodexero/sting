@@ -513,8 +513,13 @@ public:
 		auto f=[&](int index,CANTalon& test) {
 			in.talon_srx[index].fwd_limit_switch=test.IsFwdLimitSwitchClosed();
 			in.talon_srx[index].rev_limit_switch=test.IsRevLimitSwitchClosed();
-			if(index==0) in.talon_srx[index].encoder_position=-test.GetEncPosition();
-			else in.talon_srx[index].encoder_position=test.GetEncPosition();
+			if(index==0){
+				in.talon_srx[index].encoder_position=-test.GetEncPosition();
+				in.talon_srx[index].velocity = -test.GetEncVel();
+			}else{
+				in.talon_srx[index].encoder_position=test.GetEncPosition();
+				in.talon_srx[index].velocity = test.GetEncVel();
+			}
 			in.talon_srx[index].a=test.GetPinStateQuadA();
 			in.talon_srx[index].b=test.GetPinStateQuadB();
 		};

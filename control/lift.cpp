@@ -232,6 +232,7 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 	const double PRESET_POWER=.75;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
 	const double MANUAL_POWER=0.45;
 	const double P=(PRESET_POWER/5);
+	//const double I=0.01;
 	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
 	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 		switch (status.type()) {

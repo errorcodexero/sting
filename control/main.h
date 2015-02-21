@@ -40,8 +40,6 @@ struct Main{
 
 	Posedge_toggle piston;
 	
-
-
 	enum class Sticky_can_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
 	Sticky_can_goal sticky_can_goal;
 	
@@ -54,6 +52,7 @@ struct Main{
 		bool start;
 	};
 	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
+	Nudge back_turns[2];//Backwards and left, Backwards and right
 	
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);

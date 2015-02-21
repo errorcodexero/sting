@@ -104,22 +104,34 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 			static const float Y_NUDGE_POWER=.2;
 			static const float ROTATE_NUDGE_POWER=.15;
+			static const float BACK_TURN_POWER=.7;
 			if (!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
 			else if (!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
 			else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 			if (!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
 			else if (!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
+			else if (!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_TURN_POWER;
 			else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);
 			if (!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
 			else if (!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
+			else if (!back_turns[0].timer.done()) goal.theta=BACK_TURN_POWER;
+			else if (!back_turns[1].timer.done()) goal.theta=-BACK_TURN_POWER;
 			else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 			
-			const unsigned int buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
+			static const unsigned int nudge_buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
 			for (int i=0;i<6;i++) {
-				nudges[i].start=nudges[i].trigger(main_joystick.button[buttons[i]]);
+				nudges[i].start=nudges[i].trigger(main_joystick.button[nudge_buttons[i]]);
 				if (nudges[i].start) nudges[i].timer.set(.1);
 				nudges[i].timer.update(in.now,1);
 			}
+			
+			static const unsigned int back_turn_buttons[2]={Gamepad_button::BACK,Gamepad_button::START};
+			for (int i=0;i<2;i++) {
+				back_turns[i].start=back_turns[i].trigger(main_joystick.button[back_turn_buttons[i]]);
+				if (back_turns[i].start) back_turns[i].timer.set(.5);
+				back_turns[i].timer.update(in.now,1);
+			}
+			
 			goals.drive=goal;
 			static const double LEVEL = 13.5;
 			goals.lift_goal_can=[&](){

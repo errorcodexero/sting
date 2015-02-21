@@ -4,9 +4,6 @@
 
 using namespace std;
 
-//Use OI data for this
-/*Mode_buttons::Mode_buttons():
-		
-{}*/
+
 
 

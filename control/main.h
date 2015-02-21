@@ -35,6 +35,8 @@ struct Main{
 	
 	Lift lift_can;
 	Lift lift_tote;
+	
+	//Move into PANEL.H when OI ready
 
 	enum class Sticky_can_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5};
 	Sticky_can_goal sticky_can_goal;

@@ -81,7 +81,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	);
 
 	{
-		
+		cout<<"Wheel 1: "<<in.digital_io.in[0]<<", "<<in.digital_io.in[1]<<endl;
+		cout<<"Wheel 2: "<<in.digital_io.in[2]<<", "<<in.digital_io.in[3]<<endl;
+		cout<<"Wheel 3: "<<in.digital_io.in[4]<<", "<<in.digital_io.in[5]<<endl;
 		Drivebase::Goal goal;
 		bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
 		if(autonomous_start_now) mode=Mode::AUTO_MOVE;

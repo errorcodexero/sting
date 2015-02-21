@@ -41,7 +41,7 @@ Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),aut
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
 
-bool vowel(char c){
+/*bool vowel(char c){
 	c=tolower(c);
 	return c=='a' || c=='e' || c=='i' || c=='o' || c=='u' || c=='y';
 }
@@ -58,7 +58,7 @@ string abbreviate_text(string s){
 		}
 	}
 	return ss.str();
-}
+}*/
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
 	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed

@@ -17,7 +17,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	fire_control.cpp \
 	control_status.cpp \
 	shooter_status.cpp \
-	wheelrpms.cpp \
 	../input/util.cpp \
 	../util/jag_interface.cpp \
 	../util/driver_station_interface.cpp \

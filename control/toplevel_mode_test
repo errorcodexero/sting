@@ -8,7 +8,6 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_MODE_TEST \
 	drivebase.cpp \
 	../util/countup_timer.cpp \
 	pump.cpp \
-	wheelrpms.cpp \
 	../util/posedge_trigger.cpp \
 	../util/negedge_trigger.cpp \
 	../util/point.cpp \

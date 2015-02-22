@@ -16,6 +16,5 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	force.cpp \
 	../util/posedge_trigger.cpp \
 	../util/point.cpp \
-	wheelrpms.cpp \
 	../util/negedge_trigger.cpp \
 	-o monitor 2>&1 && ./monitor

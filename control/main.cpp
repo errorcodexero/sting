@@ -26,10 +26,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 	r.digital_io[0].type=Digital_out::Type::INPUT;
 
 	//cerr<<a.shooter_wheels<<"\r\n";
-	r.jaguar[JAG_TOP_FEEDBACK]=a.shooter_wheels.top[Shooter_wheels::Output::FEEDBACK];
-	r.jaguar[JAG_BOTTOM_FEEDBACK]=a.shooter_wheels.bottom[Shooter_wheels::Output::FEEDBACK];
-	r.jaguar[JAG_TOP_OPEN_LOOP]=a.shooter_wheels.top[Shooter_wheels::Output::OPEN_LOOP];
-	r.jaguar[JAG_BOTTOM_OPEN_LOOP]=a.shooter_wheels.bottom[Shooter_wheels::Output::OPEN_LOOP];
 	/*for(unsigned i=0;i<4;i++){
 		cerr<<r.jaguar[i]<<"\r\n";
 	}*/
@@ -39,7 +35,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
 
-Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
+Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Time autonomous_mode_left);
 
 /*bool vowel(char c){
 	c=tolower(c);
@@ -367,8 +363,7 @@ bool operator==(Main a,Main b){
 		a.ball_collecter==b.ball_collecter && 
 		a.print_button==b.print_button && 
 		a.field_relative==b.field_relative && 
-		a.autonomous_start==b.autonomous_start && 
-		a.wheel_calibration==b.wheel_calibration;
+		a.autonomous_start==b.autonomous_start;
 }
 
 bool operator!=(Main a,Main b){
@@ -383,7 +378,6 @@ ostream& operator<<(ostream& o,Main m){
 	o<<m.control_status;
 	o<<m.since_switch;
 	//since_auto_start
-	o<<m.wheel_calibration;
 	//o<<m.control;
 	//ball collector
 	//print button
@@ -414,7 +408,6 @@ Control_status::Control_status next(
 	bool autonomous_mode,
 	bool autonomous_mode_start,
 	Time since_switch,
-	Shooter_wheels::Calibration calib,
 	Time autonomous_time_left
 ){
 	using namespace Control_status;
@@ -458,10 +451,10 @@ Control_status::Control_status next(
 		fire_when_ready=(vert==Joystick_section::DOWN); //No equivalent on the switchpanel.
 	}
 
-	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP,calib));
-	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP,calib));
-	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT,calib));
-	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP,calib));
+	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP));
+	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP));
+	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT));
+	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP));
 	bool took_shot=1;
 	bool have_collected_question = false;
 
@@ -645,14 +638,14 @@ Jaguar_input jag_at_speed(double speed){
 	return r;
 }
 
-Shooter_wheels::Output shooter_output(Robot_outputs out){
+/*Shooter_wheels::Output shooter_output(Robot_outputs out){
 	Shooter_wheels::Output r;
 	r.top[Shooter_wheels::Output::FEEDBACK]=out.jaguar[JAG_TOP_FEEDBACK];
 	r.top[Shooter_wheels::Output::OPEN_LOOP]=out.jaguar[JAG_TOP_OPEN_LOOP];
 	r.bottom[Shooter_wheels::Output::FEEDBACK]=out.jaguar[JAG_BOTTOM_FEEDBACK];
 	r.bottom[Shooter_wheels::Output::OPEN_LOOP]=out.jaguar[JAG_BOTTOM_OPEN_LOOP];
 	return r;
-}
+}*/
 
 vector<Control_status::Control_status> auto_test(ostream& o,double automodeknob){
 	vector<Control_status::Control_status> v;
@@ -735,7 +728,7 @@ void mode_diagram(){
 void check_auto_modes_end(){
 	for(auto control_status:Control_status::all()){
 		if(teleop(control_status)) continue;
-		auto n=next(control_status,Toplevel::Status(),Joystick_data(),0,0,0,Shooter_wheels::Calibration(),10);
+		auto n=next(control_status,Toplevel::Status(),Joystick_data(),0,0,0,10);
 		cout<<control_status<<"	"<<n<<endl;
 		assert(teleop(n));
 	}

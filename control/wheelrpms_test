@@ -1,5 +1,4 @@
 g++ -Wall -Werror -DWHEELRPMS_TEST wheelrpms.cpp \
-	shooter_wheels.cpp \
 	shooter_status.cpp \
 	../util/jag_interface.cpp \
 	../util/posedge_trigger.cpp \

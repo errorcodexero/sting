@@ -11,7 +11,7 @@ void print_diff(ostream& o,unsigned char a,unsigned char b){
 
 void print_diff(ostream& o,Toplevel::Status &a,Toplevel::Status const& b){
 	#define X(name) print_diff(o,""#name ": ",a.name,b.name);
-	print_diff_approx(o,a.shooter_wheels,b.shooter_wheels);
+	//print_diff_approx(o,a.shooter_wheels,b.shooter_wheels);
 	X(pump)
 	//X(orientation)
 	//print_diff_approx(o,a.orientation,b.orientation);

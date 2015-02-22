@@ -9,7 +9,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	../util/countdown_timer.cpp \
 	../util/bound_tracker.cpp \
 	toplevel.cpp \
-	shooter_wheels.cpp \
 	../util/point.cpp \
 	drivebase.cpp \
 	pump.cpp \

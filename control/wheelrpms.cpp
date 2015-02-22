@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "shooter_wheels.h"
 #include "shooter_status.h"
 
 using namespace std;

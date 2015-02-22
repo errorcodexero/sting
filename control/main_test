@@ -14,7 +14,6 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	pump.cpp \
 	../util/countup_timer.cpp \
 	../util/negedge_trigger.cpp \
-	fire_control.cpp \
 	control_status.cpp \
 	../input/util.cpp \
 	../util/jag_interface.cpp \

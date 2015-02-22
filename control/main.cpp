@@ -4,7 +4,6 @@
 #include <cassert>
 #include <math.h>
 #include "toplevel.h"
-#include "fire_control.h"
 #include "control_status.h"
 #include "../util/util.h"
 #include "toplevel_mode.h"
@@ -386,7 +385,7 @@ ostream& operator<<(ostream& o,Main m){
 	return o<<")";
 }
 
-Fire_control::Target to_target(Joystick_section j){
+/*Fire_control::Target to_target(Joystick_section j){
 	switch(j){
 		case Joystick_section::LEFT: return Fire_control::TRUSS;
 		case Joystick_section::RIGHT: return Fire_control::AUTO_SHOT;
@@ -398,7 +397,7 @@ Fire_control::Target to_target(Joystick_section j){
 	//if(mode_buttons.shoot_high) return Fire_control::HIGH;
 	//if(mode_buttons.auto_shot) return Fire_control::AUTO_SHOT;
 	return Fire_control::NO_TARGET;
-}
+}*/
 
 Control_status::Control_status next(
 	Control_status::Control_status status,
@@ -431,16 +430,9 @@ Control_status::Control_status next(
 		//if(j.button[Gamepad_button::Y] || panel.mode_buttons.drive_wo_ball) return Control_status::SHOOT_LOW;
 		//todo: use some sort of constants rather than 0/1 for the axes
 		{
-			Joystick_section joy_section=joystick_section(j.axis[0],j.axis[1]);
-			Fire_control::Target target=to_target(joy_section);
-			if(Fire_control::target(status)!=target && !autonomous_mode){
-				switch(target){
-					case Fire_control::TRUSS: return TRUSS_TOSS_PREP;
-					case Fire_control::HIGH: return SHOOT_HIGH_PREP;
-					case Fire_control::EJECT: return EJECT_PREP;
-					case Fire_control::AUTO_SHOT:return AUTO_SHOT_PREP;
-					default: break;
-				}
+			//Joystick_section joy_section=joystick_section(j.axis[0],j.axis[1]);
+			//Fire_control::Target target=to_target(joy_section);
+			if(!autonomous_mode){
 			}
 		}
 	}

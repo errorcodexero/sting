@@ -3,7 +3,6 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	toplevel.cpp \
 	../util/interface.cpp \
 	../util/jag_interface.cpp \
-	shooter_status.cpp \
 	pump.cpp \
 	../util/posedge_toggle.cpp \
 	force_interface.cpp \

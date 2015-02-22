@@ -1,6 +1,5 @@
 g++ -Wall -Werror -std=c++0x -DTOPLEVEL_MODE_TEST \
 	toplevel_mode.cpp \
-	shooter_status.cpp \
 	../util/jag_interface.cpp \
 	../util/util.cpp \
 	toplevel.cpp \

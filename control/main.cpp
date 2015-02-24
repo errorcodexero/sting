@@ -174,7 +174,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 					sticky_can_goal=Sticky_can_goal::LEVEL5;
 				}
 				if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
-				if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
+				if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::go_to_height(0.0);
 				if(sticky_can_goal==Sticky_can_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL);
 				if(sticky_can_goal==Sticky_can_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL));
 				if(sticky_can_goal==Sticky_can_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL));
@@ -184,7 +184,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
-				static const float ENGAGE_HOOK_HEIGHT=2.8;
+				static const float ENGAGE_HOOK_HEIGHT=2.9;
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 				}

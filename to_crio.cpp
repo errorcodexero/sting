@@ -226,6 +226,7 @@ class To_crio
 	//DriverStationLCD *lcd;
 	//NetworkTable *table;
 	//Gyro *gyro;
+	PowerDistributionPanel *power;
 	Compressor *compressor;
 	//CANTalon test;
 	CANTalon test1;
@@ -233,6 +234,7 @@ class To_crio
 public:
 	To_crio():error_code(0),skipped(0),test1(0),test2(1)//,gyro(NULL)
 	{
+		power = new PowerDistributionPanel();
 		// Wake the NUC by sending a Wake-on-LAN magic UDP packet:
 		//SendWOL();
 
@@ -316,13 +318,18 @@ public:
 		error_code|=read_joysticks(r);
 		error_code|=read_analog(r);
 		error_code|=read_driver_station(r.driver_station);
+		r.current = read_currents();
 		return make_pair(r,error_code);
 	}
-	PowerDistributionPanel power;
+	//PowerDistributionPanel power;
 	array<double,Robot_inputs::CURRENT> read_currents(){
 		array<double,Robot_inputs::CURRENT> current;
 		for(unsigned x = 0;x < current.size();x++){
-			current[x] = power.GetCurrent(x);
+			if(power){
+				current[x] = power->GetCurrent(x);
+			}else{
+				current[x] = -9001;
+			}
 		}		
 		return current;
 	}

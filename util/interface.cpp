@@ -446,6 +446,11 @@ bool operator==(Robot_inputs a,Robot_inputs b){
 			return 0;
 		}
 	}
+	for(unsigned i=0; i<Robot_inputs::CURRENT;i++){
+		if(a.current[i]!=b.current[i]){
+			return 0;
+		}
+	}
 	if(a.driver_station!=b.driver_station) return 0;
 	return a.orientation==b.orientation;
 }
@@ -479,6 +484,9 @@ ostream& operator<<(ostream& o,Robot_inputs a){
 	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		o<<a.jaguar[i];
 	}
+	o<<" currents:";
+	o<<a.current;
+	
 	o<<a.driver_station;
 	o<<" orientation:"<<a.orientation;
 	return o<<")";

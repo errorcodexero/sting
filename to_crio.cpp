@@ -318,7 +318,14 @@ public:
 		error_code|=read_driver_station(r.driver_station);
 		return make_pair(r,error_code);
 	}
-
+	PowerDistributionPanel power;
+	array<double,Robot_inputs::CURRENT> read_currents(){
+		array<double,Robot_inputs::CURRENT> current;
+		for(unsigned x = 0;x < current.size();x++){
+			current[x] = power.GetCurrent(x);
+		}		
+		return current;
+	}
 	int set_solenoid(unsigned i,Solenoid_output v){
 		if(i>=Robot_outputs::SOLENOIDS) return 1;
 		if(!solenoid[i]) return 2;

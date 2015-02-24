@@ -154,6 +154,10 @@ struct Robot_inputs{
 	std::array<Jaguar_input,Robot_outputs::CAN_JAGUARS> jaguar;
 	Driver_station_input driver_station;
 	Rad orientation;
+		
+	static const unsigned CURRENT =16;
+	std::array<double,CURRENT> current;
+	
 
 	Robot_inputs();
 };

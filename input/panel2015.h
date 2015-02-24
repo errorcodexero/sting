@@ -14,7 +14,10 @@ struct Panel{
     bool piston_aligner;
     //bool piston_switch_b;
     bool level_buttons [5];
-	
+	int move_arm_one;
+    int move_arm_cont;
+    
+    
 	
 	Panel();
 };

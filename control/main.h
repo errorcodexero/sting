@@ -30,7 +30,6 @@ struct Main{
 	Posedge_toggle field_relative;
 	Posedge_trigger autonomous_start;
 
-	Shooter_wheels::Calibration_manager wheel_calibration;
 	Drivebase drivebase;
 	
 	Lift lift_can;
@@ -43,7 +42,7 @@ struct Main{
 	enum class Sticky_can_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
 	Sticky_can_goal sticky_can_goal;
 	
-	enum class Sticky_tote_goal{STOP,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
+	enum class Sticky_tote_goal{STOP,ENGAGE_HOOK,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
 	Sticky_tote_goal sticky_tote_goal;
 	
 	struct Nudge{

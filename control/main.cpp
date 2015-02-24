@@ -184,7 +184,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
-				static const float ENGAGE_HOOK_HEIGHT=0.0;
+				static const float ENGAGE_HOOK_HEIGHT=3.0;
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 				}

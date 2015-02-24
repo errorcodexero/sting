@@ -140,14 +140,14 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_can_goal=Sticky_can_goal::STOP;
 				}
-				if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
+				/*if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 					sticky_can_goal=Sticky_can_goal::STOP;
 					return Lift::Goal::up();
 				}
 				if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
 					sticky_can_goal=Sticky_can_goal::STOP;
 					return Lift::Goal::down();
-				}
+				}*/
 				if(gunner_joystick.button[Gamepad_button::R_JOY]){
 					sticky_can_goal=Sticky_can_goal::BOTTOM;
 				}
@@ -184,16 +184,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
+				static const float ENGAGE_HOOK_HEIGHT=0.0;
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 				}
-				if(gunner_joystick.button[Gamepad_button::LB]){
+				/*if(gunner_joystick.button[Gamepad_button::LB]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 					return Lift::Goal::up();
-				}
+				}*/
 				if(gunner_joystick.button[Gamepad_button::RB]){
-					sticky_tote_goal=Sticky_tote_goal::STOP;
-					return Lift::Goal::down();
+					sticky_tote_goal=Sticky_tote_goal::ENGAGE_HOOK;
 				}
 				if(gunner_joystick.button[Gamepad_button::L_JOY]){
 					sticky_tote_goal=Sticky_tote_goal::BOTTOM;
@@ -222,6 +222,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				}
 				if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 				if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
+				if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_HOOK) return Lift::Goal::go_to_height(ENGAGE_HOOK_HEIGHT);
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL);
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL));
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL));

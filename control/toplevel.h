@@ -2,7 +2,6 @@
 #define TOPLEVEL_H
 
 #include<vector>
-#include "shooter_wheels.h"
 #include "pump.h"
 #include "drivebase.h"
 #include "lift.h"
@@ -13,7 +12,6 @@ namespace Toplevel{
 		Lift::Output lift_can;
 		Lift::Output lift_tote;
 		Drivebase::Output drive;
-		Shooter_wheels::Output shooter_wheels;
 		Pump::Output pump;
 	};
 	std::ostream& operator<<(std::ostream&,Output);
@@ -22,7 +20,6 @@ namespace Toplevel{
 		Subgoals();
 		Lift::Goal lift_goal_tote;
 		Lift::Goal lift_goal_can;
-		Shooter_wheels::Goal shooter_wheels;
 		Pump::Goal pump;
 		Drivebase::Goal drive;
 		//pump omitted because it currently only has one goal.
@@ -34,7 +31,6 @@ namespace Toplevel{
 		Drivebase::Status_detail drive_status;
 		Lift::Status lift_status_can;
 		Lift::Status lift_status_tote;
-		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;
 		float orientation;
 	};
@@ -45,13 +41,12 @@ namespace Toplevel{
 
 	class Estimator{
 		//no estimate for collector
-		Shooter_wheels::Status shooter_wheels;
 		Pump::Status pump;//for now just taking the sensor's measurement as gospel.
 		float orientation;
 		
 		public:
 		Estimator();
-		void update(Time,bool enabled,Output,Pump::Status,float orientation,Shooter_wheels::Status,bool);
+		void update(Time,bool enabled,Output,Pump::Status,float orientation,bool);
 		Status estimate()const;
 		void out(std::ostream&)const;
 

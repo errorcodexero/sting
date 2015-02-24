@@ -29,36 +29,29 @@ namespace Toplevel{
 		assert(0);
 	}
 
-	Subgoals subgoals(Mode m,Shooter_wheels::Calibration calib){
+	Subgoals subgoals(Mode m){
 		Subgoals r;
 		switch(m){
 			case DRIVE_WO_BALL:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case DRIVE_W_BALL:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case COLLECT_SPIN_UP:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT_NONBLOCK);
 				r.pump=Pump::GOAL_OFF;//to make the spin up faster.
 				break;
 			case COLLECT:
 				//r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL_NONBLOCK);
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
 				break;
 			case SHOOT_HIGH_PREP:
 			case SHOOT_HIGH:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL);
 				break;
 			case SHOOT_HIGH_PREP_NO_PUMP:
 			case SHOOT_HIGH_NO_PUMP:
 			case AUTO_SHOT_PREP:
 			case AUTO_SHOT:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::AUTO_SHOT);
 				break;
 			case TRUSS_TOSS_PREP:
 			case TRUSS_TOSS:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::TRUSS);
 				if(m==SHOOT_HIGH_PREP_NO_PUMP || m==SHOOT_HIGH_NO_PUMP){
 									r.pump=Pump::GOAL_OFF;
 				}
@@ -72,7 +65,6 @@ namespace Toplevel{
 				break;*/
 			case EJECT_PREP:
 			case EJECT:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::X);
                 //Copied from a previous commit of the code, basically what it was before modification
 				break;
 				/*
@@ -84,7 +76,6 @@ namespace Toplevel{
 				break;
 				*/
 			case CATCH:
-				r.shooter_wheels=convert_goal(calib,Shooter_wheels::STOP);//could also have a reverse mode here
 				break;
 			/*
 			case SHOOT_LOW:
@@ -190,10 +181,9 @@ void toplevel_modes(){
 					}
 					ss<<"</tr>";	
 					for(auto mode:Toplevel::MODES){
-						Toplevel::Subgoals g=subgoals(mode,Shooter_wheels::Calibration());
+						//Toplevel::Subgoals g=subgoals(mode);
 						tag(ss,"tr",
-							tag("td",as_string(mode))+
-							tag("td",g.shooter_wheels.high_level)
+							tag("td",as_string(mode))
 						);
 					}
 					return ss.str();
@@ -209,7 +199,7 @@ int main(){
 	Status status;
 	for(auto mode:MODES){
 		cout<<mode<<":\n";
-		auto g=subgoals(mode,Shooter_wheels::Calibration());
+		auto g=subgoals(mode);
 		cout<<"\t"<<g<<"\n";
 		cout<<"\t"<<control(status,g)<<"\n";
 		cout<<"\t"<<ready(status,g)<<"\n";

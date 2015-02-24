@@ -4,7 +4,6 @@
 #include <cassert>
 #include <math.h>
 #include "toplevel.h"
-#include "fire_control.h"
 #include "control_status.h"
 #include "../util/util.h"
 #include "toplevel_mode.h"
@@ -26,10 +25,6 @@ Robot_outputs convert_output(Toplevel::Output a){
 	r.digital_io[0].type=Digital_out::Type::INPUT;
 
 	//cerr<<a.shooter_wheels<<"\r\n";
-	r.jaguar[JAG_TOP_FEEDBACK]=a.shooter_wheels.top[Shooter_wheels::Output::FEEDBACK];
-	r.jaguar[JAG_BOTTOM_FEEDBACK]=a.shooter_wheels.bottom[Shooter_wheels::Output::FEEDBACK];
-	r.jaguar[JAG_TOP_OPEN_LOOP]=a.shooter_wheels.top[Shooter_wheels::Output::OPEN_LOOP];
-	r.jaguar[JAG_BOTTOM_OPEN_LOOP]=a.shooter_wheels.bottom[Shooter_wheels::Output::OPEN_LOOP];
 	/*for(unsigned i=0;i<4;i++){
 		cerr<<r.jaguar[i]<<"\r\n";
 	}*/
@@ -39,7 +34,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),lift_can(1),lift_tote(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
 
-Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Shooter_wheels::Calibration,Time autonomous_mode_left);
+Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Time autonomous_mode_left);
 
 /*bool vowel(char c){
 	c=tolower(c);
@@ -62,7 +57,7 @@ string abbreviate_text(string s){
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
 	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
-	static const float SLOW_BY=.5;//Change this value to change the percentage the slow button slows
+	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
 	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 
@@ -367,8 +362,7 @@ bool operator==(Main a,Main b){
 		a.ball_collecter==b.ball_collecter && 
 		a.print_button==b.print_button && 
 		a.field_relative==b.field_relative && 
-		a.autonomous_start==b.autonomous_start && 
-		a.wheel_calibration==b.wheel_calibration;
+		a.autonomous_start==b.autonomous_start;
 }
 
 bool operator!=(Main a,Main b){
@@ -383,7 +377,6 @@ ostream& operator<<(ostream& o,Main m){
 	o<<m.control_status;
 	o<<m.since_switch;
 	//since_auto_start
-	o<<m.wheel_calibration;
 	//o<<m.control;
 	//ball collector
 	//print button
@@ -392,7 +385,7 @@ ostream& operator<<(ostream& o,Main m){
 	return o<<")";
 }
 
-Fire_control::Target to_target(Joystick_section j){
+/*Fire_control::Target to_target(Joystick_section j){
 	switch(j){
 		case Joystick_section::LEFT: return Fire_control::TRUSS;
 		case Joystick_section::RIGHT: return Fire_control::AUTO_SHOT;
@@ -404,7 +397,7 @@ Fire_control::Target to_target(Joystick_section j){
 	//if(mode_buttons.shoot_high) return Fire_control::HIGH;
 	//if(mode_buttons.auto_shot) return Fire_control::AUTO_SHOT;
 	return Fire_control::NO_TARGET;
-}
+}*/
 
 Control_status::Control_status next(
 	Control_status::Control_status status,
@@ -414,7 +407,6 @@ Control_status::Control_status next(
 	bool autonomous_mode,
 	bool autonomous_mode_start,
 	Time since_switch,
-	Shooter_wheels::Calibration calib,
 	Time autonomous_time_left
 ){
 	using namespace Control_status;
@@ -438,16 +430,9 @@ Control_status::Control_status next(
 		//if(j.button[Gamepad_button::Y] || panel.mode_buttons.drive_wo_ball) return Control_status::SHOOT_LOW;
 		//todo: use some sort of constants rather than 0/1 for the axes
 		{
-			Joystick_section joy_section=joystick_section(j.axis[0],j.axis[1]);
-			Fire_control::Target target=to_target(joy_section);
-			if(Fire_control::target(status)!=target && !autonomous_mode){
-				switch(target){
-					case Fire_control::TRUSS: return TRUSS_TOSS_PREP;
-					case Fire_control::HIGH: return SHOOT_HIGH_PREP;
-					case Fire_control::EJECT: return EJECT_PREP;
-					case Fire_control::AUTO_SHOT:return AUTO_SHOT_PREP;
-					default: break;
-				}
+			//Joystick_section joy_section=joystick_section(j.axis[0],j.axis[1]);
+			//Fire_control::Target target=to_target(joy_section);
+			if(!autonomous_mode){
 			}
 		}
 	}
@@ -458,10 +443,10 @@ Control_status::Control_status next(
 		fire_when_ready=(vert==Joystick_section::DOWN); //No equivalent on the switchpanel.
 	}
 
-	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP,calib));
-	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP,calib));
-	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT,calib));
-	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP,calib));
+	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP));
+	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP));
+	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT));
+	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP));
 	bool took_shot=1;
 	bool have_collected_question = false;
 
@@ -637,7 +622,6 @@ bool approx_equal(Main a,Main b){
 
 #ifdef MAIN_TEST
 #include<fstream>
-#include "wheel_sim.h"
 #include "monitor.h"
 
 Jaguar_input jag_at_speed(double speed){
@@ -646,14 +630,14 @@ Jaguar_input jag_at_speed(double speed){
 	return r;
 }
 
-Shooter_wheels::Output shooter_output(Robot_outputs out){
+/*Shooter_wheels::Output shooter_output(Robot_outputs out){
 	Shooter_wheels::Output r;
 	r.top[Shooter_wheels::Output::FEEDBACK]=out.jaguar[JAG_TOP_FEEDBACK];
 	r.top[Shooter_wheels::Output::OPEN_LOOP]=out.jaguar[JAG_TOP_OPEN_LOOP];
 	r.bottom[Shooter_wheels::Output::FEEDBACK]=out.jaguar[JAG_BOTTOM_FEEDBACK];
 	r.bottom[Shooter_wheels::Output::OPEN_LOOP]=out.jaguar[JAG_BOTTOM_OPEN_LOOP];
 	return r;
-}
+}*/
 
 vector<Control_status::Control_status> auto_test(ostream& o,double automodeknob){
 	vector<Control_status::Control_status> v;
@@ -661,7 +645,6 @@ vector<Control_status::Control_status> auto_test(ostream& o,double automodeknob)
 	Monitor<Robot_inputs> inputs;
 	Monitor<Main> state;
 	Monitor<Robot_outputs> outputs;
-	Shooter_sim shooter_sim;
 	for(unsigned i=0;i<1500;i++){
 		Robot_inputs in;
 		in.driver_station.analog[0]=automodeknob;
@@ -669,12 +652,9 @@ vector<Control_status::Control_status> auto_test(ostream& o,double automodeknob)
 		in.robot_mode.autonomous=1;
 		in.robot_mode.enabled=1;
 		//in.jaguar[JAG_TOP_OPEN_LOOP]=leave at 0
-		in.jaguar[JAG_TOP_FEEDBACK]=jag_at_speed(shooter_sim.estimate().top);
 		//in.jaguar[JAG_BOTTOM_OPEN_LOOP]=
-		in.jaguar[JAG_BOTTOM_FEEDBACK]=jag_at_speed(shooter_sim.estimate().bottom);
 		stringstream ss;
 		auto out_now=m(in,ss);
-		shooter_sim.update(in.now,shooter_output(out_now),out_now.solenoid[4]);
 		string change;
 		change+=inputs.update(in);
 		change+=state.update(m);
@@ -740,7 +720,7 @@ void mode_diagram(){
 void check_auto_modes_end(){
 	for(auto control_status:Control_status::all()){
 		if(teleop(control_status)) continue;
-		auto n=next(control_status,Toplevel::Status(),Joystick_data(),0,0,0,Shooter_wheels::Calibration(),10);
+		auto n=next(control_status,Toplevel::Status(),Joystick_data(),0,0,0,10);
 		cout<<control_status<<"	"<<n<<endl;
 		assert(teleop(n));
 	}

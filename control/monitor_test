@@ -3,7 +3,6 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	toplevel.cpp \
 	../util/interface.cpp \
 	../util/jag_interface.cpp \
-	shooter_status.cpp \
 	pump.cpp \
 	../util/posedge_toggle.cpp \
 	force_interface.cpp \
@@ -12,11 +11,9 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	drivebase.cpp \
 	../util/driver_station_interface.cpp \
 	../util/util.cpp \
-	shooter_wheels.cpp \
 	../util/countup_timer.cpp \
 	force.cpp \
 	../util/posedge_trigger.cpp \
 	../util/point.cpp \
-	wheelrpms.cpp \
 	../util/negedge_trigger.cpp \
 	-o monitor 2>&1 && ./monitor

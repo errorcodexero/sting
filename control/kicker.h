@@ -8,7 +8,7 @@ struct Kicker{
 	struct Input{
 	};
 
-	typedef enum class Output{IN,OUT};
+	enum class Output{IN,OUT};
 
 	enum class Status_detail{IN,HALF_OUT,OUT};
 
@@ -36,32 +36,21 @@ struct Kicker{
 
 	enum class Mode{IN,OUT};
 	
+	Mode mode;
+	
 	explicit Kicker(int);
 };
-/*
-std::ostream& operator<<(std::ostream&,Lift::Input const&);
-bool operator<(Lift::Input const&,Lift::Input const&);
-std::set<Lift::Input> examples(Lift::Input*);
 
-std::set<Lift::Output> examples(Lift::Output*);
+//std::set<Kicker::Output> examples(Kicker::Output*);
 
-std::ostream& operator<<(std::ostream&,Lift::Status_detail::Type);
-std::ostream& operator<<(std::ostream&,Lift::Status_detail const&);
-bool operator<(Lift::Status_detail const&,Lift::Status_detail const&);
-bool operator==(Lift::Status_detail const&,Lift::Status_detail const&);
-std::set<Lift::Status_detail> examples(Lift::Status_detail*);
+std::ostream& operator<<(std::ostream&,Kicker::Status_detail);
+std::ostream& operator<<(std::ostream&,Kicker::Estimator);
+//std::set<Kicker::Status_detail> examples(Kicker::Status_detail*);
 
-std::ostream& operator<<(std::ostream&,Lift::Goal::Mode);
-std::ostream& operator<<(std::ostream&,Lift::Goal);
-bool operator==(Lift::Goal,Lift::Goal);
-bool operator!=(Lift::Goal,Lift::Goal);
-bool operator<(Lift::Goal,Lift::Goal);
-std::set<Lift::Goal> examples(Lift::Goal*);
+std::ostream& operator<<(std::ostream&,Kicker const&);
 
-std::ostream& operator<<(std::ostream&,Lift const&);
+Kicker::Status status(Kicker::Status_detail const&);
+//Kicker::Output control();
+//bool ready();
 
-Lift::Status status(Lift::Status_detail const&);
-Lift::Output control(Lift::Status_detail const&, Lift::Goal const&);
-bool ready(Lift::Status,Lift::Goal::Mode);
-*/
 #endif

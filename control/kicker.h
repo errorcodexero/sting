@@ -9,21 +9,23 @@ struct Kicker{
 	};
 
 	enum class Output{IN,OUT};
+	typedef Output Goal;
 
 	enum class Status_detail{IN,HALF_OUT,OUT};
 
 	typedef Status_detail Status;
 
 	struct Estimator{
+		Output last_output;
+		float output_start;
 		Status_detail last;
-
 		Estimator();
 
-		void update(Time,/*Input,*/Output);
+		void update(Time,Input,Output);
 		Status_detail get()const;
 	};
 	Estimator estimator;
-
+	
 	struct Output_applicator{
 		int kicker_address;
 
@@ -33,10 +35,6 @@ struct Kicker{
 		Output operator()(Robot_outputs)const;
 	};
 	Output_applicator output_applicator;
-
-	enum class Mode{IN,OUT};
-	
-	Mode mode;
 	
 	explicit Kicker(int);
 };

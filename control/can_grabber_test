@@ -1,0 +1,1 @@
+g++ -Wall -Wextra -std=c++11 -DCAN_GRABBER_TEST -o can_grabber can_grabber.cpp ../util/countdown_timer.cpp ../util/interface.cpp ../util/jag_interface.cpp ../util/util.cpp ../util/driver_station_interface.cpp 2>&1 && ./can_grabber 2>&1

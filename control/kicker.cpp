@@ -55,17 +55,18 @@ std::ostream& operator<<(std::ostream& o,Kicker::Input const& a){
 	return o<<")";
 }
 
-/*
-std::set<Kicker::Input> examples(Kicker::Input*){
-	nyi
-}
-
-std::set<Kicker::Output> examples(Kicker::Output*){ return {0,1}; }*/
 
 std::ostream& operator<<(std::ostream& o,Kicker const& kicker){
 	o<<"Kicker("<<"Estimator: "<<kicker.estimator<<" Output Applicator: "<<kicker.output_applicator;
 	return o<<")";
 }
+
+/*
+std::set<Kicker::Input> examples(Kicker::Input*){
+	nyi
+}*/
+
+//std::set<Kicker::Output> examples(Kicker::Output*){ return {0,1}; }
 
 Kicker::Status status(Kicker::Status_detail const& a){
 	return a;

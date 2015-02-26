@@ -41,15 +41,11 @@ struct Kicker{
 	explicit Kicker(int);
 };
 
-//std::set<Kicker::Output> examples(Kicker::Output*);
-
 std::ostream& operator<<(std::ostream&,Kicker::Status_detail);
 std::ostream& operator<<(std::ostream&,Kicker::Estimator);
-//std::set<Kicker::Status_detail> examples(Kicker::Status_detail*);
-//std::set<Kicker::Output> examples(Kicker::Output*);
-
 std::ostream& operator<<(std::ostream&,Kicker const&);
 
+//std::set<Kicker::Output> examples(Kicker::Output*);
 Kicker::Status status(Kicker::Status_detail const&);
 //Kicker::Output control();
 //bool ready();

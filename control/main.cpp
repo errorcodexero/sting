@@ -184,7 +184,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				return Lift::Goal::stop();
 			}();
 			goals.lift_goal_tote=[&](){
-				static const float ENGAGE_HOOK_HEIGHT=2.9;
+				static const float ENGAGE_KICKER_HEIGHT=2.9;
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
 				}
@@ -193,7 +193,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 					return Lift::Goal::up();
 				}*/
 				if(gunner_joystick.button[Gamepad_button::RB]){
-					sticky_tote_goal=Sticky_tote_goal::ENGAGE_HOOK;
+					sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
 					//return Lift::Goal::up();
 				}
 				if(gunner_joystick.button[Gamepad_button::L_JOY]){
@@ -223,7 +223,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				}
 				if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 				if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
-				if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_HOOK) return Lift::Goal::go_to_height(ENGAGE_HOOK_HEIGHT);
+				if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) return Lift::Goal::go_to_height(ENGAGE_KICKER_HEIGHT);
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL);
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL));
 				if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL));

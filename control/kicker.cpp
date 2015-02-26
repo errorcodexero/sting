@@ -57,16 +57,11 @@ std::ostream& operator<<(std::ostream& o,Kicker::Input const& a){
 
 /*
 std::set<Kicker::Input> examples(Kicker::Input*){
-	return {
-		Kicker::Input{},
-		Kicker::Input{},
-		Kicker::Input{},
-		Kicker::Input{}
-	};
+	nyi
 }
 
-std::set<Kicker::Output> examples(Kicker::Output*){ return {0,1}; }
-*/
+std::set<Kicker::Output> examples(Kicker::Output*){ return {0,1}; }*/
+
 std::ostream& operator<<(std::ostream& o,Kicker const& kicker){
 	o<<"Kicker("<<"Estimator: "<<kicker.estimator<<" Output Applicator: "<<kicker.output_applicator;
 	return o<<")";
@@ -88,7 +83,7 @@ Kicker::Kicker(int kicker_address):output_applicator(kicker_address){}
 
 #ifdef KICKER_TEST
 /*struct Kicker_sim{
-	
+	nyi
 };*/
 
 int main(){

@@ -2,15 +2,11 @@
 	-ssh config:
 		-Fix the "rm ~/.ssh/known_hosts" problem
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
--Try out the new Talon SRX's
-	-sensor-based closed-loop modes
 -Autonomous mode stuff-Logan and Matthew
--Drivebase code
-	-make it so that there isn't such a deadband around 0 for fwd/backward (like 1/2 of joystick travel) -Logan
+-Drivebase wheel encoders
 -Lifter Code
 	-UI
-	-Motor and Encoders -Matthew and Logan
-	-Gripper? 
+	-Kicker -Logan
 	-figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
 -Write logging code
 -OI:
@@ -20,8 +16,8 @@
 -Cleanup stuff:
 	-use enum class more places
 	-use std::array in place of C arrays in several places
--Try out serial console cable
--Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968)
+-Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968) -Logan
+-Automatic Operations (auto-align, lift etc.) 
 
 NICE THINGS TO HAVE:
 -Drive to Wall

@@ -1,4 +1,4 @@
-#ifndef PANEL2015_H
+#ifndef    //bool piston_switch_b; PANEL2015_H
 #define PANEL2015_H 
 
 struct Level_buttons{
@@ -10,7 +10,9 @@ struct Panel{
 		DO_NOTHING,MOVE,FULL_RUN
 	};
 	Auto_mode auto_mode;
+    float slide_pos;
     //Buttons:
+    bool move_arm_to_pos;
     bool current_collect;
     bool current_drop;
     bool move_drop;
@@ -19,7 +21,6 @@ struct Panel{
 	bool lifter_off;
     bool piston_aligner;
     bool kicker_activate;
-    //bool piston_switch_b;
     bool level_buttons [5];
     //3 position Switches:
 	int move_arm_one;

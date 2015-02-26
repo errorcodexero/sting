@@ -9,7 +9,7 @@ using namespace std;
 
 Kicker::Estimator::Estimator():last(Kicker::Status_detail::HALF_OUT){}
 
-void Kicker::Estimator::update(Time,Kicker::Input in,Kicker::Output out){
+void Kicker::Estimator::update(Time,/*Kicker::Input in,*/Kicker::Output out){
 	if(out==Output::IN){
 		last=Status_detail::IN;
 	}

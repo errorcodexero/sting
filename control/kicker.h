@@ -19,7 +19,7 @@ struct Kicker{
 
 		Estimator();
 
-		void update(Time,Input,Output);
+		void update(Time,/*Input,*/Output);
 		Status_detail get()const;
 	};
 	Estimator estimator;

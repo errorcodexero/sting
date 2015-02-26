@@ -1,0 +1,1 @@
+g++ -Wall -Wextra --std=c++11 -DKICKER_TEST -o kicker kicker.cpp ../util/interface.cpp ../util/jag_interface.cpp ../util/util.cpp ../util/driver_station_interface.h 2>&1 && ./kicker 2>&1

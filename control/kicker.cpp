@@ -49,11 +49,11 @@ Kicker::Output_applicator::Output_applicator(int a):kicker_address(a){}
 	nyi
 }*/
 
-std::ostream& operator<<(std::ostream& o,Kicker::Input const& a){
+/*std::ostream& operator<<(std::ostream& o,Kicker::Input const& a){
 	o<<"kicker::Input(";
 	o<<"";
 	return o<<")";
-}
+}*/
 
 
 std::ostream& operator<<(std::ostream& o,Kicker const& kicker){

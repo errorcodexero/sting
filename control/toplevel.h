@@ -5,12 +5,14 @@
 #include "pump.h"
 #include "drivebase.h"
 #include "lift.h"
+#include "kicker.h"
 
 namespace Toplevel{
 	struct Output{
 		Output();
 		Lift::Output lift_can;
 		Lift::Output lift_tote;
+		Kicker::Output kicker;
 		Drivebase::Output drive;
 		Pump::Output pump;
 	};
@@ -20,6 +22,7 @@ namespace Toplevel{
 		Subgoals();
 		Lift::Goal lift_goal_tote;
 		Lift::Goal lift_goal_can;
+		Kicker::Goal kicker;
 		Pump::Goal pump;
 		Drivebase::Goal drive;
 		//pump omitted because it currently only has one goal.
@@ -31,6 +34,7 @@ namespace Toplevel{
 		Drivebase::Status_detail drive_status;
 		Lift::Status lift_status_can;
 		Lift::Status lift_status_tote;
+		Kicker::Status kicker;
 		Pump::Status pump;
 		float orientation;
 	};

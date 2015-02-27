@@ -223,6 +223,22 @@ std::ostream& operator<<(std::ostream& o,Lift::Goal a){
 	return o;
 }
 
+bool operator==(Lift::Output_applicator const& a,Lift::Output_applicator const& b){
+	return a.can_address==b.can_address;
+}
+
+bool operator==(Lift::Estimator const& a,Lift::Estimator const& b){
+	return a.last==b.last && a.bottom_location==b.bottom_location;
+}
+
+bool operator!=(Lift::Estimator const& a,Lift::Estimator const& b){
+	return !(a==b);
+}
+
+bool operator==(Lift const& a,Lift const& b){ return a.estimator==b.estimator && a.output_applicator==b.output_applicator; }
+
+bool operator!=(Lift const& a,Lift const& b){ return !(a==b); }
+
 std::ostream& operator<<(std::ostream& o,Lift const& lift){
 	o<<"Lift("<<"Estimator: "<<lift.estimator<<" Output Applicator: "<<lift.output_applicator;
 	return o<<")";

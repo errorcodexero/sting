@@ -42,7 +42,9 @@ struct Can_grabber {
 	
 	explicit Can_grabber(int);
 };
+bool operator!=(Can_grabber const&,Can_grabber const&);
 bool operator<(Can_grabber::Input,Can_grabber::Input);
+bool operator!=(Can_grabber::Estimator const&,Can_grabber::Estimator const&);
 std::ostream& operator<<(std::ostream&,Can_grabber::Input);
 std::ostream& operator<<(std::ostream&,Can_grabber::Output);
 std::ostream& operator<<(std::ostream&,Can_grabber::Goal);

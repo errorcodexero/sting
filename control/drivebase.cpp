@@ -110,6 +110,24 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	};
 }
 
+bool operator==(Drivebase::Output_applicator const&,Drivebase::Output_applicator const&){
+	return 1;
+}
+
+bool operator==(Drivebase::Estimator const&,Drivebase::Estimator const&){
+	return 1;
+}
+
+bool operator!=(Drivebase::Estimator const& a,Drivebase::Estimator const& b){
+	return !(a==b);
+}
+
+bool operator==(Drivebase const& a,Drivebase const& b){
+	return a.estimator==b.estimator && a.output_applicator==b.output_applicator;
+}
+
+bool operator!=(Drivebase const& a,Drivebase const& b){ return !(a==b); }
+
 Drivebase::Output control(Drivebase::Status,Drivebase::Goal goal){
 	//use jacob's or matthew's code
 	double l=goal.y+goal.theta;

@@ -101,6 +101,9 @@ std::set<Lift::Goal> examples(Lift::Goal*);
 
 std::ostream& operator<<(std::ostream&,Lift const&);
 
+bool operator!=(Lift::Estimator const&,Lift::Estimator const&);
+bool operator!=(Lift const&,Lift const&);
+
 Lift::Status status(Lift::Status_detail const&);
 Lift::Output control(Lift::Status_detail const&, Lift::Goal const&);
 bool ready(Lift::Status,Lift::Goal);

@@ -129,6 +129,22 @@ bool ready(Kicker::Status status,Kicker::Goal goal){
 	nyi
 }
 
+bool operator==(Kicker::Estimator const& a,Kicker::Estimator const& b){
+	return a.last_output==b.last_output && a.output_start==b.output_start && a.last==b.last;
+}
+
+bool operator!=(Kicker::Estimator const& a,Kicker::Estimator const& b){
+	return !(a==b);
+}
+
+bool operator==(Kicker::Output_applicator const& a,Kicker::Output_applicator const& b){
+	return a.kicker_address==b.kicker_address;
+}
+
+bool operator==(Kicker const& a,Kicker const& b){ return a.estimator==b.estimator && a.output_applicator==b.output_applicator; }
+
+bool operator!=(Kicker const& a,Kicker const& b){ return !(a==b); }
+
 #ifdef KICKER_TEST
 #include "formal.h"
 

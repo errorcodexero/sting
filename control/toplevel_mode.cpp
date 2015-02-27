@@ -197,7 +197,7 @@ int main(){
 		cout<<mode<<":\n";
 		auto g=subgoals(mode);
 		cout<<"\t"<<g<<"\n";
-		cout<<"\t"<<control(status,g)<<"\n";
+		//cout<<"\t"<<control(status,g)<<"\n";
 		cout<<"\t"<<ready(status,g)<<"\n";
 	}
 }

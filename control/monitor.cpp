@@ -20,7 +20,7 @@ void print_diff(ostream& o,Toplevel::Status &a,Toplevel::Status const& b){
 
 string Monitor<Toplevel::Estimator>::update(Toplevel::Estimator b){
 	stringstream o;
-	print_diff(o,status,b.estimate());
+	print_diff(o,status,::status(b.get()));
 	return o.str();
 }
 
@@ -31,7 +31,7 @@ string Monitor<Main>::update(Main b){
 	X(force)
 	//Y(gyro);
 	//Y(est)
-	o<<est.update(b.est);
+	//o<<est.update(b.est);
 	X(control_status)
 	X(ball_collecter)
 	X(field_relative)

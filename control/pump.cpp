@@ -71,6 +71,15 @@ Pump::Output Pump::Output_applicator::operator()(Robot_outputs out)const{
 	return out.pump_auto?Pump::Output::AUTO:Pump::Output::OFF;
 }
 
+bool operator==(Pump::Estimator const& a,Pump::Estimator const& b){ return a.status==b.status; }
+bool operator!=(Pump::Estimator const& a,Pump::Estimator const& b){ return a.status!=b.status; }
+
+bool operator==(Pump const& a,Pump const& b){
+	return a.estimator==b.estimator;
+}
+
+bool operator!=(Pump const& a,Pump const& b){ return !(a==b); }
+
 #ifdef PUMP_TEST
 #include "formal.h"
 

@@ -129,6 +129,24 @@ Can_grabber::Output Can_grabber::Output_applicator::operator()(Robot_outputs r)c
 	return (r.pwm[can_address]>.25)?Can_grabber::Output::ON:Can_grabber::Output::OFF;
 }
 
+bool operator==(Can_grabber::Estimator const& a,Can_grabber::Estimator const& b){
+	return a.last==b.last && a.timer==b.timer;
+}
+
+bool operator!=(Can_grabber::Estimator const& a,Can_grabber::Estimator const& b){ return !(a==b); }
+
+bool operator==(Can_grabber::Output_applicator const& a,Can_grabber::Output_applicator const& b){
+	return a.can_address==b.can_address;
+}
+
+bool operator==(Can_grabber const& a,Can_grabber const& b){
+	return a.estimator==b.estimator && a.output_applicator==b.output_applicator;
+}
+
+bool operator!=(Can_grabber const& a,Can_grabber const& b){
+	return !(a==b);
+}
+
 //std::set<Can_grabber::Goal> examples(Can_grabber::Goal*)nyi
 
 #ifdef CAN_GRABBER_TEST

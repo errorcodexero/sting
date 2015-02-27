@@ -20,7 +20,7 @@ struct Main{
 	
 	Force_interface force;
 	Perf_tracker perf;
-	Toplevel::Estimator est;
+	Toplevel toplevel;
 
 	Control_status::Control_status control_status;
 	Countup_timer since_switch,since_auto_start;

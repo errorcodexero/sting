@@ -60,6 +60,10 @@ Drivebase::Status status(Drivebase::Status_detail);
 Drivebase::Output control(Drivebase::Status_detail,Drivebase::Goal);
 bool ready(Drivebase::Status,Drivebase::Goal);
 
+bool operator==(Drivebase::Estimator const&,Drivebase::Estimator const&);
+bool operator!=(Drivebase::Estimator const&,Drivebase::Estimator const&);
+
+bool operator!=(Drivebase const&,Drivebase const&);
 std::ostream& operator<<(std::ostream&,Drivebase const&);
 
 #endif

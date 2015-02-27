@@ -253,7 +253,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		//r_status.drive_status=;
 		r_status.lift_can=lift_can.estimator.get();
 		r_status.lift_tote=lift_tote.estimator.get();
-		Toplevel::Output r_out=control(r_status,goals); 
+		Toplevel::Output r_out=control(toplevel.estimator.get(),goals); 
 
 		Robot_outputs r;
 		r.solenoid[0] = gunner_joystick.button[Gamepad_button::Y];
@@ -369,7 +369,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 bool operator==(Main a,Main b){
 	return a.force==b.force && 
 		a.perf==b.perf && 
-		a.est==b.est && 
+		a.toplevel==b.toplevel && 
 		a.control_status==b.control_status && 
 		a.since_switch==b.since_switch && 
 		a.since_auto_start==b.since_auto_start &&
@@ -387,7 +387,7 @@ ostream& operator<<(ostream& o,Main m){
 	o<<"Main(";
 	o<<m.force;
 	o<<m.perf;
-	o<<m.est;
+	o<<m.toplevel;
 	o<<m.control_status;
 	o<<m.since_switch;
 	//since_auto_start
@@ -624,7 +624,8 @@ bool approx_equal(Main a,Main b){
 	//cout<<"b\n";
 	//if(!approx_equal(a.perf,b.perf)) return 0;
 	//cout<<"1\n";
-	if(!approx_equal(a.est,b.est)) return 0;
+	//if(!approx_equal(a.toplevel,b.toplevel)) return 0;
+	if(a.toplevel!=b.toplevel) return 0;
 	//cout<<"a\n";
 	if(a.control_status!=b.control_status) return 0;
 	if(a.ball_collecter!=b.ball_collecter) return 0;

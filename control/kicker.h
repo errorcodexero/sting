@@ -45,6 +45,11 @@ std::ostream& operator<<(std::ostream&,Kicker::Status_detail);
 std::ostream& operator<<(std::ostream&,Kicker::Estimator);
 std::ostream& operator<<(std::ostream&,Kicker const&);
 
+bool operator!=(Kicker const&,Kicker const&);
+bool operator<(Kicker::Input,Kicker::Input);
+bool operator==(Kicker::Estimator const&,Kicker::Estimator const&);
+bool operator!=(Kicker::Estimator const&,Kicker::Estimator const&);
+
 //std::set<Kicker::Output> examples(Kicker::Output*);
 Kicker::Status status(Kicker::Status_detail const&);
 Kicker::Output control(Kicker::Status,Kicker::Goal);

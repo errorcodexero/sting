@@ -34,6 +34,12 @@ struct Pump{
 std::ostream& operator<<(std::ostream&,Pump const&);
 std::ostream& operator<<(std::ostream&,Pump::Goal);
 std::ostream& operator<<(std::ostream&,Pump::Status);
+
+bool operator==(Pump::Estimator const&,Pump::Estimator const&);
+bool operator!=(Pump::Estimator const&,Pump::Estimator const&);
+
+bool operator!=(Pump const&,Pump const&);
+
 Maybe<Pump::Status> parse_status(std::string const&);
 Pump::Output control(Pump::Status,Pump::Goal);
 Pump::Status status(Pump::Status_detail);

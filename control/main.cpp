@@ -232,6 +232,13 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 				return Lift::Goal::stop();
 			}();
+			piston.update(gunner_joystick.button[Gamepad_button::Y]);
+			goals.kicker=[&](){
+				if(piston.get()){
+					return Kicker::Goal::OUT;
+				}
+				return Kicker::Goal::IN;
+			}();
 		} 
 		else if(mode==Mode::AUTO_MOVE){
 			goal.x=0;
@@ -261,9 +268,12 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		for(unsigned i=0;i<r.PWMS;i++){
 			r.pwm[i]=0;
 		}
+		
 		r=drivebase.output_applicator(r,r_out.drive);
 		r=lift_can.output_applicator(r,r_out.lift_can);
 		r=lift_tote.output_applicator(r,r_out.lift_tote);
+		r=kicker.output_applicator(r,r_out.kicker);
+		//r.solenoid[0] = gunner_joystick.button[Gamepad_button::Y];
 		
 		/*auto l1=y-theta;
 		auto r1=y+theta;

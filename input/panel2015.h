@@ -18,22 +18,21 @@ struct Panel{
     bool move_drop;
     bool move_collect;
     bool chute_collect;
-	bool lifter_off;
+    bool lifter_off;
     bool piston_aligner;
     bool kicker_activate;
+    bool operation_buttons [4];
     bool level_buttons [5];
     //3 position Switches:
-	int move_arm_one;
+    int target_type;
+    int move_arm_one;
     int move_arm_cont;
     int collect_mode;
     int drop_mode;
     
-    
 	
 	Panel();
 };
-
-
 
 
 

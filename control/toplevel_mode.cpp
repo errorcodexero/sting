@@ -89,42 +89,6 @@ namespace Toplevel_mode{
 		}
 		return r;
 	}
-
-	Toplevel_mode::Mode to_mode(Control_status::Control_status status){
-		switch(status){
-			case Control_status::AUTO_SPIN_UP: return Toplevel_mode::Mode::SHOOT_HIGH_PREP;
-			case Control_status::AUTO_FIRE: return Toplevel_mode::Mode::SHOOT_HIGH;
-			case Control_status::AUTO_TO_COLLECT: return Toplevel_mode::Mode::COLLECT;
-			case Control_status::AUTO_COLLECT: return Toplevel_mode::Mode::COLLECT;
-			case Control_status::AUTO_SPIN_UP2: return Toplevel_mode::Mode::SHOOT_HIGH_PREP;
-			case Control_status::AUTO_FIRE2: return Toplevel_mode::Mode::SHOOT_HIGH;		
-			case Control_status::A2_SPIN_UP: return Toplevel_mode::Mode::AUTO_SHOT_PREP;
-			case Control_status::A2_FIRE: return Toplevel_mode::Mode::AUTO_SHOT;
-			case Control_status::A2_TO_COLLECT: return Toplevel_mode::Mode::COLLECT_SPIN_UP;
-			case Control_status::A2_COLLECT: return Toplevel_mode::Mode::COLLECT_SPIN_UP; //Eric says worry about this ANOTHER day 
-			case Control_status::A2_SPIN_UP2: return Toplevel_mode::AUTO_SHOT_PREP;
-			case Control_status::A2_FIRE2: return Toplevel_mode::AUTO_SHOT;
-			case Control_status::A2_MOVE: return Toplevel_mode::DRIVE_WO_BALL;
-			case Control_status::DRIVE_W_BALL: return Toplevel_mode::DRIVE_W_BALL;
-			case Control_status::DRIVE_WO_BALL: return Toplevel_mode::DRIVE_WO_BALL;
-			case Control_status::COLLECT: return Toplevel_mode::COLLECT;
-			case Control_status::SHOOT_HIGH_PREP: return Toplevel_mode::SHOOT_HIGH_PREP;
-			case Control_status::SHOOT_HIGH: return Toplevel_mode::SHOOT_HIGH;
-			case Control_status::SHOOT_HIGH_WHEN_READY: return Toplevel_mode::SHOOT_HIGH_PREP;
-			case Control_status::TRUSS_TOSS_PREP: return Toplevel_mode::TRUSS_TOSS_PREP;
-			case Control_status::TRUSS_TOSS: return Toplevel_mode::TRUSS_TOSS;
-			case Control_status::TRUSS_TOSS_WHEN_READY: return Toplevel_mode::TRUSS_TOSS_PREP;
-			case Control_status::AUTO_SHOT_PREP: return Toplevel_mode::AUTO_SHOT_PREP;
-			case Control_status::AUTO_SHOT: return Toplevel_mode::AUTO_SHOT;
-			case Control_status::AUTO_SHOT_WHEN_READY: return Toplevel_mode::AUTO_SHOT_PREP;
-			case Control_status::EJECT_PREP: return Toplevel_mode::EJECT_PREP;
-			case Control_status::EJECT: return Toplevel_mode::EJECT;
-			case Control_status::EJECT_WHEN_READY: return Toplevel_mode::EJECT_PREP;
-			case Control_status::CATCH: return Toplevel_mode::CATCH;
-			default:
-				assert(0);
-		}
-	}
 }
 
 #ifdef TOPLEVEL_MODE_TEST

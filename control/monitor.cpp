@@ -32,9 +32,6 @@ string Monitor<Main>::update(Main b){
 	//Y(gyro);
 	//Y(est)
 	//o<<est.update(b.est);
-	X(control_status)
-	X(ball_collecter)
-	X(field_relative)
 	#undef Y
 	#undef X
 	return o.str();

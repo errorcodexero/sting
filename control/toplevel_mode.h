@@ -2,7 +2,6 @@
 #define TOPLEVEL_MODE_H
 
 #include "toplevel.h"
-#include "control_status.h"
 
 namespace Toplevel_mode{
 	//all this mode stuff really belongs elsewhere
@@ -24,7 +23,6 @@ namespace Toplevel_mode{
 	std::ostream& operator<<(std::ostream& o,Mode);
 
 	Toplevel::Goal subgoals(Mode);
-	Toplevel_mode::Mode to_mode(Control_status::Control_status);
 }
 
 #endif

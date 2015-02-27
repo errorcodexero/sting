@@ -5,7 +5,6 @@
 #include "../util/posedge_toggle.h"
 #include "../util/perf_tracker.h"
 #include "../util/bound_tracker.h"
-#include "control_status.h"
 #include "../util/countdown_timer.h"
 #include "../util/countup_timer.h"
 #include "toplevel.h"
@@ -22,13 +21,8 @@ struct Main{
 	Perf_tracker perf;
 	Toplevel toplevel;
 
-	Control_status::Control_status control_status;
 	Countup_timer since_switch,since_auto_start;
 
-	Posedge_toggle ball_collecter;
-	Posedge_trigger print_button;
-
-	Posedge_toggle field_relative;
 	Posedge_trigger autonomous_start;
 
 	//Move into PANEL.H when OI ready

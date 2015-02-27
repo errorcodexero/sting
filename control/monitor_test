@@ -6,7 +6,6 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	pump.cpp \
 	../util/posedge_toggle.cpp \
 	force_interface.cpp \
-	control_status.cpp \
 	lift.cpp \
 	drivebase.cpp \
 	../util/driver_station_interface.cpp \

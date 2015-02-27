@@ -154,6 +154,7 @@ void tester(Part p){
 			}
 		}
 		if(outputs.size()<2){
+			cout<<"found:"<<outputs<<"\n";
 			//test fail becuase it doesn't actually control anything
 			NYI
 		}

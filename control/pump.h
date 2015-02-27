@@ -5,20 +5,40 @@
 //It may seem a little bit overkill, but this is here basically because there are some fancier things we might want to do later like know when we have at least 60psi.  
 
 #include<iosfwd>
+#include<set>
 #include "../util/maybe.h"
+#include "../util/interface.h"
 
-namespace Pump{
-	enum Goal{GOAL_AUTO,GOAL_OFF};
-	std::ostream& operator<<(std::ostream&,Goal);
+struct Pump{
+	enum class Goal{AUTO,OFF};
+	typedef Goal Output;
 
-	enum Output{OUTPUT_ON,OUTPUT_OFF};
-	std::ostream& operator<<(std::ostream&,Output);
+	enum class Status{FULL,NOT_FULL};
+	typedef Status Status_detail;
+	typedef Status Input;
 
-	enum Status{FULL,NOT_FULL};
-	std::ostream& operator<<(std::ostream&,Status);
-	Maybe<Status> parse_status(std::string const&);
+	struct Estimator{
+		Pump::Status status;
 
-	Output control(Status,Goal);
-}
+		void update(Time,Pump::Input,Pump::Output);
+		Status_detail get()const;
+	};
+	Estimator estimator;
+
+	struct Output_applicator{
+		Robot_outputs operator()(Robot_outputs,Pump::Output)const;
+		Pump::Output operator()(Robot_outputs)const;
+	};
+	Output_applicator output_applicator;
+};
+std::ostream& operator<<(std::ostream&,Pump const&);
+std::ostream& operator<<(std::ostream&,Pump::Goal);
+std::ostream& operator<<(std::ostream&,Pump::Status);
+Maybe<Pump::Status> parse_status(std::string const&);
+Pump::Output control(Pump::Status,Pump::Goal);
+Pump::Status status(Pump::Status_detail);
+bool ready(Pump::Status,Pump::Goal);
+std::set<Pump::Goal> examples(Pump::Goal*);
+std::set<Pump::Status> examples(Pump::Status*);
 
 #endif

@@ -7,36 +7,37 @@
 #include "lift.h"
 #include "kicker.h"
 
+#define TOPLEVEL_ITEMS\
+	X(Lift,lift_can)\
+	X(Lift,lift_tote)\
+	X(Kicker,kicker)\
+	X(Drivebase,drive)
+
 namespace Toplevel{
 	struct Output{
 		Output();
-		Lift::Output lift_can;
-		Lift::Output lift_tote;
-		Kicker::Output kicker;
-		Drivebase::Output drive;
+		#define X(A,B) A::Output B;
+		TOPLEVEL_ITEMS
+		#undef X
 		Pump::Output pump;
 	};
 	std::ostream& operator<<(std::ostream&,Output);
 
 	struct Subgoals{
 		Subgoals();
-		Lift::Goal lift_goal_tote;
-		Lift::Goal lift_goal_can;
-		Kicker::Goal kicker;
+		#define X(A,B) A::Goal B;
+		TOPLEVEL_ITEMS
+		#undef X
 		Pump::Goal pump;
-		Drivebase::Goal drive;
-		//pump omitted because it currently only has one goal.
 	};
 	std::ostream& operator<<(std::ostream&,Subgoals);
 
 	struct Status{
 		Status();
-		Drivebase::Status_detail drive_status;
-		Lift::Status lift_status_can;
-		Lift::Status lift_status_tote;
-		Kicker::Status kicker;
+		#define X(A,B) A::Status B;
+		TOPLEVEL_ITEMS
+		#undef X
 		Pump::Status pump;
-		float orientation;
 	};
 	bool operator==(Status,Status);
 	bool operator!=(Status,Status);
@@ -46,11 +47,10 @@ namespace Toplevel{
 	class Estimator{
 		//no estimate for collector
 		Pump::Status pump;//for now just taking the sensor's measurement as gospel.
-		float orientation;
 		
 		public:
 		Estimator();
-		void update(Time,bool enabled,Output,Pump::Status,float orientation,bool);
+		void update(Time,bool enabled,Output,Pump::Status,bool);
 		Status estimate()const;
 		void out(std::ostream&)const;
 

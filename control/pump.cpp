@@ -6,58 +6,83 @@
 
 using namespace std;
 
-namespace Pump{
-	ostream& operator<<(ostream& o,Goal a){
-		switch(a){
-			#define X(name) case name: return o<<""#name;
-			X(GOAL_AUTO)
-			X(GOAL_OFF)
-			#undef X
-			default: assert(0);
-		}
-	}
+set<Pump::Status> examples(Pump::Status*){
+	return {Pump::Status::FULL,Pump::Status::NOT_FULL};
+}
 
-	ostream& operator<<(ostream& o,Output a){
-		#define X(name) if(a==name) return o<<""#name;
-		X(OUTPUT_ON)
-		X(OUTPUT_OFF)
+set<Pump::Goal> examples(Pump::Goal*){
+	return {Pump::Goal::AUTO,Pump::Goal::OFF};
+}
+
+Pump::Status status(Pump::Status_detail a){ return a; }
+
+bool ready(Pump::Status,Pump::Goal){ return 1; }
+
+void Pump::Estimator::update(Time,Pump::Input in,Pump::Output){
+	status=in;
+}
+
+Pump::Status Pump::Estimator::get()const{ return status; }
+
+ostream& operator<<(ostream& o,Pump const& ){
+	return o<<"Pump()";
+}
+
+ostream& operator<<(ostream& o,Pump::Goal a){
+	switch(a){
+		#define X(name) case Pump::Goal::name: return o<<""#name;
+		X(AUTO)
+		X(OFF)
 		#undef X
-		assert(0);
-	}
-
-	ostream& operator<<(ostream& o,Status a){
-		#define X(name) if(a==name) return o<<""#name;
-		X(FULL)
-		X(NOT_FULL)
-		#undef X
-		assert(0);
-	}
-
-	vector<Pump::Status> status_list(){
-		vector<Pump::Status> r;
-		r|=Pump::FULL;
-		r|=Pump::NOT_FULL;
-		return r;
-	}
-
-	Maybe<Status> parse_status(string const& s){
-		return parse_enum(status_list(),s);
-	}
-
-	Output control(Status s,Goal g){
-		if(g==GOAL_OFF) return OUTPUT_OFF;
-		return (s==FULL)?OUTPUT_OFF:OUTPUT_ON;
+		default: assert(0);
 	}
 }
 
+ostream& operator<<(ostream& o,Pump::Status a){
+	#define X(name) if(a==Pump::Status::name) return o<<""#name;
+	X(FULL)
+	X(NOT_FULL)
+	#undef X
+	assert(0);
+}
+
+vector<Pump::Status> status_list(){
+	vector<Pump::Status> r;
+	r|=Pump::Status::FULL;
+	r|=Pump::Status::NOT_FULL;
+	return r;
+}
+
+Maybe<Pump::Status> parse_status(string const& s){
+	return parse_enum(status_list(),s);
+}
+
+Pump::Output control(Pump::Status,Pump::Goal g){
+	if(g==Pump::Goal::OFF) return Pump::Output::OFF;
+	return Pump::Output::AUTO;
+}
+
+Robot_outputs Pump::Output_applicator::operator()(Robot_outputs r,Pump::Output out)const{
+	r.pump_auto=(out==Pump::Output::AUTO);
+	return r;
+}
+
+Pump::Output Pump::Output_applicator::operator()(Robot_outputs out)const{
+	return out.pump_auto?Pump::Output::AUTO:Pump::Output::OFF;
+}
+
 #ifdef PUMP_TEST
+#include "formal.h"
+
 int main(){
-	static const vector<Pump::Goal> GOALS{Pump::GOAL_AUTO,Pump::GOAL_OFF};
-	for(auto a:Pump::status_list()){
+	static const vector<Pump::Goal> GOALS{Pump::Goal::AUTO,Pump::Goal::OFF};
+	for(auto a:status_list()){
 		for(auto g:GOALS){
 			cout<<a<<","<<g<<":"<<control(a,g)<<"\n";
 		}
-		assert(a==Pump::parse_status(as_string(a)));
+		assert(a==parse_status(as_string(a)));
 	}
+
+	tester(Pump());
 }
 #endif

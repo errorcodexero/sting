@@ -16,10 +16,10 @@ static const int JAG_BOTTOM_FEEDBACK=3;
 static const int JAG_TOP_OPEN_LOOP=0;
 static const int JAG_BOTTOM_OPEN_LOOP=2;
 
-Robot_outputs convert_output(Toplevel::Output a){
+Robot_outputs convert_output(Toplevel::Output /*a*/){
 	Robot_outputs r;
 	
-	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
+	//r.relay[0]=(a.pump==Pump::Output::AUTO)?Relay_output::_10:Relay_output::_00;
 	
 	//pressure switch
 	r.digital_io[0]=Digital_out::input();
@@ -136,7 +136,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			
 			goals.drive=goal;
 			static const double LEVEL = 13.5;
-			goals.lift_goal_can=[&](){
+			goals.lift_can=[&](){
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_can_goal=Sticky_can_goal::STOP;
 				}
@@ -183,7 +183,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
 				return Lift::Goal::stop();
 			}();
-			goals.lift_goal_tote=[&](){
+			goals.lift_tote=[&](){
 				static const float ENGAGE_KICKER_HEIGHT=2.9;
 				if(gunner_joystick.button[Gamepad_button::B]){
 					sticky_tote_goal=Sticky_tote_goal::STOP;
@@ -251,8 +251,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 
 		Toplevel::Status r_status;
 		//r_status.drive_status=;
-		r_status.lift_status_can=lift_can.estimator.get();
-		r_status.lift_status_tote=lift_tote.estimator.get();
+		r_status.lift_can=lift_can.estimator.get();
+		r_status.lift_tote=lift_tote.estimator.get();
 		Toplevel::Output r_out=control(r_status,goals); 
 
 		Robot_outputs r;

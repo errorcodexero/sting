@@ -190,7 +190,7 @@ bool operator<(Digital_out a, Digital_out b){
 	return 0;
 }
 
-Robot_outputs::Robot_outputs(){
+Robot_outputs::Robot_outputs():pump_auto(1){
 	for(unsigned i=0;i<PWMS;i++){
 		pwm[i]=0;
 	}
@@ -233,7 +233,7 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 			return 0;
 		}
 	}
-	return a.driver_station==b.driver_station;
+	return a.driver_station==b.driver_station && a.pump_auto==b.pump_auto;
 }
 
 bool operator!=(Robot_outputs a,Robot_outputs b){
@@ -275,7 +275,7 @@ bool operator<(Robot_outputs a,Robot_outputs b){
 		if(b1<a1) return 0;
 	}
 
-	return 0;
+	return a.pump_auto<b.pump_auto;
 }
 
 ostream& operator<<(ostream& o,Robot_outputs a){
@@ -307,6 +307,7 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 		o<<a.jaguar[i];
 	}
 	o<<a.driver_station;
+	o<<a.pump_auto;
 	return o<<")";
 }
 

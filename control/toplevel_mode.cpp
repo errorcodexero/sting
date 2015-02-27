@@ -37,7 +37,7 @@ namespace Toplevel{
 			case DRIVE_W_BALL:
 				break;
 			case COLLECT_SPIN_UP:
-				r.pump=Pump::GOAL_OFF;//to make the spin up faster.
+				r.pump=Pump::Goal::OFF;//to make the spin up faster.
 				break;
 			case COLLECT:
 				//r.shooter_wheels=convert_goal(calib,Shooter_wheels::HIGH_GOAL_NONBLOCK);
@@ -53,7 +53,7 @@ namespace Toplevel{
 			case TRUSS_TOSS_PREP:
 			case TRUSS_TOSS:
 				if(m==SHOOT_HIGH_PREP_NO_PUMP || m==SHOOT_HIGH_NO_PUMP){
-									r.pump=Pump::GOAL_OFF;
+									r.pump=Pump::Goal::OFF;
 				}
 				break;
 		/*	case PASS_PREP:

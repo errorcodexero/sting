@@ -91,6 +91,7 @@ struct Robot_outputs{
 	//could add in some setup for the analog inputs
 	
 	Driver_station_output driver_station;
+	bool pump_auto;
 
 	Robot_outputs();
 };

@@ -8,7 +8,7 @@ using namespace std;
 
 namespace Toplevel{
 	Output::Output():
-		pump(Pump::OUTPUT_ON)
+		pump(Pump::Output::AUTO)
 	{}
 
 	ostream& operator<<(ostream& o,Output g){
@@ -20,9 +20,9 @@ namespace Toplevel{
 
 	Subgoals::Subgoals():
 		//shooter_wheels(Shooter_wheels:)
-		lift_goal_tote(Lift::Goal::stop()),
-		lift_goal_can(Lift::Goal::stop()),
-		pump(Pump::GOAL_AUTO)
+		lift_can(Lift::Goal::stop()),
+		lift_tote(Lift::Goal::stop()),
+		pump(Pump::Goal::AUTO)
 	{}
 
 	ostream& operator<<(ostream& o,Subgoals g){
@@ -34,15 +34,14 @@ namespace Toplevel{
 	}
 
 	Status::Status():
-		lift_status_can(Lift::Status::error()),
-		lift_status_tote(Lift::Status::error()),
-		pump(Pump::NOT_FULL)
+		lift_can(Lift::Status::error()),
+		lift_tote(Lift::Status::error()),
+		pump(Pump::Status::NOT_FULL)
 	{}
 
 	bool operator==(Status a,Status b){
 		#define X(name) if(a.name!=b.name) return 0;
 		X(pump)
-		X(orientation)
 		#undef X
 		return 1;
 	}
@@ -54,7 +53,6 @@ namespace Toplevel{
 	ostream& operator<<(ostream& o,Status s){
 		o<<"Status(";
 		o<<" pump:"<<s.pump;
-		o<<" orientation:"<<s.orientation;
 		return o<<")";
 	}
 
@@ -73,20 +71,18 @@ namespace Toplevel{
 		//yes, there is a better way to do this; it's called a monad. (or exceptions)
 		#define X(i) remove_till_colon(v[i])
 		{
-			Maybe<Pump::Status> m=Pump::parse_status(X(5));
+			Maybe<Pump::Status> m;//=parse_status(X(5));
 			if(!m) return Maybe<Status>();
 			r.pump=*m;
 		}
-		r.orientation=atof(X(6));
 		#undef X
 		return Maybe<Status>(r);
 	}
 
-	Estimator::Estimator():pump(Pump::NOT_FULL), orientation(0){}
+	Estimator::Estimator():pump(Pump::Status::NOT_FULL){}
 
-	void Estimator::update(Time /*time*/,bool /*enabled*/,Output /*out*/,Pump::Status pump_status, float orientation1,bool){
+	void Estimator::update(Time /*time*/,bool /*enabled*/,Output /*out*/,Pump::Status pump_status, bool){
 		pump=pump_status;
-		orientation = orientation1;
 	}
 
 	Status Estimator::estimate()const{
@@ -104,7 +100,6 @@ namespace Toplevel{
 	bool operator==(Estimator a,Estimator b){
 		#define X(name) if(a.name!=b.name) return 0;
 		X(pump)
-		X(orientation)
 		#undef X
 		return 1;
 	}
@@ -124,10 +119,10 @@ namespace Toplevel{
 
 	Output control(Status status,Subgoals g){
 		Output r;
-		r.lift_can=control(status.lift_status_can,g.lift_goal_can);
-		r.lift_tote=control(status.lift_status_tote,g.lift_goal_tote);
-		r.drive=control(status.drive_status,g.drive);
-		r.pump=Pump::control(status.pump,g.pump);
+		r.lift_can=control(status.lift_can,g.lift_can);
+		r.lift_tote=control(status.lift_tote,g.lift_tote);
+		r.drive=control(status.drive,g.drive);
+		r.pump=control(status.pump,g.pump);
 		return r;
 	}
 
@@ -156,11 +151,11 @@ bool approx_equal(float a, float b){
 	return a==b;
 }
 
-bool approx_equal(Toplevel::Status a,Toplevel::Status b){
+bool approx_equal(Toplevel::Status /*a*/,Toplevel::Status /*b*/){
 	#define X(name) if(a.name!=b.name) return 0;
 	//X(shooter_wheels)
 	#undef X
-	return approx_equal(a.orientation,b.orientation);
+	return 1;//approx_equal(a.orientation,b.orientation);
 }
 
 template<typename T>
@@ -179,9 +174,9 @@ int main(){
 	Estimator est;
 	cout<<est<<"\n";
 	cout<<est.estimate()<<"\n";
-	Pump::Status ps=Pump::FULL;
-	est.update(0,1,Output(),ps,0,0);
-	est.update(10,0,Output(),ps,0,0);
+	Pump::Status ps=Pump::Status::FULL;
+	est.update(0,1,Output(),ps,0);
+	est.update(10,0,Output(),ps,0);
 	cout<<est.estimate()<<"\n";
 	/*
 	if we choose one of the modes and use all the built-in controls then we should after some time get to a status where we're ready.  

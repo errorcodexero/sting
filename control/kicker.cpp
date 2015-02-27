@@ -59,14 +59,20 @@ ostream& operator<<(ostream& o, Kicker::Output_applicator output_applicator) {
 	return o<<")";
 }
 
-Kicker::Output_applicator::Output_applicator(int a):kicker_address(a){}
-
-Robot_outputs Kicker::Output_applicator::operator()(Robot_outputs /*robot*/,Kicker::Output /*kicker*/)const{
+bool operator<(Kicker::Input /*a*/,Kicker::Input /*b*/){
 	nyi
 }
 
-Kicker::Output Kicker::Output_applicator::operator()(Robot_outputs /*in*/)const{
-	nyi
+Kicker::Output_applicator::Output_applicator(int a):kicker_address(a){}
+
+Robot_outputs Kicker::Output_applicator::operator()(Robot_outputs robot,Kicker::Output kicker)const{
+	robot.solenoid[kicker_address]=kicker==Kicker::Output::OUT;
+	return robot;
+}
+
+Kicker::Output Kicker::Output_applicator::operator()(Robot_outputs in)const{
+	if(in.solenoid[kicker_address]==1) return Kicker::Output::OUT;
+	return Kicker::Output::IN;
 }
 
 std::ostream& operator<<(std::ostream& o,Kicker::Input const& /*a*/){
@@ -87,28 +93,39 @@ std::ostream& operator<<(std::ostream& o,Kicker::Output out){
 }
 
 std::set<Kicker::Input> examples(Kicker::Input*){
-	nyi
+	return set<Kicker::Input> {Kicker::Input{}};
 }
 
 std::set<Kicker::Output> examples(Kicker::Output*){ 
- nyi
+	set<Kicker::Output> outputs;
+	outputs.insert(Kicker::Output::IN);
+	outputs.insert(Kicker::Output::OUT);
+	return outputs;
 }
 
 Kicker::Status status(Kicker::Status_detail const& a){
 	return a;
 }
 
-Kicker::Output control(Kicker::Status_detail,Kicker::Goal){
-	nyi
+Kicker::Output control(Kicker::Status_detail status,Kicker::Goal goal){
+	if(goal==Kicker::Goal::IN && status!=Kicker::Status_detail::IN) return Kicker::Output::IN;
+	if(goal==Kicker::Goal::OUT && status!=Kicker::Status_detail::OUT) return Kicker::Output::OUT;
+	return goal;
 }
 
 set<Kicker::Status_detail> examples(Kicker::Status_detail*){
-	nyi
+	set<Kicker::Status_detail> status;
+	status.insert(Kicker::Status_detail::IN);
+	status.insert(Kicker::Status_detail::HALF_OUT);
+	status.insert(Kicker::Status_detail::OUT);
+	return status;
 }
 
 Kicker::Kicker(int kicker_address):output_applicator(kicker_address){}
 
-bool ready(Kicker::Status,Kicker::Goal){
+bool ready(Kicker::Status status,Kicker::Goal goal){
+	if(goal==Kicker::Goal::IN) return status==Kicker::Status_detail::IN;
+	if(goal==Kicker::Goal::OUT) return status==Kicker::Status_detail::OUT;
 	nyi
 }
 

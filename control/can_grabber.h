@@ -1,6 +1,7 @@
 #ifndef CAN_GRABBER_H
 #define CAN_GRABBER_H
 
+#include <set>
 #include "../util/interface.h"
 #include "../util/countdown_timer.h"
 
@@ -41,30 +42,13 @@ struct Can_grabber {
 	
 	explicit Can_grabber(int);
 };
-/*
-std::ostream& operator<<(std::ostream&,Lift::Input const&);
-bool operator<(Lift::Input const&,Lift::Input const&);
-std::set<Lift::Input> examples(Lift::Input*);
-
-std::set<Lift::Output> examples(Lift::Output*);
-
-std::ostream& operator<<(std::ostream&,Lift::Status_detail::Type);
-std::ostream& operator<<(std::ostream&,Lift::Status_detail const&);
-bool operator<(Lift::Status_detail const&,Lift::Status_detail const&);
-bool operator==(Lift::Status_detail const&,Lift::Status_detail const&);
-std::set<Lift::Status_detail> examples(Lift::Status_detail*);
-
-std::ostream& operator<<(std::ostream&,Lift::Goal::Mode);
-std::ostream& operator<<(std::ostream&,Lift::Goal);
-bool operator==(Lift::Goal,Lift::Goal);
-bool operator!=(Lift::Goal,Lift::Goal);
-bool operator<(Lift::Goal,Lift::Goal);
-std::set<Lift::Goal> examples(Lift::Goal*);
-
-std::ostream& operator<<(std::ostream&,Lift const&);
-
-Lift::Status status(Lift::Status_detail const&);
-Lift::Output control(Lift::Status_detail const&, Lift::Goal const&);
-bool ready(Lift::Status,Lift::Goal::Mode);
-*/
+std::ostream& operator<<(std::ostream&,Can_grabber::Status_detail);
+std::ostream& operator<<(std::ostream&,Can_grabber::Estimator);
+std::ostream& operator<<(std::ostream&,Can_grabber::Output_applicator);
+Can_grabber::Status status(Can_grabber::Status_detail const&);
+bool ready(Can_grabber::Status,Can_grabber::Goal);
+std::ostream& operator<<(std::ostream&,Can_grabber const&);
+std::set<Can_grabber::Goal> examples(Can_grabber::Status_detail*);
+std::set<Can_grabber::Goal> examples(Can_grabber::Input*);
+std::set<Can_grabber::Goal> examples(Can_grabber::Output*);
 #endif

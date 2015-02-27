@@ -6,6 +6,8 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
+bool operator<(Can_grabber::Input,Can_grabber::Input)nyi
+
 Can_grabber::Estimator::Estimator():last(Can_grabber::Status_detail::MID_UP){}
 
 void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber::Output out){
@@ -67,28 +69,30 @@ std::ostream& operator<<(std::ostream& o,Can_grabber const& can_grabber){
 	return o<<")";
 }
 
-std::set<Can_grabber::Status_detail> examples(*Status_detail) {
-		return {
-			Can_grabber::Status_detail::TOP,
-			Can_grabber::Status_detail::MID_DOWN,
-			Can_grabber::Status_detail::BOTTOM,
-			Can_grabber::Status_detail::MID_UP
-		}
+std::set<Can_grabber::Status_detail> examples(Can_grabber::Status_detail*) {
+	return {
+		Can_grabber::Status_detail::TOP,
+		Can_grabber::Status_detail::MID_DOWN,
+		Can_grabber::Status_detail::BOTTOM,
+		Can_grabber::Status_detail::MID_UP
+	};
 }
 
-std::set<Can_grabber::Input> examples(*Input) {
+std::set<Can_grabber::Input> examples(Can_grabber::Input*) {
 	return {
 		Can_grabber::Input{0},
 		Can_grabber::Input{1}
-	}
+	};
 }
 
-std::set<Can_grabber::Output> examples(*Output) {
+std::set<Can_grabber::Output> examples(Can_grabber::Output*) {
 	return {
 		Can_grabber::Output::ON,
 		Can_grabber::Output::OFF
-	}
+	};
 }
+
+//std::set<Can_grabber::Goal> examples(Can_grabber::Goal*)nyi
 
 #ifdef CAN_GRABBER_TEST
 int main(){

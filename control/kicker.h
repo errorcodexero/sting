@@ -39,13 +39,14 @@ struct Kicker{
 	explicit Kicker(int);
 };
 
+std::ostream& operator<<(std::ostream&,Kicker::Output);
 std::ostream& operator<<(std::ostream&,Kicker::Status_detail);
 std::ostream& operator<<(std::ostream&,Kicker::Estimator);
 std::ostream& operator<<(std::ostream&,Kicker const&);
 
 //std::set<Kicker::Output> examples(Kicker::Output*);
 Kicker::Status status(Kicker::Status_detail const&);
-//Kicker::Output control();
-//bool ready();
+Kicker::Output control(Kicker::Status,Kicker::Goal);
+bool ready(Kicker::Status,Kicker::Goal);
 
 #endif

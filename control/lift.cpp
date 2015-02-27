@@ -197,6 +197,10 @@ bool operator==(Lift::Status_detail const& a,Lift::Status_detail const& b){
 	return a.type()!=Lift::Status_detail::Type::MID || a.inches_off_ground()==b.inches_off_ground();
 }
 
+bool operator!=(Lift::Status_detail const& a,Lift::Status_detail const& b){
+	return !(a==b);
+}
+
 std::set<Lift::Status_detail> examples(Lift::Status_detail*){
 	return {
 		Lift::Status_detail::top(),

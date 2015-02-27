@@ -6,6 +6,15 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
+ostream& operator<<(ostream& o,Can_grabber::Output a){
+	#define X(NAME) if(a==Can_grabber::Output::NAME) return o<<""#NAME;
+	X(ON) X(OFF)
+	#undef X
+	assert(0);
+}
+
+Can_grabber::Output control(Can_grabber::Status_detail,Can_grabber::Output)nyi
+
 bool operator<(Can_grabber::Input,Can_grabber::Input)nyi
 
 Can_grabber::Estimator::Estimator():last(Can_grabber::Status_detail::MID_UP){}

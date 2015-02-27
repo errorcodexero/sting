@@ -13,35 +13,43 @@ namespace Toplevel{
 
 	ostream& operator<<(ostream& o,Output g){
 		o<<"Output(";
-		//o<<" shoot:"<<g.shooter_wheels;
-		o<<" pump:"<<g.pump;
+		#define X(A,B,C) o<<" "#B<<":"<<g.B;
+		TOPLEVEL_ITEMS
+		#undef X
 		return o<<")";
 	}
 
 	Subgoals::Subgoals():
 		//shooter_wheels(Shooter_wheels:)
-		lift_can(Lift::Goal::stop()),
+		#define X(A,B,C) B(C),
+		TOPLEVEL_ITEMS
+		#undef X
+		dummy()
+		/*lift_can(Lift::Goal::stop()),
 		lift_tote(Lift::Goal::stop()),
-		pump(Pump::Goal::AUTO)
+		kicker(Kicker::Goal::IN),
+		pump(Pump::Goal::AUTO)*/
 	{}
 
 	ostream& operator<<(ostream& o,Subgoals g){
 		o<<"Toplevel::Subgoals(";
-		//o<<g.shooter_wheels.second;
-		//o<<g.shooter_wheels; not sure why this line doesn't work.
-		o<<" pump:"<<g.pump;
+		#define X(A,B,C) o<<" "#B<<":"<<g.B;
+		TOPLEVEL_ITEMS
+		#undef X
 		return o<<")";
 	}
 
 	Status::Status():
 		lift_can(Lift::Status::error()),
 		lift_tote(Lift::Status::error()),
-		pump(Pump::Status::NOT_FULL)
+		kicker(Kicker::Status::IN),
+		pump(Pump::Status::NOT_FULL),
+		can_grabber(Can_grabber::Status::MID_UP)
 	{}
 
 	bool operator==(Status a,Status b){
-		#define X(name) if(a.name!=b.name) return 0;
-		X(pump)
+		#define X(A,name,C) if(a.name!=b.name) return 0;
+		TOPLEVEL_ITEMS
 		#undef X
 		return 1;
 	}
@@ -52,7 +60,9 @@ namespace Toplevel{
 
 	ostream& operator<<(ostream& o,Status s){
 		o<<"Status(";
-		o<<" pump:"<<s.pump;
+		#define X(A,B,C) o<<" "#B<<":"<<s.B;
+		TOPLEVEL_ITEMS
+		#undef X
 		return o<<")";
 	}
 
@@ -119,31 +129,26 @@ namespace Toplevel{
 
 	Output control(Status status,Subgoals g){
 		Output r;
-		r.lift_can=control(status.lift_can,g.lift_can);
-		r.lift_tote=control(status.lift_tote,g.lift_tote);
-		r.drive=control(status.drive,g.drive);
-		r.pump=control(status.pump,g.pump);
-		return r;
-	}
-
-	bool ready(Status /*status*/,Subgoals /*g*/){
-		return 1;//ready(status.shooter_wheels,g.shooter_wheels);
-	}
-	
-	vector<string> not_ready(Status /*status*/,Subgoals /*g*/){
-		vector<string> r;
-		#define X(name) if(!ready(status.name,g.name)) r|=as_string(""#name);
-		//X(shooter_wheels)
+		#define X(A,B,C) r.B=control(status.B,g.B);
+		TOPLEVEL_ITEMS
 		#undef X
 		return r;
 	}
-	
-	/*ostream& operator<<(ostream& o,Control a){
-		o<<"Toplevel::Control(";
-		o<<a.shooter_wheels;
-		return o<<")";
-	}*/
 
+	bool ready(Status status,Subgoals g){
+		#define X(A,B,C) if(!ready(status.B,g.B)) return 0;
+		TOPLEVEL_ITEMS
+		#undef X
+		return 1;
+	}
+	
+	vector<string> not_ready(Status status,Subgoals g){
+		vector<string> r;
+		#define X(A,name,C) if(!ready(status.name,g.name)) r|=as_string(""#name);
+		TOPLEVEL_ITEMS
+		#undef X
+		return r;
+	}
 }
 
 #ifdef TOPLEVEL_TEST

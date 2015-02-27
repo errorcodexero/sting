@@ -49,6 +49,7 @@ std::set<Drivebase::Output> examples(Drivebase::Output*);
 std::ostream& operator<<(std::ostream&,Drivebase::Status const&);
 bool operator<(Drivebase::Status,Drivebase::Status);
 bool operator==(Drivebase::Status,Drivebase::Status);
+bool operator!=(Drivebase::Status,Drivebase::Status);
 std::set<Drivebase::Status> examples(Drivebase::Status*);
 
 std::ostream& operator<<(std::ostream&,Drivebase::Goal const&);

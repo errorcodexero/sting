@@ -43,6 +43,7 @@ struct Can_grabber {
 	explicit Can_grabber(int);
 };
 bool operator<(Can_grabber::Input,Can_grabber::Input);
+std::ostream& operator<<(std::ostream&,Can_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Can_grabber::Status_detail);
 std::ostream& operator<<(std::ostream&,Can_grabber::Estimator);
 std::ostream& operator<<(std::ostream&,Can_grabber::Output_applicator);
@@ -52,5 +53,6 @@ std::ostream& operator<<(std::ostream&,Can_grabber const&);
 std::set<Can_grabber::Status_detail> examples(Can_grabber::Status_detail*);
 std::set<Can_grabber::Input> examples(Can_grabber::Input*);
 std::set<Can_grabber::Output> examples(Can_grabber::Output*);
+Can_grabber::Output control(Can_grabber::Status,Can_grabber::Goal);
 
 #endif

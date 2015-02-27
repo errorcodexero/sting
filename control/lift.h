@@ -89,6 +89,7 @@ std::ostream& operator<<(std::ostream&,Lift::Status_detail::Type);
 std::ostream& operator<<(std::ostream&,Lift::Status_detail const&);
 bool operator<(Lift::Status_detail const&,Lift::Status_detail const&);
 bool operator==(Lift::Status_detail const&,Lift::Status_detail const&);
+bool operator!=(Lift::Status_detail const&,Lift::Status_detail const&);
 std::set<Lift::Status_detail> examples(Lift::Status_detail*);
 
 std::ostream& operator<<(std::ostream&,Lift::Goal::Mode);
@@ -102,6 +103,6 @@ std::ostream& operator<<(std::ostream&,Lift const&);
 
 Lift::Status status(Lift::Status_detail const&);
 Lift::Output control(Lift::Status_detail const&, Lift::Goal const&);
-bool ready(Lift::Status,Lift::Goal::Mode);
+bool ready(Lift::Status,Lift::Goal);
 
 #endif

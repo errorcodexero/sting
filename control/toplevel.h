@@ -6,38 +6,39 @@
 #include "drivebase.h"
 #include "lift.h"
 #include "kicker.h"
+#include "can_grabber.h"
 
 #define TOPLEVEL_ITEMS\
-	X(Lift,lift_can)\
-	X(Lift,lift_tote)\
-	X(Kicker,kicker)\
-	X(Drivebase,drive)
+	X(Lift,lift_can,Lift::Goal::stop())\
+	X(Lift,lift_tote,Lift::Goal::stop())\
+	X(Kicker,kicker,Kicker::Goal::IN)\
+	X(Drivebase,drive,)\
+	X(Pump,pump,Pump::Goal::AUTO)\
+	X(Can_grabber,can_grabber,Can_grabber::Goal::OFF)
 
 namespace Toplevel{
 	struct Output{
 		Output();
-		#define X(A,B) A::Output B;
+		#define X(A,B,C) A::Output B;
 		TOPLEVEL_ITEMS
 		#undef X
-		Pump::Output pump;
 	};
 	std::ostream& operator<<(std::ostream&,Output);
 
 	struct Subgoals{
 		Subgoals();
-		#define X(A,B) A::Goal B;
+		#define X(A,B,C) A::Goal B;
 		TOPLEVEL_ITEMS
 		#undef X
-		Pump::Goal pump;
+		bool dummy[0];
 	};
 	std::ostream& operator<<(std::ostream&,Subgoals);
 
 	struct Status{
 		Status();
-		#define X(A,B) A::Status B;
+		#define X(A,B,C) A::Status B;
 		TOPLEVEL_ITEMS
 		#undef X
-		Pump::Status pump;
 	};
 	bool operator==(Status,Status);
 	bool operator!=(Status,Status);

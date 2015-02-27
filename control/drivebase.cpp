@@ -10,6 +10,7 @@ set<Drivebase::Status> examples(Drivebase::Status*){ return {Drivebase::Status{}
 
 bool operator<(Drivebase::Status,Drivebase::Status){ return 0; }
 bool operator==(Drivebase::Status,Drivebase::Status){ return 1; }
+bool operator!=(Drivebase::Status a,Drivebase::Status b){ return !(a==b); }
 
 ostream& operator<<(ostream& o,Drivebase::Status const&){
 	o<<"Drivebase::Status(";

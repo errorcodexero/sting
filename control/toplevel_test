@@ -11,4 +11,7 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_TEST \
 	../util/jag_interface.cpp \
 	../util/driver_station_interface.cpp \
 	../util/util.cpp \
+	kicker.cpp \
+	can_grabber.cpp\
+	../util/countdown_timer.cpp\
 	-o toplevel 2>&1 && ./toplevel 2>&1

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace Toplevel{
+namespace Toplevel_mode{
 	ostream& operator<<(ostream& o,Mode m){
 		#define X(name) if(m==name) return o<<""#name;
 		X(DRIVE_WO_BALL)
@@ -28,9 +28,8 @@ namespace Toplevel{
 		#undef X
 		assert(0);
 	}
-
-	Goal subgoals(Mode m){
-		Goal r;
+	Toplevel::Goal subgoals(Mode m){
+		Toplevel::Goal r;
 		switch(m){
 			case DRIVE_WO_BALL:
 				break;
@@ -91,37 +90,37 @@ namespace Toplevel{
 		return r;
 	}
 
-	Toplevel::Mode to_mode(Control_status::Control_status status){
+	Toplevel_mode::Mode to_mode(Control_status::Control_status status){
 		switch(status){
-			case Control_status::AUTO_SPIN_UP: return Toplevel::SHOOT_HIGH_PREP;
-			case Control_status::AUTO_FIRE: return Toplevel::SHOOT_HIGH;
-			case Control_status::AUTO_TO_COLLECT: return Toplevel::COLLECT;
-			case Control_status::AUTO_COLLECT: return Toplevel::COLLECT;
-			case Control_status::AUTO_SPIN_UP2: return Toplevel::SHOOT_HIGH_PREP;
-			case Control_status::AUTO_FIRE2: return Toplevel::SHOOT_HIGH;		
-			case Control_status::A2_SPIN_UP: return Toplevel::AUTO_SHOT_PREP;
-			case Control_status::A2_FIRE: return Toplevel::AUTO_SHOT;
-			case Control_status::A2_TO_COLLECT: return Toplevel::COLLECT_SPIN_UP;
-			case Control_status::A2_COLLECT: return Toplevel::COLLECT_SPIN_UP; //Eric says worry about this ANOTHER day 
-			case Control_status::A2_SPIN_UP2: return Toplevel::AUTO_SHOT_PREP;
-			case Control_status::A2_FIRE2: return Toplevel::AUTO_SHOT;
-			case Control_status::A2_MOVE: return Toplevel::DRIVE_WO_BALL;
-			case Control_status::DRIVE_W_BALL: return Toplevel::DRIVE_W_BALL;
-			case Control_status::DRIVE_WO_BALL: return Toplevel::DRIVE_WO_BALL;
-			case Control_status::COLLECT: return Toplevel::COLLECT;
-			case Control_status::SHOOT_HIGH_PREP: return Toplevel::SHOOT_HIGH_PREP;
-			case Control_status::SHOOT_HIGH: return Toplevel::SHOOT_HIGH;
-			case Control_status::SHOOT_HIGH_WHEN_READY: return Toplevel::SHOOT_HIGH_PREP;
-			case Control_status::TRUSS_TOSS_PREP: return Toplevel::TRUSS_TOSS_PREP;
-			case Control_status::TRUSS_TOSS: return Toplevel::TRUSS_TOSS;
-			case Control_status::TRUSS_TOSS_WHEN_READY: return Toplevel::TRUSS_TOSS_PREP;
-			case Control_status::AUTO_SHOT_PREP: return Toplevel::AUTO_SHOT_PREP;
-			case Control_status::AUTO_SHOT: return Toplevel::AUTO_SHOT;
-			case Control_status::AUTO_SHOT_WHEN_READY: return Toplevel::AUTO_SHOT_PREP;
-			case Control_status::EJECT_PREP: return Toplevel::EJECT_PREP;
-			case Control_status::EJECT: return Toplevel::EJECT;
-			case Control_status::EJECT_WHEN_READY: return Toplevel::EJECT_PREP;
-			case Control_status::CATCH: return Toplevel::CATCH;
+			case Control_status::AUTO_SPIN_UP: return Toplevel_mode::Mode::SHOOT_HIGH_PREP;
+			case Control_status::AUTO_FIRE: return Toplevel_mode::Mode::SHOOT_HIGH;
+			case Control_status::AUTO_TO_COLLECT: return Toplevel_mode::Mode::COLLECT;
+			case Control_status::AUTO_COLLECT: return Toplevel_mode::Mode::COLLECT;
+			case Control_status::AUTO_SPIN_UP2: return Toplevel_mode::Mode::SHOOT_HIGH_PREP;
+			case Control_status::AUTO_FIRE2: return Toplevel_mode::Mode::SHOOT_HIGH;		
+			case Control_status::A2_SPIN_UP: return Toplevel_mode::Mode::AUTO_SHOT_PREP;
+			case Control_status::A2_FIRE: return Toplevel_mode::Mode::AUTO_SHOT;
+			case Control_status::A2_TO_COLLECT: return Toplevel_mode::Mode::COLLECT_SPIN_UP;
+			case Control_status::A2_COLLECT: return Toplevel_mode::Mode::COLLECT_SPIN_UP; //Eric says worry about this ANOTHER day 
+			case Control_status::A2_SPIN_UP2: return Toplevel_mode::AUTO_SHOT_PREP;
+			case Control_status::A2_FIRE2: return Toplevel_mode::AUTO_SHOT;
+			case Control_status::A2_MOVE: return Toplevel_mode::DRIVE_WO_BALL;
+			case Control_status::DRIVE_W_BALL: return Toplevel_mode::DRIVE_W_BALL;
+			case Control_status::DRIVE_WO_BALL: return Toplevel_mode::DRIVE_WO_BALL;
+			case Control_status::COLLECT: return Toplevel_mode::COLLECT;
+			case Control_status::SHOOT_HIGH_PREP: return Toplevel_mode::SHOOT_HIGH_PREP;
+			case Control_status::SHOOT_HIGH: return Toplevel_mode::SHOOT_HIGH;
+			case Control_status::SHOOT_HIGH_WHEN_READY: return Toplevel_mode::SHOOT_HIGH_PREP;
+			case Control_status::TRUSS_TOSS_PREP: return Toplevel_mode::TRUSS_TOSS_PREP;
+			case Control_status::TRUSS_TOSS: return Toplevel_mode::TRUSS_TOSS;
+			case Control_status::TRUSS_TOSS_WHEN_READY: return Toplevel_mode::TRUSS_TOSS_PREP;
+			case Control_status::AUTO_SHOT_PREP: return Toplevel_mode::AUTO_SHOT_PREP;
+			case Control_status::AUTO_SHOT: return Toplevel_mode::AUTO_SHOT;
+			case Control_status::AUTO_SHOT_WHEN_READY: return Toplevel_mode::AUTO_SHOT_PREP;
+			case Control_status::EJECT_PREP: return Toplevel_mode::EJECT_PREP;
+			case Control_status::EJECT: return Toplevel_mode::EJECT;
+			case Control_status::EJECT_WHEN_READY: return Toplevel_mode::EJECT_PREP;
+			case Control_status::CATCH: return Toplevel_mode::CATCH;
 			default:
 				assert(0);
 		}
@@ -148,22 +147,20 @@ string tag(string name,T contents){
 }
 
 
-namespace Toplevel{
-	static const vector<Mode> MODES{
-		DRIVE_WO_BALL,DRIVE_W_BALL,
-		COLLECT,
-		SHOOT_HIGH_PREP,SHOOT_HIGH,
-		TRUSS_TOSS_PREP,TRUSS_TOSS,
-		//PASS_PREP,PASS,
-		EJECT_PREP,EJECT,
-		CATCH, //SHOOT_LOW
-		COLLECT_SPIN_UP,
-		SHOOT_HIGH_PREP_NO_PUMP,
-		SHOOT_HIGH_NO_PUMP,
-		AUTO_SHOT,
-		AUTO_SHOT_PREP
-	};
-}
+static const vector<Toplevel_mode::Mode> MODES{
+	Toplevel_mode::DRIVE_WO_BALL,Toplevel_mode::DRIVE_W_BALL,
+	Toplevel_mode::COLLECT,
+	Toplevel_mode::SHOOT_HIGH_PREP,Toplevel_mode::SHOOT_HIGH,
+	Toplevel_mode::TRUSS_TOSS_PREP,Toplevel_mode::TRUSS_TOSS,
+	//PASS_PREP,PASS,
+	Toplevel_mode::EJECT_PREP,Toplevel_mode::EJECT,
+	Toplevel_mode::CATCH, //SHOOT_LOW
+	Toplevel_mode::COLLECT_SPIN_UP,
+	Toplevel_mode::SHOOT_HIGH_PREP_NO_PUMP,
+	Toplevel_mode::SHOOT_HIGH_NO_PUMP,
+	Toplevel_mode::AUTO_SHOT,
+	Toplevel_mode::AUTO_SHOT_PREP
+};
 
 void toplevel_modes(){
 	ofstream f("out.html");
@@ -180,7 +177,7 @@ void toplevel_modes(){
 						tag(ss,"th",s);
 					}
 					ss<<"</tr>";	
-					for(auto mode:Toplevel::MODES){
+					for(auto mode:MODES){
 						//Toplevel::Subgoals g=subgoals(mode);
 						tag(ss,"tr",
 							tag("td",as_string(mode))
@@ -195,8 +192,7 @@ void toplevel_modes(){
 
 int main(){
 	toplevel_modes();
-	using namespace Toplevel;
-	Status status;
+	Toplevel::Status status;
 	for(auto mode:MODES){
 		cout<<mode<<":\n";
 		auto g=subgoals(mode);

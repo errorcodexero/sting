@@ -457,10 +457,10 @@ Control_status::Control_status next(
 		fire_when_ready=(vert==Joystick_section::DOWN); //No equivalent on the switchpanel.
 	}
 
-	bool ready_to_shoot=ready(part_status,subgoals(Toplevel::SHOOT_HIGH_PREP));
-	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel::TRUSS_TOSS_PREP));
-	bool ready_to_collect=ready(part_status,subgoals(Toplevel::COLLECT));
-	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel::AUTO_SHOT_PREP));
+	bool ready_to_shoot=ready(part_status,subgoals(Toplevel_mode::SHOOT_HIGH_PREP));
+	bool ready_to_truss_toss=ready(part_status,subgoals(Toplevel_mode::TRUSS_TOSS_PREP));
+	bool ready_to_collect=ready(part_status,subgoals(Toplevel_mode::COLLECT));
+	bool ready_to_auto_shot=ready(part_status,subgoals(Toplevel_mode::AUTO_SHOT_PREP));
 	bool took_shot=1;
 	bool have_collected_question = false;
 
@@ -715,7 +715,7 @@ void mode_table(){
 			f<<control_status;
 		}
 		Tag d("td");
-		f<<Toplevel::to_mode(control_status);
+		f<<Toplevel_mode::to_mode(control_status);
 	}
 }
 
@@ -723,9 +723,9 @@ void mode_diagram(){
 	ofstream f("control_modes.dot");
 	f<<"digraph G{\n";
 	for(auto a:Control_status::all()){
-		string x=as_string(a),y=as_string(Toplevel::to_mode(a));
+		string x=as_string(a),y=as_string(Toplevel_mode::to_mode(a));
 		if(x!=y){
-			f<<"\t"<<a<<"->"<<Toplevel::to_mode(a)<<"\n";
+			f<<"\t"<<a<<"->"<<Toplevel_mode::to_mode(a)<<"\n";
 		}
 	}
 	f<<"}\n";
@@ -781,7 +781,7 @@ int main(){
 	bool test_control_status=1;
 	if(test_control_status){
 		for(Control_status::Control_status control_status:Control_status::all()){
-			cout<<control_status<<" "<<Toplevel::to_mode(control_status)<<"\n";
+			cout<<control_status<<" "<<Toplevel_mode::to_mode(control_status)<<"\n";
 		}
 	}
 	auto a=auto_test(cout,.18);

@@ -4,7 +4,7 @@
 #include "toplevel.h"
 #include "control_status.h"
 
-namespace Toplevel{
+namespace Toplevel_mode{
 	//all this mode stuff really belongs elsewhere
 	enum Mode{
 		DRIVE_WO_BALL,DRIVE_W_BALL,
@@ -23,8 +23,8 @@ namespace Toplevel{
 	};
 	std::ostream& operator<<(std::ostream& o,Mode);
 
-	Goal subgoals(Mode);
-	Toplevel::Mode to_mode(Control_status::Control_status);
+	Toplevel::Goal subgoals(Mode);
+	Toplevel_mode::Mode to_mode(Control_status::Control_status);
 }
 
 #endif

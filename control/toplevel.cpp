@@ -6,20 +6,19 @@
 
 using namespace std;
 
-namespace Toplevel{
-	Output::Output():
-		pump(Pump::Output::AUTO)
-	{}
+Toplevel::Output::Output():
+	pump(Pump::Output::AUTO)
+{}
 
-	ostream& operator<<(ostream& o,Output g){
-		o<<"Output(";
-		#define X(A,B,C) o<<" "#B<<":"<<g.B;
-		TOPLEVEL_ITEMS
-		#undef X
-		return o<<")";
-	}
+ostream& operator<<(ostream& o,Toplevel::Output g){
+	o<<"Output(";
+	#define X(A,B,C) o<<" "#B<<":"<<g.B;
+	TOPLEVEL_ITEMS
+	#undef X
+	return o<<")";
+}
 
-ostream& operator<<(ostream& o,Input const& a){
+ostream& operator<<(ostream& o,Toplevel::Input const& a){
 	o<<"Toplevel::Input(";
 	#define X(A,B,C) o<<" "#B<<":"<<a.B;
 	TOPLEVEL_ITEMS
@@ -27,136 +26,135 @@ ostream& operator<<(ostream& o,Input const& a){
 	return o<<")";
 }
 
-	Goal::Goal():
-		//shooter_wheels(Shooter_wheels:)
-		#define X(A,B,C) B(C),
-		TOPLEVEL_ITEMS
-		#undef X
-		dummy()
-		/*lift_can(Lift::Goal::stop()),
-		lift_tote(Lift::Goal::stop()),
-		kicker(Kicker::Goal::IN),
-		pump(Pump::Goal::AUTO)*/
-	{}
+Toplevel::Goal::Goal():
+	//shooter_wheels(Shooter_wheels:)
+	#define X(A,B,C) B(C),
+	TOPLEVEL_ITEMS
+	#undef X
+	dummy()
+	/*lift_can(Lift::Goal::stop()),
+	lift_tote(Lift::Goal::stop()),
+	kicker(Kicker::Goal::IN),
+	pump(Pump::Goal::AUTO)*/
+{}
 
-	ostream& operator<<(ostream& o,Goal g){
-		o<<"Toplevel::Goal(";
-		#define X(A,B,C) o<<" "#B<<":"<<g.B;
-		TOPLEVEL_ITEMS
-		#undef X
-		return o<<")";
+ostream& operator<<(ostream& o,Toplevel::Goal g){
+	o<<"Toplevel::Goal(";
+	#define X(A,B,C) o<<" "#B<<":"<<g.B;
+	TOPLEVEL_ITEMS
+	#undef X
+	return o<<")";
+}
+
+Toplevel::Status::Status():
+	lift_can(Lift::Status::error()),
+	lift_tote(Lift::Status::error()),
+	kicker(Kicker::Status::IN),
+	pump(Pump::Status::NOT_FULL),
+	can_grabber(Can_grabber::Status::MID_UP)
+{}
+
+bool operator==(Toplevel::Status a,Toplevel::Status b){
+	#define X(A,name,C) if(a.name!=b.name) return 0;
+	TOPLEVEL_ITEMS
+	#undef X
+	return 1;
+}
+
+bool operator!=(Toplevel::Status a,Toplevel::Status b){
+	return !(a==b);
+}
+
+ostream& operator<<(ostream& o,Toplevel::Status s){
+	o<<"Status(";
+	#define X(A,B,C) o<<" "#B<<":"<<s.B;
+	TOPLEVEL_ITEMS
+	#undef X
+	return o<<")";
+}
+
+string remove_till_colon(string s){
+	unsigned i=0;
+	while(i<s.size() && s[i]!=':') i++;
+	if(s[i]==':') i++;
+	string r=s.substr(i,s.size());
+	return r;
+}
+
+/*Maybe<Toplevel::Status> parse_status(string const& s){
+	vector<string> v=split(inside_parens(s));
+	if(v.size()!=7) return Maybe<Status>();
+	Status r;
+	//yes, there is a better way to do this; it's called a monad. (or exceptions)
+	#define X(i) remove_till_colon(v[i])
+	{
+		Maybe<Pump::Status> m;//=parse_status(X(5));
+		if(!m) return Maybe<Status>();
+		r.pump=*m;
 	}
+	#undef X
+	return Maybe<Status>(r);
+}*/
 
-	Status::Status():
-		lift_can(Lift::Status::error()),
-		lift_tote(Lift::Status::error()),
-		kicker(Kicker::Status::IN),
-		pump(Pump::Status::NOT_FULL),
-		can_grabber(Can_grabber::Status::MID_UP)
-	{}
+Toplevel::Estimator::Estimator():pump(Pump::Status::NOT_FULL){}
 
-	bool operator==(Status a,Status b){
-		#define X(A,name,C) if(a.name!=b.name) return 0;
-		TOPLEVEL_ITEMS
-		#undef X
-		return 1;
-	}
+void Toplevel::Estimator::update(Time /*time*/,bool /*enabled*/,Output /*out*/,Pump::Status pump_status, bool){
+	pump=pump_status;
+}
 
-	bool operator!=(Status a,Status b){
-		return !(a==b);
-	}
+Toplevel::Status Toplevel::Estimator::estimate()const{
+	Status r;
+	r.pump=pump;
+	return r;
+}
 
-	ostream& operator<<(ostream& o,Status s){
-		o<<"Status(";
-		#define X(A,B,C) o<<" "#B<<":"<<s.B;
-		TOPLEVEL_ITEMS
-		#undef X
-		return o<<")";
-	}
+void Toplevel::Estimator::out(ostream& o)const{
+	o<<"Estimator(";
+	o<<" pump:"<<pump;
+	o<<")";
+}
 
-	string remove_till_colon(string s){
-		unsigned i=0;
-		while(i<s.size() && s[i]!=':') i++;
-		if(s[i]==':') i++;
-		string r=s.substr(i,s.size());
-		return r;
-	}
+bool operator==(Toplevel::Estimator a,Toplevel::Estimator b){
+	#define X(name) if(a.name!=b.name) return 0;
+	X(pump)
+	#undef X
+	return 1;
+}
 
-	Maybe<Status> parse_status(string const& s){
-		vector<string> v=split(inside_parens(s));
-		if(v.size()!=7) return Maybe<Status>();
-		Status r;
-		//yes, there is a better way to do this; it's called a monad. (or exceptions)
-		#define X(i) remove_till_colon(v[i])
-		{
-			Maybe<Pump::Status> m;//=parse_status(X(5));
-			if(!m) return Maybe<Status>();
-			r.pump=*m;
-		}
-		#undef X
-		return Maybe<Status>(r);
-	}
+bool operator!=(Toplevel::Estimator a,Toplevel::Estimator b){
+	return !(a==b);
+}
 
-	Estimator::Estimator():pump(Pump::Status::NOT_FULL){}
+ostream& operator<<(ostream& o,Toplevel::Estimator e){
+	e.out(o);
+	return o;
+}
 
-	void Estimator::update(Time /*time*/,bool /*enabled*/,Output /*out*/,Pump::Status pump_status, bool){
-		pump=pump_status;
-	}
+bool approx_equal(Toplevel::Estimator a,Toplevel::Estimator b){
+	return a.estimate()==b.estimate();
+}
 
-	Status Estimator::estimate()const{
-		Status r;
-		r.pump=pump;
-		return r;
-	}
+Toplevel::Output control(Toplevel::Status status,Toplevel::Goal g){
+	Toplevel::Output r;
+	#define X(A,B,C) r.B=control(status.B,g.B);
+	TOPLEVEL_ITEMS
+	#undef X
+	return r;
+}
 
-	void Estimator::out(ostream& o)const{
-		o<<"Estimator(";
-		o<<" pump:"<<pump;
-		o<<")";
-	}
+bool ready(Toplevel::Status status,Toplevel::Goal g){
+	#define X(A,B,C) if(!ready(status.B,g.B)) return 0;
+	TOPLEVEL_ITEMS
+	#undef X
+	return 1;
+}
 
-	bool operator==(Estimator a,Estimator b){
-		#define X(name) if(a.name!=b.name) return 0;
-		X(pump)
-		#undef X
-		return 1;
-	}
-
-	bool operator!=(Estimator a,Estimator b){
-		return !(a==b);
-	}
-
-	ostream& operator<<(ostream& o,Estimator e){
-		e.out(o);
-		return o;
-	}
-
-	bool approx_equal(Estimator a,Estimator b){
-		return a.estimate()==b.estimate();
-	}
-
-	Output control(Status status,Goal g){
-		Output r;
-		#define X(A,B,C) r.B=control(status.B,g.B);
-		TOPLEVEL_ITEMS
-		#undef X
-		return r;
-	}
-
-	bool ready(Status status,Goal g){
-		#define X(A,B,C) if(!ready(status.B,g.B)) return 0;
-		TOPLEVEL_ITEMS
-		#undef X
-		return 1;
-	}
-	
-	vector<string> not_ready(Status status,Goal g){
-		vector<string> r;
-		#define X(A,name,C) if(!ready(status.name,g.name)) r|=as_string(""#name);
-		TOPLEVEL_ITEMS
-		#undef X
-		return r;
-	}
+vector<string> not_ready(Toplevel::Status status,Toplevel::Goal g){
+	vector<string> r;
+	#define X(A,name,C) if(!ready(status.name,g.name)) r|=as_string(""#name);
+	TOPLEVEL_ITEMS
+	#undef X
+	return r;
 }
 
 #ifdef TOPLEVEL_TEST
@@ -178,18 +176,17 @@ bool approx_equal(T t,Maybe<T> m){
 }
 
 int main(){
-	using namespace Toplevel;
 	Toplevel::Goal g;
 	cout<<g<<"\n";
 	Toplevel::Status status;
 	cout<<status<<"\n";
 	//Toplevel::Control control;
-	Estimator est;
+	Toplevel::Estimator est;
 	cout<<est<<"\n";
 	cout<<est.estimate()<<"\n";
 	Pump::Status ps=Pump::Status::FULL;
-	est.update(0,1,Output(),ps,0);
-	est.update(10,0,Output(),ps,0);
+	est.update(0,1,Toplevel::Output(),ps,0);
+	est.update(10,0,Toplevel::Output(),ps,0);
 	cout<<est.estimate()<<"\n";
 	/*
 	if we choose one of the modes and use all the built-in controls then we should after some time get to a status where we're ready.  

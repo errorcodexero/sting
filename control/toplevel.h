@@ -16,7 +16,8 @@
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Can_grabber,can_grabber,Can_grabber::Goal::TOP)
 
-namespace Toplevel{
+class Toplevel{
+	public:
 	struct Input{
 		#define X(A,B,C) A::Input B;
 		TOPLEVEL_ITEMS
@@ -29,7 +30,6 @@ namespace Toplevel{
 		TOPLEVEL_ITEMS
 		#undef X
 	};
-	std::ostream& operator<<(std::ostream&,Output);
 
 	struct Goal{
 		Goal();
@@ -38,14 +38,12 @@ namespace Toplevel{
 		#undef X
 		bool dummy[0];
 	};
-	std::ostream& operator<<(std::ostream&,Goal);
 
 	struct Status_detail{
 		#define X(A,B,C) A::Status_detail B;
 		TOPLEVEL_ITEMS
 		#undef X
 	};
-	std::ostream& operator<<(std::ostream&,Status_detail const&);
 	
 	struct Status{
 		Status();
@@ -53,10 +51,6 @@ namespace Toplevel{
 		TOPLEVEL_ITEMS
 		#undef X
 	};
-	bool operator==(Status,Status);
-	bool operator!=(Status,Status);
-	std::ostream& operator<<(std::ostream& o,Status);
-	Maybe<Status> parse_status(std::string const&);
 
 	class Estimator{
 		//no estimate for collector
@@ -70,15 +64,23 @@ namespace Toplevel{
 
 		friend bool operator==(Estimator,Estimator);
 	};
-	bool operator==(Estimator,Estimator);
-	bool operator!=(Estimator,Estimator);
-	std::ostream& operator<<(std::ostream& o,Estimator);
-	bool approx_equal(Estimator,Estimator);
+};
+std::ostream& operator<<(std::ostream&,Toplevel::Output);
+std::ostream& operator<<(std::ostream&,Toplevel::Goal);
+std::ostream& operator<<(std::ostream&,Toplevel::Status_detail const&);
+bool operator==(Toplevel::Status,Toplevel::Status);
+bool operator!=(Toplevel::Status,Toplevel::Status);
+std::ostream& operator<<(std::ostream& o,Toplevel::Status);
+//Maybe<Toplevel::Status> parse_status(std::string const&);
 
-	Output control(Status,Goal);
-	bool ready(Status,Goal);
-	std::vector<std::string> not_ready(Status,Goal);
-	Status status(Status_detail const&);
-}
+bool operator==(Toplevel::Estimator,Toplevel::Estimator);
+bool operator!=(Toplevel::Estimator,Toplevel::Estimator);
+std::ostream& operator<<(std::ostream& o,Toplevel::Estimator);
+bool approx_equal(Toplevel::Estimator,Toplevel::Estimator);
+
+Toplevel::Output control(Toplevel::Status,Toplevel::Goal);
+bool ready(Toplevel::Status,Toplevel::Goal);
+std::vector<std::string> not_ready(Toplevel::Status,Toplevel::Goal);
+Toplevel::Status status(Toplevel::Status_detail const&);
 
 #endif

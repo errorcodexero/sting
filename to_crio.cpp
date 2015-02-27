@@ -406,6 +406,8 @@ public:
 			/*int r=digital_io[i].set(out.digital_io[i]);
 			if(r) error_code|=512;*/
 		}
+		digital_io.set(out.digital_io);
+
 		//test.Set(1);
 		test1.Set(out.talon_srx[0].power_level);
 		test2.Set(out.talon_srx[1].power_level);
@@ -479,7 +481,7 @@ public:
 	void run(Robot_inputs in){
 		cout<<"in:"<<in<<"\n";
 		Robot_outputs out=main(in);
-		//cout<<"out:"<<out<<"\n";
+		cout<<"out:"<<out<<"\n";
 		int x=set_outputs(out,in.robot_mode.enabled);
 		if(x) cout<<"x was:"<<x<<"\n";
 		static int i=0;
@@ -523,6 +525,7 @@ public:
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			//in.digital_io[i]=digital_io[i].get();
 		}
+		in.digital_io=digital_io.get();
 		//for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
 		auto f=[&](int index,CANTalon& test) {
 			in.talon_srx[index].fwd_limit_switch=test.IsFwdLimitSwitchClosed();

@@ -32,6 +32,7 @@ class DIO_control{
 	
 	friend std::ostream& operator<<(std::ostream&,DIO_control const&);
 };
+std::ostream& operator<<(std::ostream&,DIO_control::Mode);
 std::ostream& operator<<(std::ostream&,DIO_control const&);
 
 struct Encoder_control{

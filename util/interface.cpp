@@ -6,8 +6,48 @@
 
 using namespace std;
 
+Digital_out::Digital_out():type_(Type::INPUT){}
+
+Digital_out::Type Digital_out::type()const{ return type_; }
+
+int Digital_out::encoder_index()const{
+	assert(type_==Type::ENCODER);
+	return encoder_index_;
+}
+
+bool Digital_out::input_a()const{
+	assert(type_==Type::ENCODER);
+	return input_a_;
+}
+
+Digital_out Digital_out::input(){
+	Digital_out r;
+	r.type_=Digital_out::Type::INPUT;
+	return r;
+}
+
+Digital_out Digital_out::one(){
+	Digital_out r;
+	r.type_=Digital_out::Type::_1;
+	return r;
+}
+
+Digital_out Digital_out::zero(){
+	Digital_out r;
+	r.type_=Digital_out::Type::_0;
+	return r;
+}
+
+Digital_out Digital_out::encoder(int encoder_index,bool input_a){
+	Digital_out r;
+	r.type_=Digital_out::Type::ENCODER;
+	r.encoder_index_=encoder_index;
+	r.input_a_=input_a;
+	return r;
+}
+
 std::ostream& operator<<(std::ostream& o,Digital_out a){
-	switch(a.type){
+	switch(a.type()){
 		case a.Type::INPUT:
 			o<<"INPUT";
 			break;
@@ -17,27 +57,29 @@ std::ostream& operator<<(std::ostream& o,Digital_out a){
 		case a.Type::_1:
 			o<<"1";
 			break;
+		case a.Type::ENCODER:
+			o<<"encoder_index: "<<a.encoder_index();
+			o<<"input_a: "<<a.input_a();
+			break;
 		default:
 			o<<"?";
 	}
-	o<<"encoder_index: "<<a.encoder_index;
-	o<<"input_a: "<<a.input_a;
 	return o;
 }
 
 std::ostream& operator<<(std::ostream& o, Talon_srx_input in){
-	o<<"encoder_position: "<<in.encoder_position<<" velocity:"<<in.velocity<<" fwd_limit_switch: "<<in.fwd_limit_switch<<" rev_limit_switch: "<<in.rev_limit_switch<<" a: "<<in.a<<" b: "<<in.b;
-	return o;
+	o<<"(encoder_position: "<<in.encoder_position<<" velocity:"<<in.velocity<<" fwd_limit_switch: "<<in.fwd_limit_switch<<" rev_limit_switch: "<<in.rev_limit_switch<<" a: "<<in.a<<" b: "<<in.b;
+	return o<<")";
 }
 
 std::ostream& operator<<(std::ostream& o, Talon_srx_output in){
-	o<<"power_level: "<<in.power_level;
-	return o;
+	o<<"(power_level: "<<in.power_level;
+	return o<<")";
 }
 
 void terse(ostream& o, Digital_out d){
 	//o<<d;
-	switch(d.type){
+	switch(d.type()){
 		case Digital_out::Type::INPUT:
 			o<<'i';
 			break;
@@ -126,7 +168,11 @@ bool operator<(Talon_srx_output a, Talon_srx_output b){
 }
 
 bool operator==(Digital_out a, Digital_out b){
-	return a.type==b.type && a.encoder_index==b.encoder_index && a.input_a==b.input_a;
+	if(a.type()!=b.type()) return 0;
+	if(a.type()==Digital_out::Type::ENCODER){
+		return a.encoder_index()==b.encoder_index() && a.input_a()==b.input_a();
+	}
+	return 1;
 }
 
 bool operator!=(Digital_out a, Digital_out b){
@@ -134,7 +180,14 @@ bool operator!=(Digital_out a, Digital_out b){
 }
 
 bool operator<(Digital_out a, Digital_out b){
-	return a.type<b.type && a.encoder_index<b.encoder_index && a.input_a<b.input_a;
+	if(a.type()<b.type()) return 1;
+	if(b.type()<a.type()) return 0;
+	if(a.type()==Digital_out::Type::ENCODER){
+		if(a.encoder_index()<b.encoder_index()) return 1;
+		if(b.encoder_index()<a.encoder_index()) return 0;
+		return a.input_a()<b.input_a();
+	}
+	return 0;
 }
 
 Robot_outputs::Robot_outputs(){
@@ -146,11 +199,6 @@ Robot_outputs::Robot_outputs(){
 	}
 	for(unsigned i=0;i<RELAYS;i++){
 		relay[i]=Relay_output::_00;
-	}
-	for(unsigned i=0;i<DIGITAL_IOS;i++){
-		Digital_out out;
-		out.type=Digital_out::Type::INPUT;
-		digital_io[i]=out;
 	}
 }
 

@@ -18,11 +18,26 @@ typedef bool Solenoid_output;
 enum class Relay_output{_00,_01,_10,_11};
 std::ostream& operator<<(std::ostream&,Relay_output);
 
-struct Digital_out{
+class Digital_out{
+	public:
 	enum class Type{INPUT,_1,_0,ENCODER};
-	Type type;
-	int encoder_index;
-	bool input_a;
+
+	private:
+	Type type_;
+	int encoder_index_;
+	bool input_a_;
+
+	public:
+	Digital_out();
+
+	Type type()const;
+	int encoder_index()const;
+	bool input_a()const;
+
+	static Digital_out input();
+	static Digital_out one();
+	static Digital_out zero();
+	static Digital_out encoder(int encoder_index,bool input_a);
 };
 
 struct Talon_srx_input{

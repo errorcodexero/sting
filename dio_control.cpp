@@ -20,14 +20,14 @@ int DIO_control::set_channel(int i){
 
 int DIO_control::set(Digital_out d){
 	if(channel==-1) return 4;
-	if(d.type==Digital_out::Type::INPUT) return set_mode(Mode::IN);
-	if(d.type==Digital_out::Type::ENCODER) return set_mode(Mode::FREE);
+	if(d.type()==Digital_out::Type::INPUT) return set_mode(Mode::IN);
+	if(d.type()==Digital_out::Type::ENCODER) return set_mode(Mode::FREE);
 	{
 		int r=set_mode(Mode::OUT);
 		if(r) return r;
 	}
 	if(!out) return 1;
-	out->Set(d.type==Digital_out::Type::_1);
+	out->Set(d.type()==Digital_out::Type::_1);
 	return 0;
 }
 
@@ -121,11 +121,13 @@ void DIO_controls::set(array<Digital_out,Robot_outputs::DIGITAL_IOS> const& a){
 		}
 	}
 
+	int r=0;
 	//set all the dios
 	for(unsigned i=0;i<channel.size();i++){
-		channel[i].set(a[i]);
+		r|=channel[i].set(a[i]);
 	}
-	
+	if(r)cout<<"r:"<<r<<"\n";
+
 	//create new encoders
 	for(unsigned i=0;i<Digital_inputs::ENCODERS;i++){
 		auto ca=channel_a[i];

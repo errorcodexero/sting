@@ -22,7 +22,7 @@ Robot_outputs convert_output(Toplevel::Output a){
 	r.relay[0]=(a.pump==Pump::OUTPUT_ON)?Relay_output::_10:Relay_output::_00;
 	
 	//pressure switch
-	r.digital_io[0].type=Digital_out::Type::INPUT;
+	r.digital_io[0]=Digital_out::input();
 
 	//cerr<<a.shooter_wheels<<"\r\n";
 	/*for(unsigned i=0;i<4;i++){
@@ -254,7 +254,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		piston.update(gunner_joystick.button[Gamepad_button::Y]);
 		r.solenoid[0] = piston.get();
 
-
+		for(unsigned i=0;i<6;i++){
+			r.digital_io[i]=Digital_out::input();
+		}
 
 		for(unsigned i=0;i<r.PWMS;i++){
 			r.pwm[i]=0;

@@ -16,4 +16,7 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	../util/posedge_trigger.cpp \
 	../util/point.cpp \
 	../util/negedge_trigger.cpp \
+	kicker.cpp\
+	can_grabber.cpp\
+	../util/countdown_timer.cpp\
 	-o monitor 2>&1 && ./monitor

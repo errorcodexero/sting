@@ -14,7 +14,7 @@
 	X(Kicker,kicker,Kicker::Goal::IN)\
 	X(Drivebase,drive,)\
 	X(Pump,pump,Pump::Goal::AUTO)\
-	X(Can_grabber,can_grabber,Can_grabber::Goal::OFF)
+	X(Can_grabber,can_grabber,Can_grabber::Goal::TOP)
 
 namespace Toplevel{
 	struct Output{

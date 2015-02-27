@@ -38,11 +38,13 @@ struct Can_grabber {
 	};
 	Output_applicator output_applicator;
 	
-	typedef Output Goal;
+	enum class Goal{TOP,BOTTOM};
 	
 	explicit Can_grabber(int);
 };
 bool operator<(Can_grabber::Input,Can_grabber::Input);
+std::ostream& operator<<(std::ostream&,Can_grabber::Input);
+std::ostream& operator<<(std::ostream&,Can_grabber::Output);
 std::ostream& operator<<(std::ostream&,Can_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Can_grabber::Status_detail);
 std::ostream& operator<<(std::ostream&,Can_grabber::Estimator);

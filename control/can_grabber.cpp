@@ -6,6 +6,10 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
+ostream& operator<<(ostream& o,Can_grabber::Input a){
+	return o<<"Can_grabber::Input("<<a.sensor<<")";
+}
+
 ostream& operator<<(ostream& o,Can_grabber::Output a){
 	#define X(NAME) if(a==Can_grabber::Output::NAME) return o<<""#NAME;
 	X(ON) X(OFF)
@@ -13,9 +17,13 @@ ostream& operator<<(ostream& o,Can_grabber::Output a){
 	assert(0);
 }
 
-Can_grabber::Output control(Can_grabber::Status_detail,Can_grabber::Output)nyi
+Can_grabber::Output control(Can_grabber::Status_detail status,Can_grabber::Goal goal){
+	return ready(status,goal)?Can_grabber::Output::OFF:Can_grabber::Output::ON;
+}
 
-bool operator<(Can_grabber::Input,Can_grabber::Input)nyi
+bool operator<(Can_grabber::Input a,Can_grabber::Input b){
+	return a.sensor<b.sensor;
+}
 
 Can_grabber::Estimator::Estimator():last(Can_grabber::Status_detail::MID_UP){}
 
@@ -67,10 +75,10 @@ Can_grabber::Status status(Can_grabber::Status_detail const& a){
 
 Can_grabber::Can_grabber(int can_address):output_applicator(can_address){}
 
-bool ready(Can_grabber::Status status,Can_grabber::Goal goal){//NO
-	if(goal==Can_grabber::Goal::ON) return (status==Can_grabber::Status_detail::TOP);//FIX
-	if(goal==Can_grabber::Goal::OFF) return (status==Can_grabber::Status_detail::MID_DOWN);//THIS
-	nyi
+bool ready(Can_grabber::Status status,Can_grabber::Goal goal){
+	if(goal==Can_grabber::Goal::TOP) return (status==Can_grabber::Status_detail::TOP);
+	if(goal==Can_grabber::Goal::BOTTOM) return (status==Can_grabber::Status_detail::BOTTOM);
+	assert(0);
 }
 
 std::ostream& operator<<(std::ostream& o,Can_grabber const& can_grabber){
@@ -101,10 +109,32 @@ std::set<Can_grabber::Output> examples(Can_grabber::Output*) {
 	};
 }
 
+std::set<Can_grabber::Goal> examples(Can_grabber::Goal*){
+	return {Can_grabber::Goal::TOP,Can_grabber::Goal::BOTTOM};
+}
+
+ostream& operator<<(ostream& o,Can_grabber::Goal a){
+	#define X(NAME) if(a==Can_grabber::Goal::NAME) return o<<""#NAME;
+	X(TOP) X(BOTTOM)
+	#undef X
+	assert(0);
+}
+
+Robot_outputs Can_grabber::Output_applicator::operator()(Robot_outputs r,Output out)const{
+	r.pwm[can_address]=(out==Can_grabber::Output::ON)?.5:0;
+	return r;
+}
+
+Can_grabber::Output Can_grabber::Output_applicator::operator()(Robot_outputs r)const{
+	return (r.pwm[can_address]>.25)?Can_grabber::Output::ON:Can_grabber::Output::OFF;
+}
+
 //std::set<Can_grabber::Goal> examples(Can_grabber::Goal*)nyi
 
 #ifdef CAN_GRABBER_TEST
-int main(){
+#include "formal.h"
 
+int main(){
+	tester(Can_grabber(4));
 }
 #endif

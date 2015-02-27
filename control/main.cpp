@@ -85,7 +85,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		since_auto_start.update(in.now,autonomous_start_now);
 		//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
-		Toplevel::Subgoals goals;
+		Toplevel::Goal goals;
 		//Drivebase::Status_detail status_detail = drivebase.estimator.get();
 		
 		Lift::Input can_input;

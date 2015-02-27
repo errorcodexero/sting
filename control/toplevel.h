@@ -17,6 +17,12 @@
 	X(Can_grabber,can_grabber,Can_grabber::Goal::TOP)
 
 namespace Toplevel{
+	struct Input{
+		#define X(A,B,C) A::Input B;
+		TOPLEVEL_ITEMS
+		#undef X
+	};
+
 	struct Output{
 		Output();
 		#define X(A,B,C) A::Output B;
@@ -25,15 +31,22 @@ namespace Toplevel{
 	};
 	std::ostream& operator<<(std::ostream&,Output);
 
-	struct Subgoals{
-		Subgoals();
+	struct Goal{
+		Goal();
 		#define X(A,B,C) A::Goal B;
 		TOPLEVEL_ITEMS
 		#undef X
 		bool dummy[0];
 	};
-	std::ostream& operator<<(std::ostream&,Subgoals);
+	std::ostream& operator<<(std::ostream&,Goal);
 
+	struct Status_detail{
+		#define X(A,B,C) A::Status_detail B;
+		TOPLEVEL_ITEMS
+		#undef X
+	};
+	std::ostream& operator<<(std::ostream&,Status_detail const&);
+	
 	struct Status{
 		Status();
 		#define X(A,B,C) A::Status B;
@@ -62,9 +75,10 @@ namespace Toplevel{
 	std::ostream& operator<<(std::ostream& o,Estimator);
 	bool approx_equal(Estimator,Estimator);
 
-	Output control(Status,Subgoals);
-	bool ready(Status,Subgoals);
-	std::vector<std::string> not_ready(Status,Subgoals);
+	Output control(Status,Goal);
+	bool ready(Status,Goal);
+	std::vector<std::string> not_ready(Status,Goal);
+	Status status(Status_detail const&);
 }
 
 #endif

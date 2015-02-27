@@ -19,7 +19,15 @@ namespace Toplevel{
 		return o<<")";
 	}
 
-	Subgoals::Subgoals():
+ostream& operator<<(ostream& o,Input const& a){
+	o<<"Toplevel::Input(";
+	#define X(A,B,C) o<<" "#B<<":"<<a.B;
+	TOPLEVEL_ITEMS
+	#undef X
+	return o<<")";
+}
+
+	Goal::Goal():
 		//shooter_wheels(Shooter_wheels:)
 		#define X(A,B,C) B(C),
 		TOPLEVEL_ITEMS
@@ -31,8 +39,8 @@ namespace Toplevel{
 		pump(Pump::Goal::AUTO)*/
 	{}
 
-	ostream& operator<<(ostream& o,Subgoals g){
-		o<<"Toplevel::Subgoals(";
+	ostream& operator<<(ostream& o,Goal g){
+		o<<"Toplevel::Goal(";
 		#define X(A,B,C) o<<" "#B<<":"<<g.B;
 		TOPLEVEL_ITEMS
 		#undef X
@@ -127,7 +135,7 @@ namespace Toplevel{
 		return a.estimate()==b.estimate();
 	}
 
-	Output control(Status status,Subgoals g){
+	Output control(Status status,Goal g){
 		Output r;
 		#define X(A,B,C) r.B=control(status.B,g.B);
 		TOPLEVEL_ITEMS
@@ -135,14 +143,14 @@ namespace Toplevel{
 		return r;
 	}
 
-	bool ready(Status status,Subgoals g){
+	bool ready(Status status,Goal g){
 		#define X(A,B,C) if(!ready(status.B,g.B)) return 0;
 		TOPLEVEL_ITEMS
 		#undef X
 		return 1;
 	}
 	
-	vector<string> not_ready(Status status,Subgoals g){
+	vector<string> not_ready(Status status,Goal g){
 		vector<string> r;
 		#define X(A,name,C) if(!ready(status.name,g.name)) r|=as_string(""#name);
 		TOPLEVEL_ITEMS
@@ -171,7 +179,7 @@ bool approx_equal(T t,Maybe<T> m){
 
 int main(){
 	using namespace Toplevel;
-	Toplevel::Subgoals g;
+	Toplevel::Goal g;
 	cout<<g<<"\n";
 	Toplevel::Status status;
 	cout<<status<<"\n";

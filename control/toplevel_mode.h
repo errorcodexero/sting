@@ -23,7 +23,7 @@ namespace Toplevel{
 	};
 	std::ostream& operator<<(std::ostream& o,Mode);
 
-	Subgoals subgoals(Mode);
+	Goal subgoals(Mode);
 	Toplevel::Mode to_mode(Control_status::Control_status);
 }
 

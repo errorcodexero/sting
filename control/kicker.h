@@ -39,6 +39,7 @@ struct Kicker{
 	explicit Kicker(int);
 };
 
+std::ostream& operator<<(std::ostream&,Kicker::Input const&);
 std::ostream& operator<<(std::ostream&,Kicker::Output);
 std::ostream& operator<<(std::ostream&,Kicker::Status_detail);
 std::ostream& operator<<(std::ostream&,Kicker::Estimator);

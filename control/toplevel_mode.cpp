@@ -29,8 +29,8 @@ namespace Toplevel{
 		assert(0);
 	}
 
-	Subgoals subgoals(Mode m){
-		Subgoals r;
+	Goal subgoals(Mode m){
+		Goal r;
 		switch(m){
 			case DRIVE_WO_BALL:
 				break;

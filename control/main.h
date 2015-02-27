@@ -11,6 +11,7 @@
 #include "toplevel.h"
 #include "drivebase.h"
 #include "lift.h"
+#include "kicker.h"
 #include "../input/util.h"
 
 struct Main{
@@ -31,6 +32,8 @@ struct Main{
 	Posedge_trigger autonomous_start;
 
 	Drivebase drivebase;
+	
+	Kicker kicker;
 	
 	Lift lift_can;
 	Lift lift_tote;

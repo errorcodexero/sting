@@ -137,7 +137,7 @@ bool ready(Kicker::Status status,Kicker::Goal goal){
 };*/
 
 int main(){
-	Kicker kicker(0);
-	tester(kicker);
+	Kicker a(0);
+	tester(a);
 }
 #endif

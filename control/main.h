@@ -31,13 +31,6 @@ struct Main{
 	Posedge_toggle field_relative;
 	Posedge_trigger autonomous_start;
 
-	Drivebase drivebase;
-	
-	Kicker kicker;
-	
-	Lift lift_can;
-	Lift lift_tote;
-	
 	//Move into PANEL.H when OI ready
 
 	Posedge_toggle piston;

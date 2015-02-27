@@ -32,7 +32,7 @@ Robot_outputs convert_output(Toplevel::Output /*a*/){
 }
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),kicker(0),lift_can(1),lift_tote(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
+Main::Main():mode(Mode::TELEOP),control_status(Control_status::DRIVE_W_BALL),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
 
 Control_status::Control_status next(Control_status::Control_status status,Toplevel::Status part_status,Joystick_data j,bool autonomous_mode,bool autonomous_mode_start,Time since_switch,Time autonomous_mode_left);
 
@@ -245,14 +245,10 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goal.y=0;
 			goal.theta=0;
 		}
-		cout<<"Can: "<<lift_can<<endl;
-		cout<<"Tote: "<<lift_tote<<endl;	
+		//cout<<"Can: "<<lift_can<<endl;
+		//cout<<"Tote: "<<lift_tote<<endl;	
 		//Drivebase::Output out = control(status_detail, goal);
 
-		Toplevel::Status r_status;
-		//r_status.drive_status=;
-		r_status.lift_can=lift_can.estimator.get();
-		r_status.lift_tote=lift_tote.estimator.get();
 		Toplevel::Output r_out=control(toplevel.estimator.get(),goals); 
 
 		Robot_outputs r;
@@ -269,10 +265,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			r.pwm[i]=0;
 		}
 		
-		r=drivebase.output_applicator(r,r_out.drive);
-		r=lift_can.output_applicator(r,r_out.lift_can);
-		r=lift_tote.output_applicator(r,r_out.lift_tote);
-		r=kicker.output_applicator(r,r_out.kicker);
+		r=toplevel.output_applicator(r,r_out);
 		//r.solenoid[0] = gunner_joystick.button[Gamepad_button::Y];
 		
 		/*auto l1=y-theta;
@@ -298,8 +291,18 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			return 0.0;
 		}();*/
 		r=force(r);
-		lift_can.estimator.update(in.now,can_input,lift_can.output_applicator(r));
-		lift_tote.estimator.update(in.now,tote_input,lift_tote.output_applicator(r));
+		toplevel.estimator.update(
+			in.now,
+			Toplevel::Input{
+				can_input,
+				tote_input,
+				Kicker::Input{},
+				Drivebase::Input{},
+				Pump::Input::NOT_FULL,
+				Can_grabber::Input{1} //todo: make this actually ready from a digital io
+			},
+			toplevel.output_applicator(r)
+		);
 		return r;
 	}
 	/*

@@ -33,11 +33,11 @@ struct Main{
 	struct Nudge{
 		Posedge_trigger trigger;
 		Countdown_timer timer;
-		bool start;
 	};
 	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
 	Nudge back_turns[2];//Backwards and left, Backwards and right
-	
+
+	void teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Toplevel::Goal&);
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };

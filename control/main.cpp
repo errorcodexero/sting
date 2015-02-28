@@ -20,8 +20,15 @@ double set_drive_speed(Joystick_data joystick, int axis, double boost, double sl
 	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 
-Lift::Goal tote_lifter(Toplevel::Goal &goals,float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_detail &toplevel_status,bool kick_and_lift=1){
-	if(kick_and_lift && toplevel_status.combo_lift.tote.inches_off_ground()==ENGAGE_KICKER_HEIGHT) goals.kicker=Kicker::Goal::OUT;
+template<typename T>
+bool in_range(T a,T b,T c){
+	return a<b+c && a>b-c;
+}
+
+Lift::Goal tote_lifter(Toplevel::Goal /*&goals*/,float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_detail &toplevel_status,Posedge_toggle &piston,bool kick_and_lift=1){
+	float lift_height=toplevel_status.combo_lift.tote.inches_off_ground();
+	static const float ALLOWED_ERROR=.1;
+	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR)) piston.update(1);
 	return Lift::Goal::go_to_height(level);
 }
 
@@ -70,6 +77,9 @@ void Main::teleop(
 	}
 	
 	goals.drive=goal;
+	
+	piston.update(gunner_joystick.button[Gamepad_button::Y]);
+	
 	static const double LEVEL = 13.5;
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
@@ -174,16 +184,15 @@ void Main::teleop(
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) return Lift::Goal::go_to_height(ENGAGE_KICKER_HEIGHT);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return tote_lifter(goals,(1*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter(goals,(2*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return tote_lifter(goals,(3*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter(goals,(4*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return tote_lifter(goals,(5*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return tote_lifter(goals,(1*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter(goals,(2*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return tote_lifter(goals,(3*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter(goals,(4*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return tote_lifter(goals,(5*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.can_priority=can_priority;
-	piston.update(gunner_joystick.button[Gamepad_button::Y]);
 	goals.kicker=[&](){
 		if(piston.get()){
 			return Kicker::Goal::OUT;

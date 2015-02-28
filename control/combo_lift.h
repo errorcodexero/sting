@@ -14,9 +14,10 @@ struct Combo_lift{
 
 	struct Goal{
 		Lift::Goal can,tote;
+		bool can_priority;
 
 		Goal();
-		Goal(Lift::Goal,Lift::Goal);
+		Goal(Lift::Goal,Lift::Goal,bool);
 	};
 
 	struct Status_detail{

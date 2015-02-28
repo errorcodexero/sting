@@ -9,12 +9,10 @@ using namespace std;
 		if(b.can<a.can) return 0;\
 		return a.tote<b.tote;\
 	}
-COMPARE(Input)
 
 #define OUT(NAME) ostream& operator<<(ostream& o,Combo_lift::NAME const& a){\
 	return o<<"("<<a.can<<" "<<a.tote<<")";\
 }
-OUT(Input)
 
 #define EXAMPLES(NAME)\
 	set<Combo_lift::NAME> examples(Combo_lift::NAME*){\
@@ -27,26 +25,48 @@ OUT(Input)
 		}\
 		return r;\
 	}
-EXAMPLES(Input)
 
 #define EQ(NAME) \
 	bool operator==(Combo_lift::NAME const& a,Combo_lift::NAME const& b){\
 		return a.can==b.can && a.tote==b.tote; \
 	}
+
 #define NEQ(NAME) bool operator!=(Combo_lift::NAME const& a,Combo_lift::NAME const& b){ return !(a==b); }
+
+COMPARE(Input)
+OUT(Input)
+EXAMPLES(Input)
+
 EQ(Output)
-
-bool operator!=(Combo_lift::Output const& a,Combo_lift::Output const& b){ return !(a==b); }
-
+NEQ(Output)
 COMPARE(Output)
 OUT(Output)
 EXAMPLES(Output)
 
-Combo_lift::Goal::Goal():can(Lift::Goal::stop()),tote(Lift::Goal::stop()){}
-Combo_lift::Goal::Goal(Lift::Goal a,Lift::Goal b):can(a),tote(b){}
-COMPARE(Goal)
-OUT(Goal)
-EXAMPLES(Goal)
+Combo_lift::Goal::Goal():can(Lift::Goal::stop()),tote(Lift::Goal::stop()),can_priority(0){}
+Combo_lift::Goal::Goal(Lift::Goal a,Lift::Goal b,bool c):can(a),tote(b),can_priority(c){}
+
+bool operator<(Combo_lift::Goal const& a,Combo_lift::Goal const& b){
+	if(a.can<b.can) return 1;
+	if(b.can<a.can) return 0;
+	if(a.tote<b.tote) return 1;
+	if(b.tote<a.tote) return 0;
+	return a.can_priority<b.can_priority;
+}
+
+ostream& operator<<(ostream& o,Combo_lift::Goal const& a){
+	return o<<"("<<a.can<<" "<<a.tote<<" "<<a.can_priority<<")";
+}
+
+set<Combo_lift::Goal> examples(Combo_lift::Goal*){
+	set<Combo_lift::Goal> r;
+	auto opt=examples((Lift::Goal*)0);
+	for(auto a:opt) for(auto b:opt){
+		r|={a,b,0};
+		r|={a,b,1};
+	}
+	return r;
+}
 
 EQ(Status_detail)
 NEQ(Status_detail)
@@ -112,8 +132,56 @@ ostream& operator<<(ostream& o,Combo_lift const& a){
 	return o<<")";
 }
 
+static const double MAX_LIFT_HEIGHT=70;//made up
+
+double status_height(Lift::Status_detail status){
+	switch(status.type()){
+		case Lift::Status_detail::Type::TOP: return MAX_LIFT_HEIGHT;
+		case Lift::Status_detail::Type::BOTTOM: return 0;
+		case Lift::Status_detail::Type::MID: return status.inches_off_ground();
+		case Lift::Status_detail::Type::ERRORS: return 0;//this number is sort of arbitrary
+		default: assert(0);
+	}
+}
+
+//returns inches
+double goal_height(Lift::Status_detail status,Lift::Goal goal){
+	switch(goal.mode()){
+		case Lift::Goal::Mode::GO_TO_HEIGHT: return goal.height();
+		case Lift::Goal::Mode::UP: return MAX_LIFT_HEIGHT;
+		case Lift::Goal::Mode::DOWN: return 0;
+		case Lift::Goal::Mode::STOP: return status_height(status);
+		default: assert(0);
+	}
+}
+
+Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goal){
+	auto c=goal_height(status.can,goal.can);
+	auto t=goal_height(status.tote,goal.tote);
+
+	static const auto LIFT_SPEED=10;//inches per second, this is made up
+
+	if(goal.can_priority){
+		auto keepout_limit=max(status_height(status.can)-LIFT_SPEED,c);
+		return Combo_lift::Goal{
+			goal.can,
+			((keepout_limit<t)?Lift::Goal::go_to_height(keepout_limit):goal.tote),
+			goal.can_priority
+		};
+	}
+	auto keepout_limit=min(status_height(status.tote)+LIFT_SPEED,t);
+	return Combo_lift::Goal{
+		(keepout_limit>c)?Lift::Goal::go_to_height(keepout_limit):goal.can,
+		goal.tote,
+		goal.can_priority
+	};
+}
+
 Combo_lift::Output control(Combo_lift::Status_detail const& a,Combo_lift::Goal const& b){
-	return Combo_lift::Output{control(a.can,b.can),control(a.tote,b.tote)};
+	auto b2=b;
+	//uncomment the following line to enable the non-crashing logic
+	//b2=interfere(a,b);
+	return Combo_lift::Output{control(a.can,b2.can),control(a.tote,b2.tote)};
 }
 
 Combo_lift::Status status(Combo_lift::Status_detail const& a){

@@ -29,6 +29,7 @@ struct Main{
 	
 	enum class Sticky_tote_goal{STOP,ENGAGE_KICKER,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
 	Sticky_tote_goal sticky_tote_goal;
+	bool can_priority;
 	
 	struct Nudge{
 		Posedge_trigger trigger;

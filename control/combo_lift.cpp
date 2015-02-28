@@ -43,7 +43,7 @@ COMPARE(Output)
 OUT(Output)
 EXAMPLES(Output)
 
-Combo_lift::Goal::Goal():can(Lift::Goal::stop()),tote(Lift::Goal::stop()),can_priority(0){}
+Combo_lift::Goal::Goal():can(Lift::Goal::stop()),tote(Lift::Goal::stop()),can_priority(1){}
 Combo_lift::Goal::Goal(Lift::Goal a,Lift::Goal b,bool c):can(a),tote(b),can_priority(c){}
 
 bool operator<(Combo_lift::Goal const& a,Combo_lift::Goal const& b){

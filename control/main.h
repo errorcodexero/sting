@@ -4,14 +4,9 @@
 #include "force_interface.h"
 #include "../util/posedge_toggle.h"
 #include "../util/perf_tracker.h"
-#include "../util/bound_tracker.h"
 #include "../util/countdown_timer.h"
 #include "../util/countup_timer.h"
 #include "toplevel.h"
-#include "drivebase.h"
-#include "lift.h"
-#include "kicker.h"
-#include "../input/util.h"
 
 struct Main{
 	enum class Mode{TELEOP,AUTO_MOVE};

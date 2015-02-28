@@ -3,10 +3,11 @@
 #include <sstream>
 #include <cassert>
 #include <math.h>
+#include <stdlib.h>
 #include "toplevel.h"
 #include "../util/util.h"
 #include "toplevel_mode.h"
-#include <stdlib.h>
+#include "../input/util.h"
 
 using namespace std;
 
@@ -239,30 +240,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		}
 		
 		r=toplevel.output_applicator(r,r_out);
-		//r.solenoid[0] = gunner_joystick.button[Gamepad_button::Y];
-		
-		/*auto l1=y-theta;
-		auto r1=y+theta;
-		auto lim=max(1.0,max(l1,r1));
-		r.pwm[0]=-(pow((l1/lim),3))*multiplier;//Change these "coefficients" for different movement behavior
-		r.pwm[1]=pow((r1/lim),3)*multiplier;
-		r.pwm[2]=x;*/
-		/*const double POWER=0.45;
-		r.talon_srx[0].power_level=[&](){		
-			if(gunner_joystick.button[Gamepad_button::X]) return POWER;		
-			if(gunner_joystick.button[Gamepad_button::Y]) return -POWER;		
-			return 0.0;		
-		}();		
-		r.talon_srx[1].power_level=[&](){		
-			if(gunner_joystick.button[Gamepad_button::LB]) return POWER;		
-			if(gunner_joystick.button[Gamepad_button::RB]) return -POWER;		
-			return 0.0;		
-		}();
-		r.pwm[3]=[&](){
-			if(gunner_joystick.button[Gamepad_button::A]) return .5;
-			if(gunner_joystick.button[Gamepad_button::B]) return -.5;
-			return 0.0;
-		}();*/
 		r=force(r);
 		toplevel.estimator.update(
 			in.now,

@@ -77,7 +77,7 @@ def cross_makefile(out):
 
 	print>>out,"H_FILES=*.h */*.h"
 	print>>out,"CXX=arm-frc-linux-gnueabi-g++"
-	print>>out,"CXX_FLAGS=-Wall -Wextra -g -Werror --std=c++11 -I"+os.environ['HOME']+"/wpilib/cpp/current/include -fmessage-length=0"
+	print>>out,"CXX_FLAGS=-Wall -Wextra -O2 -g -Werror --std=c++11 -I"+os.environ['HOME']+"/wpilib/cpp/current/include -fmessage-length=0"
 	print>>out,"LD_FLAGS=-L"+os.environ['HOME']+"/wpilib/cpp/current/lib -Wl,-rpath,/opt/GenICam_v2_3/bin/Linux_armv7-a -lwpi"
 	print>>out,".PHONY: clean\n"
 

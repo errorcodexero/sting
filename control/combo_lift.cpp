@@ -159,19 +159,25 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	auto c=goal_height(status.can,goal.can);
 	auto t=goal_height(status.tote,goal.tote);
 
-	static const auto LIFT_SPEED=10;//inches per second, this is made up
+	static const auto TOTE_LIFT_SPEED=10;//inches per second, this is made up
+	static const auto CAN_LIFT_SPEED=27;//inches per second, this is made up
 
-	if(goal.can_priority){
-		auto keepout_limit=max(status_height(status.can)-LIFT_SPEED,c);
+	if(goal.can_priority){	
+		//auto keepout_limit=max(status_height(status.can)-LIFT_SPEED,c);
+		auto keepout_limit=status_height(status.can)-CAN_LIFT_SPEED;
+		Lift::Goal limit_goal = (keepout_limit > .5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::down(); 
+		
 		return Combo_lift::Goal{
 			goal.can,
-			((keepout_limit<t)?Lift::Goal::go_to_height(keepout_limit):goal.tote),
+			((keepout_limit<t)?limit_goal:goal.tote),
 			goal.can_priority
 		};
 	}
-	auto keepout_limit=min(status_height(status.tote)+LIFT_SPEED,t);
+	//auto keepout_limit=min(status_height(status.tote)+LIFT_SPEED,t);
+	auto keepout_limit=status_height(status.tote)+TOTE_LIFT_SPEED;
+	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::up(); 
 	return Combo_lift::Goal{
-		(keepout_limit>c)?Lift::Goal::go_to_height(keepout_limit):goal.can,
+		(keepout_limit>c)?limit_goal:goal.can,
 		goal.tote,
 		goal.can_priority
 	};
@@ -180,7 +186,7 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 Combo_lift::Output control(Combo_lift::Status_detail const& a,Combo_lift::Goal const& b){
 	auto b2=b;
 	//uncomment the following line to enable the non-crashing logic
-	//b2=interfere(a,b);
+	b2=interfere(a,b);
 	return Combo_lift::Output{control(a.can,b2.can),control(a.tote,b2.tote)};
 }
 

@@ -14,6 +14,7 @@ DIO_control::~DIO_control(){ free(); }
 
 int DIO_control::set_channel(int i){
 	if(channel!=-1) return 1;
+	assert(i>=0);
 	channel=i;
 	return 0;
 }
@@ -48,6 +49,7 @@ DIO_control::Mode DIO_control::mode()const{
 }
 
 int DIO_control::set_mode(Mode m){
+	assert(channel!=-1);
 	if(m==mode()) return 0;
 	
 	{

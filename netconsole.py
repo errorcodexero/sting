@@ -67,7 +67,8 @@ have_now=''
 
 group=[]
 
-while True:
+try:
+  while True:
 	try: msg = sock_queue.get_nowait()
 	except Empty:
 		pass # no output
@@ -98,4 +99,5 @@ while True:
 	else:
 		send_msg(line)
 	#time.sleep(0.05)
-
+except:
+  for elem in group: print elem

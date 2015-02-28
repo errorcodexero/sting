@@ -6,16 +6,32 @@ A - Nudge Down
 B - Nudge Right
 X - Nudge Left
 Y - Nudge Up
+Start - Left Backwards Turn
+Back - Right Backwards Turn
 Left Button - Nudge Counter-clockwise
 Right Button - Nudge Clockwise
-Right Trigger - Boost
+Left Trigger - Boost
+Right Trigger - Slow
+
 
 Gunner Controller
 -------------------
-A - Tote Bottom Preset
-B - Tote Middle Preset
-Y - Tote Top  Preset
-Left Button - Tote Arm Up
-Right Button - Tote Arm Down
-Left Trigger - Can Arm Up
-Right Trigger - Can Arm Down
+Left Joystick:
+   Press - Tote Bottom Preset
+   Down - Tote Level 1
+   Left - Tote Level 2
+   Right - Tote Level 3
+   Up - Tote Level 4
+Right Joystick:
+   Press - Can Bottom Preset
+   Down - Can Level 1
+   Left - Can Level 2
+   Right - Can Level 3
+   Up - Can Level 4
+B - Stop Lifts
+Y - Toggle Kicker
+Start - Tote Level 5
+Back - Can Level 5
+Right Button - Engage Kicker
+Left Trigger - Tote Top Preset
+Right Trigger - Can  Top Preset

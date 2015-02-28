@@ -69,14 +69,7 @@ void Main::teleop(
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_can_goal=Sticky_can_goal::STOP;
 		}
-		/*if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
-			sticky_can_goal=Sticky_can_goal::STOP;
-			return Lift::Goal::up();
-		}
-		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
-			sticky_can_goal=Sticky_can_goal::STOP;
-			return Lift::Goal::down();
-		}*/
+		
 		if(gunner_joystick.button[Gamepad_button::R_JOY]){
 			sticky_can_goal=Sticky_can_goal::BOTTOM;
 		}
@@ -100,6 +93,9 @@ void Main::teleop(
 		}
 		if(gunner_joystick.button[Gamepad_button::START]){
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
+		}
+		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
+			sticky_can_goal=Sticky_can_goal::TOP;
 		}
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
@@ -148,6 +144,9 @@ void Main::teleop(
 		}
 		if(gunner_joystick.button[Gamepad_button::BACK]){
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
+		}
+		if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
+			sticky_tote_goal=Sticky_tote_goal::TOP;
 		}
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();

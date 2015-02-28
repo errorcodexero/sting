@@ -12,7 +12,7 @@
 using namespace std;
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
+Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
 	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
@@ -68,24 +68,30 @@ void Main::teleop(
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_can_goal=Sticky_can_goal::STOP;
+			can_priority=1;
 		}
 		
 		if(gunner_joystick.button[Gamepad_button::R_JOY]){
 			sticky_can_goal=Sticky_can_goal::BOTTOM;
+			can_priority=1;
 		}
 		Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
 		switch (section) {
 			case Joystick_section::DOWN:
 				sticky_can_goal=Sticky_can_goal::LEVEL1;
+				can_priority=1;
 				break;
 			case Joystick_section::LEFT:
 				sticky_can_goal=Sticky_can_goal::LEVEL2;
+				can_priority=1;
 				break;
 			case Joystick_section::RIGHT:
 				sticky_can_goal=Sticky_can_goal::LEVEL3;
+				can_priority=1;
 				break;
 			case Joystick_section::UP:
 				sticky_can_goal=Sticky_can_goal::LEVEL4;
+				can_priority=1;
 				break;
 			case Joystick_section::CENTER:
 				break;
@@ -93,8 +99,10 @@ void Main::teleop(
 		}
 		if(gunner_joystick.button[Gamepad_button::START]){
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
+			can_priority=1;
 		}
 		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
+			can_priority=1;
 			sticky_can_goal=Sticky_can_goal::TOP;
 		}
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
@@ -111,6 +119,7 @@ void Main::teleop(
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_tote_goal=Sticky_tote_goal::STOP;
+			can_priority=0;
 		}
 		/*if(gunner_joystick.button[Gamepad_button::LB]){
 			sticky_tote_goal=Sticky_tote_goal::STOP;
@@ -118,24 +127,30 @@ void Main::teleop(
 		}*/
 		if(gunner_joystick.button[Gamepad_button::RB]){
 			sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
+			can_priority=0;
 			//return Lift::Goal::up();
 		}
 		if(gunner_joystick.button[Gamepad_button::L_JOY]){
+			can_priority=0;
 			sticky_tote_goal=Sticky_tote_goal::BOTTOM;
 		}
 		Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
 		switch (section) {
 			case Joystick_section::DOWN:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL1;
+				can_priority=0;
 				break;
 			case Joystick_section::LEFT:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL2;
+				can_priority=0;
 				break;
 			case Joystick_section::RIGHT:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL3;
+				can_priority=0;
 				break;
 			case Joystick_section::UP:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL4;
+				can_priority=0;
 				break;
 			case Joystick_section::CENTER:
 				break;
@@ -144,9 +159,11 @@ void Main::teleop(
 		}
 		if(gunner_joystick.button[Gamepad_button::BACK]){
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
+			can_priority=0;
 		}
 		if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 			sticky_tote_goal=Sticky_tote_goal::TOP;
+			can_priority=0;
 		}
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
@@ -159,6 +176,7 @@ void Main::teleop(
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
+	goals.combo_lift.can_priority=can_priority;
 	piston.update(gunner_joystick.button[Gamepad_button::Y]);
 	goals.kicker=[&](){
 		if(piston.get()){

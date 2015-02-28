@@ -81,6 +81,14 @@ std::array<float,3> findHeight(Lift_position const& a){
 	return std::array<float,3>{target-negative_tolerance,target,target+positive_tolerance};
 }
 
+double LiftToBar(double liftHeight) {
+	return liftHeight < 58 ? (1.06 * liftHeight) + 3.25 : (3.12 * liftHeight) - 116;
+}
+
+double BarToLift(double barHeight) {
+	return barHeight < 58 ? (barHeight - 3.25) / 1.06 : (barHeight + 116) / 3.12;
+}
+
 #ifdef HEIGHT_TEST
 pair<int,float> to_feet(float inches){
 	assert(inches>=0);

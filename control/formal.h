@@ -63,7 +63,7 @@ void test_ostream(std::string heading,T* t){
 }
 
 template<typename Part>
-void tester(Part p){
+void tester(Part p, bool b=1){
 	using namespace std;
 
 	typedef typename Part::Input Input;
@@ -90,7 +90,7 @@ void tester(Part p){
 		if(used.size()<2){
 			assert(0);
 		}
-		if(used!=examples((Output*)0)){
+		if(b && used!=examples((Output*)0)){
 			cout<<"used:"<<used<<"\n";
 			cout<<"examples:"<<examples((Output*)0)<<"\n";
 			//test failed

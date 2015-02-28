@@ -200,6 +200,6 @@ bool ready(Combo_lift::Status const& a,Combo_lift::Goal const& b){
 
 #ifdef COMBO_LIFT_TEST
 int main(){
-	tester(Combo_lift());
+	tester(Combo_lift(), 0);
 }
 #endif

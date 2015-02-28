@@ -175,7 +175,7 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	}
 	//auto keepout_limit=min(status_height(status.tote)+LIFT_SPEED,t);
 	auto keepout_limit=status_height(status.tote)+TOTE_LIFT_SPEED;
-	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::up(); 
+	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::go_to_height(60); 
 	return Combo_lift::Goal{
 		(keepout_limit>c)?limit_goal:goal.can,
 		goal.tote,

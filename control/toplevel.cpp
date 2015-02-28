@@ -6,8 +6,8 @@
 
 using namespace std;
 
-Toplevel::Toplevel():lift_can(1),
-	lift_tote(0),kicker(0),
+Toplevel::Toplevel():
+	kicker(0),
 	can_grabber(4),estimator(this),
 	output_applicator(this)
 {}
@@ -116,8 +116,6 @@ ostream& operator<<(ostream& o,Toplevel::Goal g){
 }
 
 Toplevel::Status::Status():
-	lift_can(Lift::Status::error()),
-	lift_tote(Lift::Status::error()),
 	kicker(Kicker::Status::IN),
 	pump(Pump::Status::NOT_FULL),
 	can_grabber(Can_grabber::Status::MID_UP)

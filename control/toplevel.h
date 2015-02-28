@@ -4,13 +4,12 @@
 #include<vector>
 #include "pump.h"
 #include "drivebase.h"
-#include "lift.h"
+#include "combo_lift.h"
 #include "kicker.h"
 #include "can_grabber.h"
 
 #define TOPLEVEL_ITEMS\
-	X(Lift,lift_can,Lift::Goal::stop())\
-	X(Lift,lift_tote,Lift::Goal::stop())\
+	X(Combo_lift,combo_lift,Combo_lift::Goal{})\
 	X(Kicker,kicker,Kicker::Goal::IN)\
 	X(Drivebase,drive,)\
 	X(Pump,pump,Pump::Goal::AUTO)\

@@ -62,10 +62,10 @@ void Main::teleop(
 		if (start) back_turns[i].timer.set(1);
 		back_turns[i].timer.update(in.now,1);
 	}
-			
+	
 	goals.drive=goal;
 	static const double LEVEL = 13.5;
-	goals.lift_can=[&](){
+	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_can_goal=Sticky_can_goal::STOP;
 		}
@@ -111,7 +111,7 @@ void Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
-	goals.lift_tote=[&](){
+	goals.combo_lift.tote=[&](){
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_tote_goal=Sticky_tote_goal::STOP;

@@ -1,0 +1,8 @@
+g++ -Wall -std=c++11 -DCOMBO_LIFT_TEST \
+	combo_lift.cpp \
+	lift.cpp \
+	../util/interface.cpp \
+	../util/jag_interface.cpp \
+	../util/util.cpp\
+	../util/driver_station_interface.cpp\
+	2>&1 && ./a.out 2>&1

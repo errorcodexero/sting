@@ -20,7 +20,7 @@ double set_drive_speed(Joystick_data joystick, int axis, double boost, double sl
 	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 
-template<typename T>
+template<typename T>//Compares two types to see if one is within a range
 bool in_range(T a,T b,T c){
 	return a<b+c && a>b-c;
 }

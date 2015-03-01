@@ -48,16 +48,16 @@ Digital_out Digital_out::encoder(int encoder_index,bool input_a){
 
 std::ostream& operator<<(std::ostream& o,Digital_out a){
 	switch(a.type()){
-		case a.Type::INPUT:
+		case Digital_out::Type::INPUT:
 			o<<"INPUT";
 			break;
-		case a.Type::_0:
+		case Digital_out::Type::_0:
 			o<<"0";
 			break;
-		case a.Type::_1:
+		case Digital_out::Type::_1:
 			o<<"1";
 			break;
-		case a.Type::ENCODER:
+		case Digital_out::Type::ENCODER:
 			o<<"encoder_index: "<<a.encoder_index();
 			o<<"input_a: "<<a.input_a();
 			break;

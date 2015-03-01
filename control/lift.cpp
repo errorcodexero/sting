@@ -44,7 +44,9 @@ ostream& operator<<(ostream& o, Lift::Output_applicator output_applicator) {
 	return o<<")";
 }
 
-Lift::Output_applicator::Output_applicator(int a):can_address(a){}
+Lift::Output_applicator::Output_applicator(int a):can_address(a){
+	assert(can_address>=0 && (unsigned)can_address<Robot_outputs::TALON_SRX_OUTPUTS);
+}
 
 Robot_outputs Lift::Output_applicator::operator()(Robot_outputs robot,Lift::Output lift)const{
 	//just making up which pwm it is
@@ -346,7 +348,7 @@ static const double LIMIT_SWITCH_RANGE=.25;
 static const unsigned TICKS_PER_REVOLUTION=60;//todo: check this
 
 static const unsigned CIM_FREE_SPEED=5310;//RPM
-static const unsigned CIM_STALL_TORQUE=343.4;//oz-in
+static const double CIM_STALL_TORQUE=343.4;//oz-in
 static const unsigned REDUCTION=10;//to 1
 static const double CHAIN_EFFICIENCY=.9;
 static const double PLANETARY_EFFICIENCY=.8;
@@ -354,7 +356,7 @@ static const double PLANETARY_EFFICIENCY=.8;
 static const double SPROCKET_RADIUS=1+11.0/16;//inches
 
 static const double TOTE_WEIGHT=10.5;//lb
-static const double CAN_WEIGHT=12;//check this
+//static const double CAN_WEIGHT=12;//check this
 static const double CARRIAGE_WEIGHT=8;//lb, just a guesss
 
 //rpm->in/s
@@ -460,7 +462,7 @@ int main(){
 		auto rec=from_pwm(p);
 		cout<<x<<"\t"<<(int)p<<"\t"<<rec<<"\n";
 	}*/
-	Lift a(4);
+	Lift a(1);
 	tester(a);
 	Lift::Goal goal=goal.up();
 	run(a,0,Lift::Input{0,0,0},Lift::Output{},goal);

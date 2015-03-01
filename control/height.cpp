@@ -78,7 +78,7 @@ std::array<float,3> findHeight(Lift_position const& a){
 			target+=BIN_HOLD_MARGIN;
 		}
 	}
-	return std::array<float,3>{target-negative_tolerance,target,target+positive_tolerance};
+	return std::array<float,3>{{target-negative_tolerance,target,target+positive_tolerance}};
 }
 
 double LiftToBar(double liftHeight) {

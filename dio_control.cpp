@@ -109,6 +109,7 @@ void DIO_controls::init(){
 		for(unsigned i=0;i<channel.size();i++){
 			channel[i].set_channel(i);
 		}
+		init_=1;
 	}
 }
 

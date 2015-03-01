@@ -279,8 +279,10 @@ bool operator<(Toplevel::Goal const& a,Toplevel::Goal const& b){
 
 set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 	return {Toplevel::Status_detail{
-		Lift::Status_detail::error(),
-		Lift::Status_detail::error(),
+		{
+			Lift::Status_detail::error(),
+			Lift::Status_detail::error()
+		},
 		Kicker::Status_detail{},
 		Drivebase::Status_detail{},
 		Pump::Status_detail{},

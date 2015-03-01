@@ -6,6 +6,7 @@
 #include<iostream>
 #include<vector>
 #include<sstream>
+#include<set>
 #include "interface.h"
 
 #ifndef M_PI
@@ -51,6 +52,13 @@ std::ostream& operator<<(std::ostream& o,std::vector<T> const& v){
 		o<<' '<<*at;
 	}
 	return o<<" ]";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& o,std::set<T> const& v){
+	o<<"{ ";
+	for(auto const& a:v) o<<a<<" ";
+	return o<<"}";
 }
 
 double sum(std::vector<double> const&);

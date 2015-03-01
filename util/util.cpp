@@ -9,7 +9,7 @@ using namespace std;
 int isblank(int){ return 0; }
 #endif
 
-static const unsigned char PWM_MAX=206,PWM_CENTER=128,PWM_MIN=50;//was 56 to make same as WPIlib
+//static const unsigned char PWM_MAX=206,PWM_CENTER=128,PWM_MIN=50;//was 56 to make same as WPIlib
 //probably want to decouple the deadzones from the rest of this.
 Pwm_output pwm_convert(double p){
 //going to emulate this so that we don't need to recalibrate stuff.

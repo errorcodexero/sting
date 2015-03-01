@@ -80,7 +80,10 @@ bool operator!=(Jaguar_output a,Jaguar_output b){
 
 bool operator<(Jaguar_output a,Jaguar_output b){
 	#define X(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
-	X(pid) X(speed) X(voltage) X(controlSpeed)
+	X(pid)
+	X(speed)
+	X(voltage)
+	X(controlSpeed)
 	#undef X
 	return 0;
 }

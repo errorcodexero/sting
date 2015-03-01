@@ -15,13 +15,6 @@ std::set<T>& operator|=(std::set<T>& s,T t){
 	return s;
 }
 
-template<typename T>
-std::ostream& operator<<(std::ostream& o,std::set<T> const& a){
-	o<<"{ ";
-	for(auto elem:a) o<<elem<<" ";
-	return o<<"}";
-}
-
 template<
 	typename Part,
 	typename Input,
@@ -144,7 +137,7 @@ void tester(Part p, bool b=1){
 		set<Robot_outputs> outputs;
 		for(auto output:examples((Output*)0)){
 			Part const& p1=p;
-			auto out=(p1.output_applicator(Robot_outputs{},output));
+			auto out=p1.output_applicator(Robot_outputs{},output);
 			outputs|=out;
 			auto recovered=p1.output_applicator(out);
 			if(recovered!=output){

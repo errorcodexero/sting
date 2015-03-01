@@ -260,8 +260,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	toplevel.estimator.update(
 		in.now,
 		Toplevel::Input{
-			can_input,
-			tote_input,
+			{can_input,tote_input},
 			Kicker::Input{},
 			Drivebase::Input{},
 			Pump::Input::NOT_FULL,

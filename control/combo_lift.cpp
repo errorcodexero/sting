@@ -43,7 +43,7 @@ COMPARE(Output)
 OUT(Output)
 EXAMPLES(Output)
 
-Combo_lift::Goal::Goal():can(Lift::Goal::stop()),tote(Lift::Goal::stop()),can_priority(0){}
+Combo_lift::Goal::Goal():can(Lift::Goal::stop()),tote(Lift::Goal::stop()),can_priority(1){}
 Combo_lift::Goal::Goal(Lift::Goal a,Lift::Goal b,bool c):can(a),tote(b),can_priority(c){}
 
 bool operator<(Combo_lift::Goal const& a,Combo_lift::Goal const& b){
@@ -162,6 +162,10 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	static const auto TOTE_LIFT_SPEED=10;//inches per second, this is made up
 	static const auto CAN_LIFT_SPEED=27;//inches per second, this is made up
 
+	if(goal.can.mode()==Lift::Goal::Mode::UP){
+		goal.can=Lift::Goal::go_to_height(61);
+	}
+
 	if(goal.can_priority){	
 		//auto keepout_limit=max(status_height(status.can)-LIFT_SPEED,c);
 		auto keepout_limit=status_height(status.can)-CAN_LIFT_SPEED;
@@ -175,7 +179,7 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	}
 	//auto keepout_limit=min(status_height(status.tote)+LIFT_SPEED,t);
 	auto keepout_limit=status_height(status.tote)+TOTE_LIFT_SPEED;
-	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::go_to_height(60); 
+	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::go_to_height(61); 
 	return Combo_lift::Goal{
 		(keepout_limit>c)?limit_goal:goal.can,
 		goal.tote,

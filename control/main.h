@@ -29,6 +29,7 @@ struct Main{
 	
 	enum class Sticky_tote_goal{STOP,ENGAGE_KICKER,BOTTOM,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,TOP};
 	Sticky_tote_goal sticky_tote_goal;
+	bool can_priority;
 	
 	struct Nudge{
 		Posedge_trigger trigger;
@@ -36,8 +37,8 @@ struct Main{
 	};
 	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
 	Nudge back_turns[2];//Backwards and left, Backwards and right
-
-	void teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Toplevel::Goal&);
+	
+	void teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Toplevel::Goal&,Toplevel::Status_detail&);
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };

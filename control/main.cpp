@@ -12,7 +12,7 @@
 using namespace std;
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
-Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP){}
+Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
 double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
 	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
@@ -20,11 +20,25 @@ double set_drive_speed(Joystick_data joystick, int axis, double boost, double sl
 	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 
+template<typename T>//Compares two types to see if one is within a range
+bool in_range(T a,T b,T c){
+	return a<b+c && a>b-c;
+}
+
+Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_detail& toplevel_status,Posedge_toggle& piston,bool kick_and_lift=1){
+	float lift_height=0.0;
+	if(toplevel_status.combo_lift.tote!=Lift::Status_detail::bottom() || toplevel_status.combo_lift.tote!=Lift::Status_detail::top()) lift_height=toplevel_status.combo_lift.tote.inches_off_ground();
+	static const float ALLOWED_ERROR=.1;
+	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR)) piston.update(1);
+	return Lift::Goal::go_to_height(level);
+}
+
 void Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Toplevel::Goal &goals
+	Toplevel::Goal &goals,
+	Toplevel::Status_detail& toplevel_status
 ){
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 	static const float Y_NUDGE_POWER=.2;
@@ -64,28 +78,37 @@ void Main::teleop(
 	}
 	
 	goals.drive=goal;
+	
+	piston.update(gunner_joystick.button[Gamepad_button::Y]);
+	
 	static const double LEVEL = 13.5;
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_can_goal=Sticky_can_goal::STOP;
+			can_priority=1;
 		}
 		
 		if(gunner_joystick.button[Gamepad_button::R_JOY]){
 			sticky_can_goal=Sticky_can_goal::BOTTOM;
+			can_priority=1;
 		}
 		Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
 		switch (section) {
 			case Joystick_section::DOWN:
 				sticky_can_goal=Sticky_can_goal::LEVEL1;
+				can_priority=1;
 				break;
 			case Joystick_section::LEFT:
 				sticky_can_goal=Sticky_can_goal::LEVEL2;
+				can_priority=1;
 				break;
 			case Joystick_section::RIGHT:
 				sticky_can_goal=Sticky_can_goal::LEVEL3;
+				can_priority=1;
 				break;
 			case Joystick_section::UP:
 				sticky_can_goal=Sticky_can_goal::LEVEL4;
+				can_priority=1;
 				break;
 			case Joystick_section::CENTER:
 				break;
@@ -93,10 +116,13 @@ void Main::teleop(
 		}
 		if(gunner_joystick.button[Gamepad_button::START]){
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
+			can_priority=1;
 		}
 		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
+			can_priority=1;
 			sticky_can_goal=Sticky_can_goal::TOP;
 		}
+		cout<<toplevel_status<<"\n";
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL);
@@ -111,31 +137,38 @@ void Main::teleop(
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_tote_goal=Sticky_tote_goal::STOP;
+			can_priority=0;
 		}
-		/*if(gunner_joystick.button[Gamepad_button::LB]){
-			sticky_tote_goal=Sticky_tote_goal::STOP;
-			return Lift::Goal::up();
-		}*/
+		//if(gunner_joystick.button[Gamepad_button::LB]){
+		//	sticky_tote_goal=Sticky_tote_goal::STOP;
+		//	return Lift::Goal::up();
+		//}
 		if(gunner_joystick.button[Gamepad_button::RB]){
 			sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
+			can_priority=0;
 			//return Lift::Goal::up();
 		}
 		if(gunner_joystick.button[Gamepad_button::L_JOY]){
+			can_priority=0;
 			sticky_tote_goal=Sticky_tote_goal::BOTTOM;
 		}
 		Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
 		switch (section) {
 			case Joystick_section::DOWN:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL1;
+				can_priority=0;
 				break;
 			case Joystick_section::LEFT:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL2;
+				can_priority=0;
 				break;
 			case Joystick_section::RIGHT:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL3;
+				can_priority=0;
 				break;
 			case Joystick_section::UP:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL4;
+				can_priority=0;
 				break;
 			case Joystick_section::CENTER:
 				break;
@@ -144,22 +177,24 @@ void Main::teleop(
 		}
 		if(gunner_joystick.button[Gamepad_button::BACK]){
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
+			can_priority=0;
 		}
 		if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 			sticky_tote_goal=Sticky_tote_goal::TOP;
+			can_priority=0;
 		}
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) return Lift::Goal::go_to_height(ENGAGE_KICKER_HEIGHT);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL));
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL));
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL));
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL));
-		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return tote_lifter((1*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		/*if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter((2*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return tote_lifter((3*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter((4*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return tote_lifter((5*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		*/if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
-	piston.update(gunner_joystick.button[Gamepad_button::Y]);
+	goals.combo_lift.can_priority=can_priority;
 	goals.kicker=[&](){
 		if(piston.get()){
 			return Kicker::Goal::OUT;
@@ -181,7 +216,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		main_joystick.button[Gamepad_button::B],
 		main_joystick.button[Gamepad_button::X]
 	);
-
+	
+	Toplevel::Status_detail toplevel_status=toplevel.estimator.get();
+	
 	if (in.digital_io.encoder[0]) cout<<"Wheel 1: "<<*in.digital_io.encoder[0]<<endl;
 	if (in.digital_io.encoder[1]) cout<<"Wheel 2: "<<*in.digital_io.encoder[1]<<endl;
 	if (in.digital_io.encoder[2]) cout<<"Wheel 3: "<<*in.digital_io.encoder[2]<<endl;
@@ -195,7 +232,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	
 	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 	if(1 || mode==Mode::TELEOP){
-		teleop(in,main_joystick,gunner_joystick,goals);
+		teleop(in,main_joystick,gunner_joystick,goals,toplevel_status);
 	}
 	else if(mode==Mode::AUTO_MOVE){
 		goals.drive.x=0;
@@ -206,7 +243,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	//cout<<"Tote: "<<lift_tote<<endl;	
 	//Drivebase::Output out = control(status_detail, goal);
 
-	Toplevel::Output r_out=control(toplevel.estimator.get(),goals); 
+	Toplevel::Output r_out=control(toplevel_status,goals); 
 
 	auto r=toplevel.output_applicator(Robot_outputs{},r_out);
 	r=force(r);

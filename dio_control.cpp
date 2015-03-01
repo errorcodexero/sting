@@ -95,19 +95,27 @@ ostream& operator<<(ostream& o,DIO_control const& a){
 	return o<<")";
 }
 
-Encoder_control::Encoder_control():encoder(nullptr){}
+Encoder_control::Encoder_control():encoder(nullptr),channel_a(-1),channel_b(-1){}
 
 Encoder_control::~Encoder_control(){
 	delete encoder;
 }
 
-DIO_controls::DIO_controls(){
-	for(unsigned i=0;i<channel.size();i++){
-		channel[i].set_channel(i);
+DIO_controls::DIO_controls():init_(0){
+}
+
+void DIO_controls::init(){
+	if(!init_){
+		for(unsigned i=0;i<channel.size();i++){
+			channel[i].set_channel(i);
+		}
 	}
 }
 
+
 void DIO_controls::set(array<Digital_out,Robot_outputs::DIGITAL_IOS> const& a){
+	init();
+
 	array<int,Digital_inputs::ENCODERS> channel_a,channel_b;
 	for(auto& a:channel_a) a=-1;
 	for(auto& b:channel_b) b=-1;
@@ -145,6 +153,8 @@ void DIO_controls::set(array<Digital_out,Robot_outputs::DIGITAL_IOS> const& a){
 }
 
 Digital_inputs DIO_controls::get(){
+	init();
+
 	Digital_inputs r;
 	for(unsigned i=0;i<channel.size();i++){
 		r.in[i]=channel[i].get();

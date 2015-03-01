@@ -46,9 +46,12 @@ struct Encoder_control{
 class DIO_controls{
 	std::array<DIO_control,Robot_outputs::DIGITAL_IOS> channel;
 	std::array<Encoder_control,Digital_inputs::ENCODERS> encoder;
+	bool init_;
 
 	DIO_controls(DIO_controls const&);
 	DIO_controls& operator=(DIO_controls const&);
+
+	void init();
 
 	public:
 	DIO_controls();

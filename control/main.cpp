@@ -52,24 +52,40 @@ void Main::teleop(
 	else if (!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
 	else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 
+	const double turbo_button= main_joystick.axis[Gamepad_axis::LTRIGGER];
+
 	if (!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
 	else if (!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
 	else if (!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_MOVE_POWER;
-	else goal.y=set_drive_speed(main_joystick, 1, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);
+	else goal.y=set_drive_speed(main_joystick, 1, turbo_button, main_joystick.axis[Gamepad_axis::RTRIGGER]);
 
 	if (!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
 	else if (!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 	else if (!back_turns[0].timer.done()) goal.theta=BACK_TURN_POWER;
 	else if (!back_turns[1].timer.done()) goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick, 4, main_joystick.axis[Gamepad_axis::LTRIGGER], main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
-			
-	static const unsigned int nudge_buttons[6]={Gamepad_button::X,Gamepad_button::B,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
+	else goal.theta=-set_drive_speed(main_joystick, 4, turbo_button, main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
+
+	const bool normal_nudge_enable=turbo_button<.25;			
+	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
+	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
 	for (int i=0;i<6;i++) {
-		bool start=nudges[i].trigger(main_joystick.button[nudge_buttons[i]]);
+		bool start=nudges[i].trigger(normal_nudge_enable && main_joystick.button[nudge_buttons[i]]);
 		if (start) nudges[i].timer.set(.1);
 		nudges[i].timer.update(in.now,1);
 	}
-			
+
+	//auto nudge!
+	if(!normal_nudge_enable){
+		static const auto AUTO_NUDGE_POWER=.5;
+		//todo: add the part where we actually read the sensors
+		if(main_joystick.button[NUDGE_LEFT_BUTTON] && in.digital_io.in[8]==Digital_in::_0){
+			goal.x=AUTO_NUDGE_POWER;
+		}
+		if(main_joystick.button[NUDGE_RIGHT_BUTTON] && in.digital_io.in[7]==Digital_in::_0){
+			goal.x=-AUTO_NUDGE_POWER;
+		}
+	}
+	
 	static const unsigned int back_turn_buttons[2]={Gamepad_button::BACK,Gamepad_button::START};
 	for (int i=0;i<2;i++) {
 		bool start=back_turns[i].trigger(main_joystick.button[back_turn_buttons[i]]);

@@ -138,6 +138,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.pwm[0]=-pwm_convert(b.l);
 	robot.pwm[1]=pwm_convert(b.r);
 	robot.pwm[2]=pwm_convert(b.c);
+	robot.solenoid[1]=fabs(b.c)>.1;
 	return robot;
 }
 

@@ -89,8 +89,19 @@ Lift::Goal::Goal(){}
 Lift::Status_detail::Type Lift::Status_detail::type()const{ return type_; }
 
 double Lift::Status_detail::inches_off_ground()const{
-	assert(type_==Lift::Status_detail::Type::MID);
-	return height;
+	/*assert(type_==Lift::Status_detail::Type::MID);
+	return height;*/
+	switch(type_){
+		case Lift::Status_detail::Type::MID:
+			return height;
+		case Lift::Status_detail::Type::TOP:
+			return 62;//not sure this is exactly right
+		case Lift::Status_detail::Type::BOTTOM:
+		case Lift::Status_detail::Type::ERRORS:
+			return 0;
+		default:
+			assert(0);
+	}
 }
 
 Lift::Status_detail Lift::Status_detail::error(){

@@ -67,7 +67,8 @@ void Main::teleop(
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
-	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,Gamepad_button::Y,Gamepad_button::A,Gamepad_button::RB,Gamepad_button::LB};
+	static const auto NUDGE_CCW_BUTTON=Gamepad_button::RB,NUDGE_CW_BUTTON=Gamepad_button::LB;
+	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,Gamepad_button::Y,Gamepad_button::A,NUDGE_CCW_BUTTON,NUDGE_CW_BUTTON};
 	for (int i=0;i<6;i++) {
 		bool start=nudges[i].trigger(normal_nudge_enable && main_joystick.button[nudge_buttons[i]]);
 		if (start) nudges[i].timer.set(.1);
@@ -76,13 +77,18 @@ void Main::teleop(
 
 	//auto nudge!
 	if(!normal_nudge_enable){
-		static const auto AUTO_NUDGE_POWER=.5;
 		//todo: add the part where we actually read the sensors
-		if(main_joystick.button[NUDGE_LEFT_BUTTON] && in.digital_io.in[8]==Digital_in::_0){
-			goal.x=AUTO_NUDGE_POWER;
+		if(	
+			(main_joystick.button[NUDGE_LEFT_BUTTON] && in.digital_io.in[8]==Digital_in::_0) ||
+			(main_joystick.button[NUDGE_CW_BUTTON] && in.digital_io.in[9]==Digital_in::_0)
+		){
+			goal.x=X_NUDGE_POWER;
 		}
-		if(main_joystick.button[NUDGE_RIGHT_BUTTON] && in.digital_io.in[7]==Digital_in::_0){
-			goal.x=-AUTO_NUDGE_POWER;
+		if(
+			(main_joystick.button[NUDGE_RIGHT_BUTTON] && in.digital_io.in[7]==Digital_in::_0) ||
+			(main_joystick.button[NUDGE_CCW_BUTTON] && in.digital_io.in[9]==Digital_in::_0)
+		){
+			goal.x=-X_NUDGE_POWER;
 		}
 	}
 	

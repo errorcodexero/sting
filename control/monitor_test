@@ -19,4 +19,5 @@ g++ -Wall -Werror -std=c++0x -DMONITOR_TEST \
 	can_grabber.cpp\
 	../util/countdown_timer.cpp\
 	combo_lift.cpp\
+	motor_check.cpp\
 	-o monitor 2>&1 && ./monitor

@@ -6,14 +6,26 @@
 
 using namespace std;
 
-set<Drivebase::Status> examples(Drivebase::Status*){ return {Drivebase::Status{}}; }
+Drivebase::Input::Input():current({0,0,0}){}
+Drivebase::Input::Input(array<double,Drivebase::MOTORS> a):current(a){}
+
+Drivebase::Status::Status(array<Motor_check::Status,Drivebase::MOTORS> a):motor(a){}
+
+set<Drivebase::Status> examples(Drivebase::Status*){
+	return {Drivebase::Status{array<Motor_check::Status,Drivebase::MOTORS>{
+		Motor_check::Status::OK_,
+		Motor_check::Status::OK_,
+		Motor_check::Status::OK_
+	}}};
+}
 
 bool operator<(Drivebase::Status,Drivebase::Status){ return 0; }
 bool operator==(Drivebase::Status,Drivebase::Status){ return 1; }
 bool operator!=(Drivebase::Status a,Drivebase::Status b){ return !(a==b); }
 
-ostream& operator<<(ostream& o,Drivebase::Status const&){
+ostream& operator<<(ostream& o,Drivebase::Status const& a){
 	o<<"Drivebase::Status(";
+	o<<a.motor;
 	return o<<")";
 }
 
@@ -70,30 +82,57 @@ bool operator==(Drivebase::Output const& a,Drivebase::Output const& b){
 }
 
 set<Drivebase::Input> examples(Drivebase::Input*){
-	return {Drivebase::Input{}};
+	return {Drivebase::Input{{0,0,0}}};
 }
 
 bool operator<(Drivebase::Input const&,Drivebase::Input const&){
 	NYI
 }
 
-ostream& operator<<(ostream& o,Drivebase::Input const&){
+ostream& operator<<(ostream& o,Drivebase::Input const& a){
 	o<<"Drivebase::Input(";
+	o<<a.current;
 	return o<<")";
 }
 
-Drivebase::Status_detail Drivebase::Estimator::get()const{ return Status{}; }
+Drivebase::Status_detail Drivebase::Estimator::get()const{
+	array<Motor_check::Status,MOTORS> a;
+	for(unsigned i=0;i<a.size();i++){
+		a[i]=motor_check[i].get();
+	}
+	return Status{a};
+}
 
 ostream& operator<<(ostream& o,Drivebase::Output_applicator){
 	return o<<"output_applicator";
 }
 
-ostream& operator<<(ostream& o,Drivebase const&){
+ostream& operator<<(ostream& o,Drivebase const& a){
 	o<<"Drivebase(";
+	o<<a.estimator.get();
 	return o<<")";
 }
 
-void Drivebase::Estimator::update(double,Drivebase::Input,Drivebase::Output){}
+double get_output(Drivebase::Output out,Drivebase::Motor m){
+	#define X(NAME,POSITION) if(m==Drivebase::NAME) return out.POSITION;
+	X(LEFT1,l)
+	X(LEFT2,l)
+	X(RIGHT1,r)
+	X(RIGHT2,r)
+	X(CENTER1,c)
+	X(CENTER2,c)
+	#undef X
+	assert(0);
+}
+
+void Drivebase::Estimator::update(Time time,Drivebase::Input in,Drivebase::Output out){
+	for(unsigned i=0;i<MOTORS;i++){
+		Drivebase::Motor m=(Drivebase::Motor)i;
+		auto current=in.current[i];
+		auto set_power_level=get_output(out,m);
+		motor_check[i].update(time,current,set_power_level);
+	}
+}
 
 Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drivebase::Output b)const{
 	robot.pwm[0]=-pwm_convert(b.l);

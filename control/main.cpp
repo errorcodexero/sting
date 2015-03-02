@@ -203,6 +203,19 @@ void Main::teleop(
 	}();
 }
 
+unsigned pdb_location(Drivebase::Motor m){
+	#define X(NAME,INDEX) if(m==Drivebase::NAME) return INDEX;
+	X(LEFT1,12)
+	X(LEFT2,13)
+	X(RIGHT1,14)
+	X(RIGHT2,15)
+	X(CENTER1,2)
+	X(CENTER2,3)
+	#undef X
+	assert(0);
+	//assert(m>=0 && m<Drivebase::MOTORS);
+}
+
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[Gamepad_axis::LEFTX];
@@ -257,12 +270,18 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	tote_input.bottom=in.talon_srx[0].rev_limit_switch;
 	tote_input.ticks=in.talon_srx[0].encoder_position;
 
+	Drivebase::Input drive_in;
+	for(unsigned i=0;i<Drivebase::MOTORS;i++){
+		Drivebase::Motor m=(Drivebase::Motor)i;
+		drive_in.current[i]=in.current[pdb_location(m)];
+	}
+
 	toplevel.estimator.update(
 		in.now,
 		Toplevel::Input{
 			{can_input,tote_input},
 			Kicker::Input{},
-			Drivebase::Input{},
+			drive_in,
 			Pump::Input::NOT_FULL,
 			Can_grabber::Input{1} //todo: make this actually ready from a digital io
 		},

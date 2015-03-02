@@ -23,4 +23,5 @@ g++ -Wall -Werror -std=c++0x --short-enums -DMAIN_TEST -I.. main.cpp \
 	kicker.cpp \
 	can_grabber.cpp \
 	combo_lift.cpp \
+	motor_check.cpp \
 	-o main 2>&1 && ./main

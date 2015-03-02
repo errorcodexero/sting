@@ -117,6 +117,7 @@ ostream& operator<<(ostream& o,Toplevel::Goal g){
 
 Toplevel::Status::Status():
 	kicker(Kicker::Status::IN),
+	drive({Motor_check::Status::OK_,Motor_check::Status::OK_,Motor_check::Status::OK_}),
 	pump(Pump::Status::NOT_FULL),
 	can_grabber(Can_grabber::Status::MID_UP)
 {}
@@ -284,7 +285,7 @@ set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 			Lift::Status_detail::error()
 		},
 		Kicker::Status_detail{},
-		Drivebase::Status_detail{},
+		*examples((Drivebase::Status_detail*)0).begin(),
 		Pump::Status_detail{},
 		Can_grabber::Status_detail{}
 	}};

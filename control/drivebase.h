@@ -4,9 +4,17 @@
 #include <iosfwd>
 #include <set>
 #include "../util/interface.h"
+#include "motor_check.h"
 
 struct Drivebase{
-	struct Input{};
+	enum Motor{LEFT1,LEFT2,RIGHT1,RIGHT2,CENTER1,CENTER2,MOTORS};
+
+	struct Input{
+		std::array<double,MOTORS> current;
+
+		Input();
+		Input(std::array<double,MOTORS>);
+	};
 	
 	struct Output{
 		double l,r,c; //power levels for the left, right, and center wheels
@@ -15,10 +23,16 @@ struct Drivebase{
 		Output(double,double,double);
 	};
 
-	struct Status{};
+	struct Status{
+		std::array<Motor_check::Status,MOTORS> motor;
+
+		Status(std::array<Motor_check::Status,MOTORS>);
+	};
 	typedef Status Status_detail;
 
 	struct Estimator{
+		std::array<Motor_check,MOTORS> motor_check;
+
 		void update(Time,Input,Output);
 		Status_detail get()const;
 	};

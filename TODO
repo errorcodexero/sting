@@ -3,11 +3,18 @@
 		-Fix the "rm ~/.ssh/known_hosts" problem
 		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
 -Autonomous mode stuff-Logan and Matthew
+	-make it do something
+	-put in selector switch (talk w/ electical about form)
 -Drivebase wheel encoders
+	-Get all A/B lines working (electrical)
+	-Turn on counting mode & see if works
+	-Determine directions & scales of counts
+	-Drive distance routine
 -Lifter Code
 	-UI
-	-Kicker -Logan
 	-figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
+	-code to diagnose motor/encoder problems
+	-track whether been to one of the ends yet?
 -Write logging code
 -OI:
 	-put in outputs
@@ -17,11 +24,21 @@
 	-use enum class more places
 	-use std::array in place of C arrays in several places
 -Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968) -Logan
--Automatic Operations (auto-align, lift etc.) 
--Sensor stuff
-	-Work with roboRIO
-	-Test for auto-alignment
+-Automatic Operations
+	-auto-align
+		-test w/ totes
+		-consider disabling when would be looking at the grabber
+	-lift
+-Can grabber:
+	-check that the IO number in code is correct
+	-test when have hardware
+	-see if ought to have two seperate parts if the halves are controlled individually
 
 NICE THINGS TO HAVE:
 -Drive to Wall
-
+-Meta IO information
+	-Add a function that will discover which IOs different parts use (and make a nice list)
+	-Make a datatype to talk about different inputs
+-Improve testing, make sims meaningful
+-Audit code to see what each part of the robot does when in disabled mode
+-Improve testing for toplevel.cpp

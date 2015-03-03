@@ -210,11 +210,11 @@ void Main::teleop(
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) return Lift::Goal::go_to_height(ENGAGE_KICKER_HEIGHT);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return tote_lifter((1*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
-		/*if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter((2*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter((2*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return tote_lifter((3*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter((4*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return tote_lifter((5*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
-		*/if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
+		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.can_priority=can_priority;

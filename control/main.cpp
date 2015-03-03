@@ -29,7 +29,7 @@ Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_d
 	float lift_height=0.0;
 	static const float ALLOWED_ERROR=.5;
 	if(toplevel_status.combo_lift.tote!=Lift::Status_detail::bottom() || toplevel_status.combo_lift.tote!=Lift::Status_detail::top()) lift_height=toplevel_status.combo_lift.tote.inches_off_ground();
-	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR) && piston.get()==0 && level<ENGAGE_KICKER_HEIGHT) piston.update(1);
+	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR) && piston.get()==0 && level>=ENGAGE_KICKER_HEIGHT) piston.update(1);
 	return Lift::Goal::go_to_height(level);
 }
 

@@ -69,7 +69,7 @@ set<Input> inputs(){
 	return r;
 }
 
-#ifndef INPUT_TEST
+#ifdef INPUT_TEST
 int main(){
 	for(auto a:inputs()){
 		cout<<a<<"\n";

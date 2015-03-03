@@ -14,7 +14,7 @@ using namespace std;
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
-double set_drive_speed(Joystick_data joystick, int axis, double boost, double slow){
+double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow){
 	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
 	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
 	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
@@ -22,14 +22,14 @@ double set_drive_speed(Joystick_data joystick, int axis, double boost, double sl
 
 template<typename T>//Compares two types to see if one is within a range
 bool in_range(T a,T b,T c){
-	return a<b+c && a>b-c;
+	return a<b+c&&a>b-c;
 }
 
-Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_detail& toplevel_status,Posedge_toggle& piston,bool kick_and_lift=1){
+Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_detail& toplevel_status,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code
 	float lift_height=0.0;
-	if(toplevel_status.combo_lift.tote!=Lift::Status_detail::bottom() || toplevel_status.combo_lift.tote!=Lift::Status_detail::top()) lift_height=toplevel_status.combo_lift.tote.inches_off_ground();
+	if(toplevel_status.combo_lift.tote!=Lift::Status_detail::bottom()||toplevel_status.combo_lift.tote!=Lift::Status_detail::top()) lift_height=toplevel_status.combo_lift.tote.inches_off_ground();
 	if(lift_height<ENGAGE_KICKER_HEIGHT) lift_height=0.0;
-	static const float ALLOWED_ERROR=.1;
+	static const float ALLOWED_ERROR=.6;
 	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR)) piston.update(1);
 	return Lift::Goal::go_to_height(level);
 }
@@ -49,22 +49,22 @@ void Main::teleop(
 	static const float BACK_MOVE_POWER=.5;
 
 	Drivebase::Goal &goal=goals.drive;
-	if (!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
-	else if (!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
+	if(!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
+	else if(!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
 	else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 
 	const double turbo_button= main_joystick.axis[Gamepad_axis::LTRIGGER];
 
-	if (!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
-	else if (!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
-	else if (!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_MOVE_POWER;
+	if(!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
+	else if(!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
+	else if(!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_MOVE_POWER;
 	else goal.y=set_drive_speed(main_joystick, 1, turbo_button, main_joystick.axis[Gamepad_axis::RTRIGGER]);
 
-	if (!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
-	else if (!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
-	else if (!back_turns[0].timer.done()) goal.theta=BACK_TURN_POWER;
-	else if (!back_turns[1].timer.done()) goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick, 4, turbo_button, main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
+	if(!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
+	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
+	else if(!back_turns[0].timer.done()) goal.theta=BACK_TURN_POWER;
+	else if(!back_turns[1].timer.done()) goal.theta=-BACK_TURN_POWER;
+	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
@@ -94,7 +94,7 @@ void Main::teleop(
 	}
 	
 	static const unsigned int back_turn_buttons[2]={Gamepad_button::BACK,Gamepad_button::START};
-	for (int i=0;i<2;i++) {
+	for(int i=0;i<2;i++) {
 		bool start=back_turns[i].trigger(main_joystick.button[back_turn_buttons[i]]);
 		if (start) back_turns[i].timer.set(1);
 		back_turns[i].timer.update(in.now,1);

@@ -25,13 +25,12 @@ bool in_range(T a,T b,T c){
 	return a<b+c && a>b-c;
 }
 
-Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_detail& toplevel_status,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code
-	float lift_height=0.0;
+Lift::Goal tote_lifter(float level,float /*ENGAGE_KICKER_HEIGHT*/,Toplevel::Status_detail& /*toplevel_status*/,Posedge_toggle& /*piston,bool kick_and_lift=1*/){//Auto kicking code
+	/*float lift_height=0.0;
 	if(toplevel_status.combo_lift.tote!=Lift::Status_detail::bottom() || toplevel_status.combo_lift.tote!=Lift::Status_detail::top()) lift_height=toplevel_status.combo_lift.tote.inches_off_ground();
-	if(lift_height<ENGAGE_KICKER_HEIGHT) lift_height=0.0;
 	static const float ALLOWED_ERROR=.6;
-	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR) && toplevel_status.kicker==Kicker::Status_detail::IN) piston.update(1);
-	return Lift::Goal::go_to_height(level);
+	if(kick_and_lift && in_range(lift_height,ENGAGE_KICKER_HEIGHT,ALLOWED_ERROR) && piston.get()==0 && lift_height<ENGAGE_KICKER_HEIGHT) piston.update(1);
+	*/return Lift::Goal::go_to_height(level);
 }
 
 void Main::teleop(

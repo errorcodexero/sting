@@ -34,7 +34,7 @@ Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_d
 }
 
 float round_to_level(float level,float height){
-	for(unsigned int i; i<6; i++){
+	for(unsigned int i=0; i<6; i++){
 		if(in_range(height, level*i, level/2)) return level*i;
 	}
 	assert(0);
@@ -220,7 +220,7 @@ void Main::teleop(
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return tote_lifter((1*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter((2*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return tote_lifter((3*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter((4*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter((4.5*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return tote_lifter((5*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) return tote_lifter((6*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();

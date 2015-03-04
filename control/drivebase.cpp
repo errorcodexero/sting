@@ -6,10 +6,9 @@
 
 using namespace std;
 
-Drivebase::Input::Input():current({0,0,0}){}
-Drivebase::Input::Input(array<double,Drivebase::MOTORS> a):current(a){}
+CMP_OPS(Drivebase::Input,DRIVEBASE_INPUT)
 
-Drivebase::Status::Status(array<Motor_check::Status,Drivebase::MOTORS> a):motor(a){}
+CMP_OPS(Drivebase::Status,DRIVEBASE_STATUS)
 
 set<Drivebase::Status> examples(Drivebase::Status*){
 	return {Drivebase::Status{array<Motor_check::Status,Drivebase::MOTORS>{
@@ -17,16 +16,6 @@ set<Drivebase::Status> examples(Drivebase::Status*){
 		Motor_check::Status::OK_,
 		Motor_check::Status::OK_
 	}}};
-}
-
-bool operator<(Drivebase::Status,Drivebase::Status){ return 0; }
-bool operator==(Drivebase::Status,Drivebase::Status){ return 1; }
-bool operator!=(Drivebase::Status a,Drivebase::Status b){ return !(a==b); }
-
-ostream& operator<<(ostream& o,Drivebase::Status const& a){
-	o<<"Drivebase::Status(";
-	o<<a.motor;
-	return o<<")";
 }
 
 set<Drivebase::Goal> examples(Drivebase::Goal*){
@@ -51,48 +40,17 @@ bool operator<(Drivebase::Goal const& a,Drivebase::Goal const& b){
 	return 0;
 }
 
-Drivebase::Output::Output():l(0),r(0),c(0){}
-Drivebase::Output::Output(double a,double b,double c1):l(a),r(b),c(c1){}
-
+CMP_OPS(Drivebase::Output,DRIVEBASE_OUTPUT)
 
 set<Drivebase::Output> examples(Drivebase::Output*){
 	return {
-		Drivebase::Output{},
+		Drivebase::Output{0,0,0},
 		Drivebase::Output{1,1,0}
 	};
 }
 
-ostream& operator<<(ostream& o,Drivebase::Output const& a){
-	o<<"Drivebase::Output(";
-	o<<a.l<<" "<<a.r<<" "<<a.c;
-	return o<<")";
-}
-
-bool operator<(Drivebase::Output const& a,Drivebase::Output const& b){
-	CMP(l) CMP(r) CMP(c)
-	return 0;
-}
-
-bool operator!=(Drivebase::Output const& a,Drivebase::Output const& b){
-	return !(a==b);
-}
-
-bool operator==(Drivebase::Output const& a,Drivebase::Output const& b){
-	return a.l==b.l && a.r==b.r && a.c==b.c;
-}
-
 set<Drivebase::Input> examples(Drivebase::Input*){
 	return {Drivebase::Input{{0,0,0}}};
-}
-
-bool operator<(Drivebase::Input const&,Drivebase::Input const&){
-	NYI
-}
-
-ostream& operator<<(ostream& o,Drivebase::Input const& a){
-	o<<"Drivebase::Input(";
-	o<<a.current;
-	return o<<")";
 }
 
 Drivebase::Status_detail Drivebase::Estimator::get()const{

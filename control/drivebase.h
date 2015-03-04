@@ -5,29 +5,23 @@
 #include <set>
 #include "../util/interface.h"
 #include "motor_check.h"
+#include "quick.h"
 
 struct Drivebase{
 	enum Motor{LEFT1,LEFT2,RIGHT1,RIGHT2,CENTER1,CENTER2,MOTORS};
 
-	struct Input{
-		std::array<double,MOTORS> current;
+	#define DRIVEBASE_INPUT(X) X(SINGLE_ARG(std::array<double,MOTORS>),current)
+	DECLARE_STRUCT(Input,DRIVEBASE_INPUT)
 
-		Input();
-		Input(std::array<double,MOTORS>);
-	};
-	
-	struct Output{
-		double l,r,c; //power levels for the left, right, and center wheels
+	#define DRIVEBASE_OUTPUT(X)\
+		X(double,l)\
+		X(double,r)\
+		X(double,c)
+	DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
-		Output();
-		Output(double,double,double);
-	};
+	#define DRIVEBASE_STATUS(X) X(SINGLE_ARG(std::array<Motor_check::Status,MOTORS>),motor)
+	DECLARE_STRUCT(Status,DRIVEBASE_STATUS)
 
-	struct Status{
-		std::array<Motor_check::Status,MOTORS> motor;
-
-		Status(std::array<Motor_check::Status,MOTORS>);
-	};
 	typedef Status Status_detail;
 
 	struct Estimator{
@@ -60,10 +54,7 @@ bool operator==(Drivebase::Output const&,Drivebase::Output const&);
 bool operator!=(Drivebase::Output const&,Drivebase::Output const&);
 std::set<Drivebase::Output> examples(Drivebase::Output*);
 
-std::ostream& operator<<(std::ostream&,Drivebase::Status const&);
-bool operator<(Drivebase::Status,Drivebase::Status);
-bool operator==(Drivebase::Status,Drivebase::Status);
-bool operator!=(Drivebase::Status,Drivebase::Status);
+CMP1(Drivebase::Status)
 std::set<Drivebase::Status> examples(Drivebase::Status*);
 
 std::ostream& operator<<(std::ostream&,Drivebase::Goal const&);

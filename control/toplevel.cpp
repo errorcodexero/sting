@@ -62,6 +62,7 @@ Toplevel::Output Toplevel::Output_applicator::operator()(Robot_outputs a)const{
 }
 
 Toplevel::Output::Output():
+	drive({0,0,0}),
 	pump(Pump::Output::AUTO)
 {}
 
@@ -300,7 +301,13 @@ set<Toplevel::Goal> examples(Toplevel::Goal*){
 set<Toplevel::Status> examples(Toplevel::Status*){ return {Toplevel::Status{}}; }
 
 set<Toplevel::Input> examples(Toplevel::Input*){
-	Toplevel::Input a;
+	Toplevel::Input a{
+		Combo_lift::Input(),
+		Kicker::Input(),
+		*examples((Drivebase::Input*)0).begin(),
+		Pump::Input{},
+		Can_grabber::Input{0}
+	};
 	return {a};
 }
 

@@ -305,11 +305,14 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	tote_input.bottom=in.talon_srx[0].rev_limit_switch;
 	tote_input.ticks=in.talon_srx[0].encoder_position;
 
-	Drivebase::Input drive_in;
-	for(unsigned i=0;i<Drivebase::MOTORS;i++){
-		Drivebase::Motor m=(Drivebase::Motor)i;
-		drive_in.current[i]=in.current[pdb_location(m)];
-	}
+	Drivebase::Input drive_in{[&](){
+		array<double,Drivebase::MOTORS> r;
+		for(unsigned i=0;i<Drivebase::MOTORS;i++){
+			Drivebase::Motor m=(Drivebase::Motor)i;
+			r[i]=in.current[pdb_location(m)];
+		}
+		return r;
+	}()};
 
 	toplevel.estimator.update(
 		in.now,

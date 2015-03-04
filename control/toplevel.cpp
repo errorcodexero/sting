@@ -62,7 +62,7 @@ Toplevel::Output Toplevel::Output_applicator::operator()(Robot_outputs a)const{
 }
 
 Toplevel::Output::Output():
-	drive({0,0,0}),
+	drive(0,0,0,0),
 	pump(Pump::Output::AUTO)
 {}
 
@@ -118,7 +118,10 @@ ostream& operator<<(ostream& o,Toplevel::Goal g){
 
 Toplevel::Status::Status():
 	kicker(Kicker::Status::IN),
-	drive({Motor_check::Status::OK_,Motor_check::Status::OK_,Motor_check::Status::OK_}),
+	drive(
+		{Motor_check::Status::OK_,Motor_check::Status::OK_,Motor_check::Status::OK_},
+		Drivebase::Piston::FULL
+	),
 	pump(Pump::Status::NOT_FULL),
 	can_grabber(Can_grabber::Status::MID_UP)
 {}

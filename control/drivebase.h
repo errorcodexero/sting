@@ -6,6 +6,7 @@
 #include "../util/interface.h"
 #include "motor_check.h"
 #include "quick.h"
+#include "../util/countdown_timer.h"
 
 struct Drivebase{
 	enum Motor{LEFT1,LEFT2,RIGHT1,RIGHT2,CENTER1,CENTER2,MOTORS};
@@ -16,16 +17,32 @@ struct Drivebase{
 	#define DRIVEBASE_OUTPUT(X)\
 		X(double,l)\
 		X(double,r)\
-		X(double,c)
+		X(double,c)\
+		X(bool,piston)
 	DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
-	#define DRIVEBASE_STATUS(X) X(SINGLE_ARG(std::array<Motor_check::Status,MOTORS>),motor)
+	#define PISTON_STATES X(FULL) X(EMPTY) X(FILLING) X(EMPTYING)
+	enum class Piston{
+		#define X(NAME) NAME,
+		PISTON_STATES
+		#undef X
+	};
+
+	#define DRIVEBASE_STATUS(X) \
+		X(SINGLE_ARG(std::array<Motor_check::Status,MOTORS>),motor)\
+		X(Piston,piston)
 	DECLARE_STRUCT(Status,DRIVEBASE_STATUS)
 
 	typedef Status Status_detail;
 
 	struct Estimator{
 		std::array<Motor_check,MOTORS> motor_check;
+
+		bool piston_last;
+		Countdown_timer piston_timer;
+		Piston piston;
+
+		Estimator();
 
 		void update(Time,Input,Output);
 		Status_detail get()const;
@@ -43,6 +60,8 @@ struct Drivebase{
 		double x,y,theta;
 	};
 };
+
+std::ostream& operator<<(std::ostream&,Drivebase::Piston);
 
 std::ostream& operator<<(std::ostream&,Drivebase::Input const&);
 bool operator<(Drivebase::Input const&,Drivebase::Input const&);

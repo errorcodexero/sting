@@ -9,10 +9,22 @@
 
 #define DECL1(A,B) A B;
 
+#define TYPES(A,B) A,
+
 #define DECLARE_STRUCT(NAME,LIST)\
 	struct NAME{\
 		LIST(DECL1)\
+		bool dummy[0];\
+		NAME( LIST(TYPES) bool=0);\
 	};
+
+#define ARGS(A,B) A B##1,
+#define FDECL(A,B) B(B##1),
+
+#define IMPL_STRUCT(NAME,LIST)\
+	NAME( LIST(ARGS) bool):LIST(FDECL) dummy{}{\
+		\
+	}
 
 #define CMP_OPS(NAME,LIST) \
 	bool operator==(NAME const& a,NAME const& b){\

@@ -6,16 +6,30 @@
 
 using namespace std;
 
+ostream& operator<<(ostream& o,Drivebase::Piston a){
+	#define X(NAME) if(a==Drivebase::Piston::NAME) return o<<""#NAME;
+	PISTON_STATES
+	#undef X
+	assert(0);
+}
+
+IMPL_STRUCT(Drivebase::Status::Status,DRIVEBASE_STATUS)
+IMPL_STRUCT(Drivebase::Input::Input,DRIVEBASE_INPUT)
+IMPL_STRUCT(Drivebase::Output::Output,DRIVEBASE_OUTPUT)
+
 CMP_OPS(Drivebase::Input,DRIVEBASE_INPUT)
 
 CMP_OPS(Drivebase::Status,DRIVEBASE_STATUS)
 
 set<Drivebase::Status> examples(Drivebase::Status*){
-	return {Drivebase::Status{array<Motor_check::Status,Drivebase::MOTORS>{
-		Motor_check::Status::OK_,
-		Motor_check::Status::OK_,
-		Motor_check::Status::OK_
-	}}};
+	return {Drivebase::Status{
+		array<Motor_check::Status,Drivebase::MOTORS>{
+			Motor_check::Status::OK_,
+			Motor_check::Status::OK_,
+			Motor_check::Status::OK_
+		},
+		Drivebase::Piston::FULL
+	}};
 }
 
 set<Drivebase::Goal> examples(Drivebase::Goal*){
@@ -44,8 +58,8 @@ CMP_OPS(Drivebase::Output,DRIVEBASE_OUTPUT)
 
 set<Drivebase::Output> examples(Drivebase::Output*){
 	return {
-		Drivebase::Output{0,0,0},
-		Drivebase::Output{1,1,0}
+		Drivebase::Output{0,0,0,1},
+		Drivebase::Output{1,1,0,0}
 	};
 }
 
@@ -58,7 +72,7 @@ Drivebase::Status_detail Drivebase::Estimator::get()const{
 	for(unsigned i=0;i<a.size();i++){
 		a[i]=motor_check[i].get();
 	}
-	return Status{a};
+	return Status{a,piston};
 }
 
 ostream& operator<<(ostream& o,Drivebase::Output_applicator){
@@ -83,12 +97,33 @@ double get_output(Drivebase::Output out,Drivebase::Motor m){
 	assert(0);
 }
 
-void Drivebase::Estimator::update(Time time,Drivebase::Input in,Drivebase::Output out){
+Drivebase::Estimator::Estimator():piston_last(0),piston(Piston::EMPTYING){}
+
+void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output out){
 	for(unsigned i=0;i<MOTORS;i++){
 		Drivebase::Motor m=(Drivebase::Motor)i;
 		auto current=in.current[i];
 		auto set_power_level=get_output(out,m);
-		motor_check[i].update(time,current,set_power_level);
+		motor_check[i].update(now,current,set_power_level);
+	}
+
+	if(out.piston==piston_last){
+		piston_timer.update(now,1);
+		if(piston_timer.done()){
+			if(piston_last){
+				piston=Piston::FULL;
+			}else{
+				piston=Piston::EMPTY;
+			}
+		}
+	}else{
+		if(out.piston){
+			piston=Piston::FILLING;
+		}else{
+			piston=Piston::EMPTYING;
+		}
+		piston_last=out.piston;
+		piston_timer.set(.2);//total guess
 	}
 }
 
@@ -96,7 +131,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.pwm[0]=-pwm_convert(b.l);
 	robot.pwm[1]=pwm_convert(b.r);
 	robot.pwm[2]=pwm_convert(b.c);
-	robot.solenoid[1]=fabs(b.c)>.1;
+	robot.solenoid[1]=b.piston;
 	return robot;
 }
 
@@ -104,7 +139,8 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	return Drivebase::Output{
 		-from_pwm(robot.pwm[0]),
 		from_pwm(robot.pwm[1]),
-		from_pwm(robot.pwm[2])
+		from_pwm(robot.pwm[2]),
+		robot.solenoid[1]
 	};
 }
 
@@ -126,14 +162,30 @@ bool operator==(Drivebase const& a,Drivebase const& b){
 
 bool operator!=(Drivebase const& a,Drivebase const& b){ return !(a==b); }
 
-Drivebase::Output control(Drivebase::Status,Drivebase::Goal goal){
-	//use jacob's or matthew's code
+Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 	double l=goal.y+goal.theta;
 	double r=goal.y-goal.theta;
 	auto m=max(1.0,max(fabs(l),fabs(r)));
-	auto ret=Drivebase::Output{l/m,r/m,goal.x};
-	cout<<"r:"<<ret<<"\n";
-	return ret;
+
+	auto main_wheel_portion=max(fabs(l),fabs(r));
+	auto strafe_portion=fabs(goal.x);
+	auto mostly_stationary=max(main_wheel_portion,strafe_portion)<.1;
+	bool piston=[=]()->bool{
+		if(mostly_stationary){
+			switch(status.piston){
+				case Drivebase::Piston::FULL:
+				case Drivebase::Piston::FILLING:
+					return 1;
+				case Drivebase::Piston::EMPTY:
+				case Drivebase::Piston::EMPTYING:
+					return 0;
+				default: assert(0);
+			}
+		}
+		return strafe_portion>=main_wheel_portion/2;
+	}();
+
+	return Drivebase::Output{l/m,r/m,goal.x,piston};
 }
 
 Drivebase::Status status(Drivebase::Status a){ return a; }

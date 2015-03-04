@@ -2,10 +2,10 @@ Driver Controller
 -------------------
 Left Joystick - Forward/Backward/Left/Right
 Right Joystick - Stationary Rotation
-A - Nudge Down
+A - Nudge Back
 B - Nudge Right
 X - Nudge Left
-Y - Nudge Up
+Y - Nudge Forward
 Start - Left Backwards Turn
 Back - Right Backwards Turn
 Left Button - Nudge Counter-clockwise
@@ -16,22 +16,22 @@ Right Trigger - Slow
 
 Gunner Controller
 -------------------
-Left Joystick:
+Left Joystick(Tote):
    Press - Tote Bottom Preset
    Down - Tote Level 1
    Left - Tote Level 2
    Right - Tote Level 3
    Up - Tote Level 4
-Right Joystick:
+Right Joystick(Can):
    Press - Can Bottom Preset
    Down - Can Level 1
    Left - Can Level 2
    Right - Can Level 3
    Up - Can Level 4
-B - Stop Lifts
+B - Stop Lifter
 Y - Toggle Kicker
 Start - Tote Level 5
 Back - Can Level 5
-Right Button - Engage Kicker
+Right Button - Go To Engage Kicker Height For A Tote On The Ground
 Left Trigger - Tote Top Preset
 Right Trigger - Can  Top Preset

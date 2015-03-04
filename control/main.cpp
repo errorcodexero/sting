@@ -35,7 +35,7 @@ Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_d
 
 float round_to_level(float level,float height){
 	for(unsigned int i=0; i<6; i++){
-		if(in_range(height, level*i, level/2)) return level*i;
+		if(in_range(height,level*i,level/2)) return level*i;
 	}
 	assert(0);
 }
@@ -144,12 +144,12 @@ void Main::teleop(
 			default: assert(0);
 		}
 		if(gunner_joystick.button[Gamepad_button::START]){
-			sticky_can_goal=Sticky_can_goal::TOP;
+			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
 		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
 			can_priority=1;
-			sticky_can_goal=Sticky_can_goal::LEVEL5;
+			sticky_can_goal=Sticky_can_goal::TOP;
 		}
 		cout<<toplevel_status<<"\n";
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();

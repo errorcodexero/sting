@@ -34,7 +34,7 @@ Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Toplevel::Status_d
 }
 
 float round_to_level(float level,float height){
-	for(unsigned int i; i<6; i++){
+	for(unsigned int i=0; i<6; i++){
 		if(in_range(height, level*i, level/2)) return level*i;
 	}
 	assert(0);

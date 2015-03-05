@@ -4,7 +4,7 @@
 #include <set>
 #include "../util/interface.h"
 #include "../util/countdown_timer.h"
-#include "quick.h"
+#include "../util/quick.h"
 
 struct Can_grabber{
 	#define CAN_GRABBER_INPUT(X) X(bool,sensor)

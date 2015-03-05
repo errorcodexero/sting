@@ -3,7 +3,7 @@
 
 #include<set>
 #include "../util/interface.h"
-#include "quick.h"
+#include "../util/quick.h"
 
 struct Kicker{
 	#define KICKER_INPUT(X)

@@ -144,7 +144,7 @@ Maybe<Relay_output> parse_relay_output(string s){
 }
 
 bool operator==(Talon_srx_input a,Talon_srx_input b){
-	return a.encoder_position==b.encoder_position && a.fwd_limit_switch==b.fwd_limit_switch && a.rev_limit_switch==b.rev_limit_switch;
+	return a.encoder_position==b.encoder_position && a.fwd_limit_switch==b.fwd_limit_switch && a.rev_limit_switch==b.rev_limit_switch && a.current==b.current;
 }
 
 bool operator!=(Talon_srx_input a,Talon_srx_input b){
@@ -152,7 +152,10 @@ bool operator!=(Talon_srx_input a,Talon_srx_input b){
 }
 
 bool operator<(Talon_srx_input a, Talon_srx_input b){
-	return a.encoder_position<b.encoder_position && a.fwd_limit_switch<b.fwd_limit_switch && a.rev_limit_switch<b.rev_limit_switch;
+	#define X(NAME) if(a.NAME<b.NAME) return 1; if(b.NAME<a.NAME) return 0;
+	X(encoder_position) X(fwd_limit_switch) X(rev_limit_switch) X(current)
+	#undef X
+	return 0;
 }
 
 bool operator==(Talon_srx_output a,Talon_srx_output b){

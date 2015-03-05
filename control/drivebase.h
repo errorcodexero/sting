@@ -5,7 +5,7 @@
 #include <set>
 #include "../util/interface.h"
 #include "motor_check.h"
-#include "quick.h"
+#include "../util/quick.h"
 #include "../util/countdown_timer.h"
 
 struct Drivebase{

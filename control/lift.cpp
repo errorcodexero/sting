@@ -7,13 +7,6 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
-//IMPL_STRUCT(Lift::Lift::Input,LIFT_INPUT)
-
-int x;
-
-//Lift::Lift::Input(bool,bool,int,bool)nyi
-//Lift::Lift::Input(bool a,b,c,d){}
-
 CMP_OPS(Lift::Input,LIFT_INPUT)
 
 Lift::Input_reader::Input_reader(int i):can_address(i){}
@@ -23,6 +16,7 @@ Robot_inputs Lift::Input_reader::operator()(Robot_inputs all,Input in)const{
 	t.fwd_limit_switch=in.top;
 	t.rev_limit_switch=in.bottom;
 	t.encoder_position=in.ticks;
+	t.current=in.current;
 	return all;
 }
 
@@ -31,7 +25,8 @@ Lift::Input Lift::Input_reader::operator()(Robot_inputs all)const{
 	return Input{
 		t.fwd_limit_switch,
 		t.rev_limit_switch,
-		t.encoder_position
+		t.encoder_position,
+		t.current
 	};
 }
 
@@ -90,10 +85,10 @@ Lift::Output Lift::Output_applicator::operator()(Robot_outputs in)const{
 
 std::set<Lift::Input> examples(Lift::Input*){
 	return {
-		Lift::Input{0,0,0},
-		Lift::Input{0,1,0},
-		Lift::Input{1,0,0},
-		Lift::Input{1,1,0}
+		Lift::Input{0,0,0,0},
+		Lift::Input{0,1,0,0},
+		Lift::Input{1,0,0,0},
+		Lift::Input{1,1,0,0}
 	};
 }
 
@@ -423,7 +418,8 @@ struct Lift_sim{
 		return Lift::Input{
 			height>=MAX_HEIGHT-LIMIT_SWITCH_RANGE,
 			height<=MIN_HEIGHT+LIMIT_SWITCH_RANGE,
-			(int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION)
+			(int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION),
+			0
 		};
 	}
 };
@@ -493,7 +489,7 @@ int main(){
 	Lift a(1);
 	tester(a);
 	Lift::Goal goal=goal.up();
-	run(a,0,Lift::Input{0,0,0},Lift::Output{},goal);
+	run(a,0,Lift::Input{0,0,0,0},Lift::Output{},goal);
 
 	for(unsigned i=0;i<30;i++){
 		cout<<i<<"\t"<<acceleration_range(60,i)<<"\n";

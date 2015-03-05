@@ -3,13 +3,14 @@
 
 #include<set>
 #include "../util/interface.h"
-#include "quick.h"
+#include "../util/quick.h"
 
 struct Lift{
-	#define LIFT_INPUT(X) X(bool,top) X(bool,bottom) X(int,ticks)
+	#define LIFT_INPUT(X) X(bool,top) X(bool,bottom) X(int,ticks) X(double,current)
 	struct Input{
 		bool top,bottom;
 		int ticks;
+		double current;
 	};
 
 	struct Input_reader{

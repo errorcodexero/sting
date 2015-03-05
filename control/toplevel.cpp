@@ -561,19 +561,56 @@ int main(){
 
 	cout<<"Inputs:\n";
 	Toplevel t;
-	#define X(A,B,C) cout<<""#A<<inputs(t.B)<<"\n";
+	map<string,set<Input>> input_map;
+	#define X(A,B,C) cout<<""#A<<inputs(t.B)<<"\n"; input_map[""#A]=inputs(t.B);
 	TOPLEVEL_ITEMS
 	#undef X
+
+	auto find_input=[=](Input a)->string{
+		set<string> found;
+		for(auto p:input_map){
+			if(p.second.count(a)){
+				found|=p.first;
+			}
+		}
+		switch(found.size()){
+			case 0: return "UNUSED";
+			case 1: return *found.begin();
+			default: assert(0);
+		}
+	};
+
+	for(auto a:inputs()){
+		cout<<a<<"\t"<<find_input(a)<<"\n";
+	}
 
 	cout<<"Outputs:\n";
 	auto f=outputs(Toplevel{});
 	cout<<f<<"\n";
 
-	#define X(A,B,C) cout<<""#A<<outputs(t.B)<<"\n";
+	map<string,set<Output>> output_map;
+	#define X(A,B,C) cout<<""#A<<outputs(t.B)<<"\n"; output_map[""#A]=outputs(t.B);
 	TOPLEVEL_ITEMS
 	#undef X
 
-	cout<<"demo:"<<outputs(Lift{1})<<"\n";
+	auto find_output=[=](Output a)->string{
+		set<string> found;
+		for(auto p:output_map){
+			if(p.second.count(a)){
+				found|=p.first;
+			}
+		}
+		switch(found.size()){
+			case 0: return "UNUSED";
+			case 1: return *found.begin();
+			default:
+				//return "----CONFLICT!----"+as_string(found);
+				assert(0);
+		}
+	};
+	for(auto a:outputs()){
+		cout<<a<<"\t"<<find_output(a)<<"\n";
+	}
 
 	//tester(Toplevel{});
 	//Toplevel::Control control;

@@ -2,6 +2,7 @@
 #define OUTPUT_H
 
 #include<iosfwd>
+#include<set>
 
 #define OUTPUT_TYPES X(PWM) X(SOLENOID) X(RELAY) X(DIGITAL_IO) X(TALON_SRX) X(CAN_JAGUAR) X(DRIVER_STATION) X(PUMP)
 
@@ -39,5 +40,6 @@ class Output{
 
 bool operator<(Output const&,Output const&);
 std::ostream& operator<<(std::ostream&,Output const&);
+std::set<Output> outputs();
 
 #endif

@@ -1,6 +1,7 @@
 #include "can_grabber.h"
 #include <stdlib.h>
 #include "../util/util.h"
+#include "monitor.h"
 
 using namespace std;
 
@@ -164,11 +165,80 @@ bool operator!=(Can_grabber const& a,Can_grabber const& b){
 }
 
 //std::set<Can_grabber::Goal> examples(Can_grabber::Goal*)nyi
+struct Sim{
+	Time last=-1;
+	double angle;//radians, 0=up, goes clockwise
+
+	public:
+	Sim():angle(0){}
+
+	void update(Time now,Can_grabber::Output out){
+		if(last==-1){
+			last=now;
+			return;
+		}
+		Time elapsed=now-last;
+		last=now;
+		static const Time CYCLE_TIME=4;
+		switch(out){
+			case Can_grabber::Output::ON:
+				angle+=elapsed/CYCLE_TIME*2*M_PI;
+				while(angle>2*M_PI) angle-=2*M_PI;
+				return;
+			case Can_grabber::Output::OFF:return;
+			default: assert(0);
+		}
+	}
+
+	Can_grabber::Input get()const{
+		//just choosing some port of the travel where the sensor is on
+		return .4<angle && angle<1;
+	}
+};
 
 #ifdef CAN_GRABBER_TEST
 #include "formal.h"
+template<typename T>
+string clip1(T t){
+	return as_string(t).substr(0,4);
+}
 
 int main(){
-	tester(Can_grabber(6,4));//numbers are totally made up
+	//numbers are totally made up
+	Can_grabber c(6,4);
+
+	tester(c);
+
+	Sim s;
+	static const Time STEPSIZE=.01;
+	Monitor<Can_grabber::Input> sensor;
+	Monitor<Can_grabber::Status> status;
+	Can_grabber::Goal goal=Can_grabber::Goal::TOP;
+	cout<<"time\tangle\tinput\t\t\toutput\n";
+	Can_grabber::Output out=Can_grabber::Output::OFF;
+	Time f=0;
+	auto step=[&](){
+		c.estimator.update(f,s.get(),out);
+		out=control(c.estimator.get(),goal);
+		s.update(f,out);
+		cout<<sensor.update(s.get());
+		cout<<status.update(c.estimator.get());
+		cout<<f<<"\t"<<clip1(s.angle)<<"\t"<<s.get()<<"\t"<<out<<"\t"<<c.estimator<<"\n";
+		f+=STEPSIZE;
+	};
+	for(;c.estimator.get()!=Can_grabber::Status::TOP && f<10;){
+		step();
+	}
+	if(c.estimator.get()!=Can_grabber::Status::TOP){
+		nyi
+	}
+	goal=Can_grabber::Goal::BOTTOM;
+	while(c.estimator.get()!=Can_grabber::Status::BOTTOM && f<10){
+		step();
+	}
+	if(c.estimator.get()!=Can_grabber::Status::BOTTOM){
+		nyi
+	}
+	return 0;
 }
 #endif

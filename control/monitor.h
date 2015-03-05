@@ -36,11 +36,15 @@ void print_diff(std::ostream&,Robot_inputs&,Robot_inputs const&);
 
 template<typename T>
 struct Monitor{
-	T data;
+	Maybe<T> data;
 
 	std::string update(T t){
 		std::stringstream ss;
-		print_diff(ss,data,t);
+		if(data){
+			print_diff(ss,*data,t);
+		}else{
+			ss<<t<<"\n";
+		}
 		data=t;
 		return ss.str();
 	}

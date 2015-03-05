@@ -2,6 +2,7 @@
 #define LIFT_H
 
 #include<set>
+#include<utility>
 #include "../util/interface.h"
 #include "../util/quick.h"
 
@@ -27,7 +28,8 @@ struct Lift{
 	class Status_detail{
 		public:
 		enum class Type{TOP,BOTTOM,MID,ERRORS};
-
+		std::pair<bool,bool> reached_ends;//first is the bottom and second is the top
+		
 		private:
 		Status_detail();
 

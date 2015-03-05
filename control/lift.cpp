@@ -219,11 +219,13 @@ std::ostream& operator<<(ostream& o,Lift::Status_detail const& a){
 	if(a.type()==Lift::Status_detail::Type::MID){
 		o<<" "<<a.inches_off_ground();
 	}
+	o<<" reached_ends:"<<a.reached_ends;
 	return o<<")";
 }
 
 bool operator<(Lift::Status_detail const& a,Lift::Status_detail const& b){
 	CMP(type())
+	CMP(reached_ends)
 	if(a.type()==Lift::Status_detail::Type::MID){
 		return a.inches_off_ground()<b.inches_off_ground();
 	}
@@ -232,7 +234,7 @@ bool operator<(Lift::Status_detail const& a,Lift::Status_detail const& b){
 
 bool operator==(Lift::Status_detail const& a,Lift::Status_detail const& b){
 	if(a.type()!=b.type()) return 0;
-	return a.type()!=Lift::Status_detail::Type::MID || a.inches_off_ground()==b.inches_off_ground();
+	return (a.type()!=Lift::Status_detail::Type::MID || a.inches_off_ground()==b.inches_off_ground()) && a.reached_ends==b.reached_ends;
 }
 
 bool operator!=(Lift::Status_detail const& a,Lift::Status_detail const& b){

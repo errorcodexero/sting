@@ -173,5 +173,31 @@ bool operator!=(Kicker const& a,Kicker const& b){ return !(a==b); }
 int main(){
 	Kicker a(0);
 	tester(a);
+
+	Time t=0;
+	static const Time TIMESTEP=.01;
+	Kicker::Goal goal=Kicker::Goal::IN;
+	cout<<"time\tgoal\tstatus\n";
+	auto step=[&](){
+		auto out=control(a.estimator.get(),goal);
+		a.estimator.update(t,Kicker::Input{},out);
+		cout<<t<<"\t"<<goal<<"\t"<<a.estimator.get()<<"\n";
+		t+=TIMESTEP;
+	};
+	static const Time TIME_LIMIT=10;
+
+	for(unsigned i=0;i<10;i++){
+		step();
+	}
+
+	for(auto g:examples((Kicker::Goal*)0)){
+		goal=g;
+		cout<<g<<"\n";
+		while(!ready(a.estimator.get(),goal) && t<TIME_LIMIT){
+			step();
+		}
+		assert(t<TIME_LIMIT);
+		cout<<"go to "<<goal<<"\n";
+	}
 }
 #endif

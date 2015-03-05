@@ -398,7 +398,7 @@ bool ready(Lift::Status status,Lift::Goal goal){
 #include "formal.h"
 
 static const double MAX_HEIGHT=65-5;
-static const double MIN_HEIGHT=6;
+static const double MIN_HEIGHT=0;
 static const double LIMIT_SWITCH_RANGE=.25;
 
 static const unsigned TICKS_PER_REVOLUTION=60;//todo: check this
@@ -443,16 +443,46 @@ double speed_with_load(double load){
 }
 
 struct Lift_sim{
-	double height;//in inches off the ground for the end effector
+	Time last=-1;
+	double height;//in inches above the lower hardstop
+	double old_output=0;
 
-	Lift_sim():height(10){}
+	Lift_sim():height(0){}
+
+	bool top_lim()const{ return height>=MAX_HEIGHT-LIMIT_SWITCH_RANGE; }
+	bool bottom_lim()const{ return height<=MIN_HEIGHT+LIMIT_SWITCH_RANGE; }
+	
+	double effective_output(Lift::Output a)const{
+		//take limit switches into account
+		if(a>0 && top_lim()) return 0;
+		if(a<0 && bottom_lim()) return 0;
+		return a;
+	}
+
+	void update(Time now,Lift::Output output){
+		assert(output>=-1 && output<=1);
+
+		//first, going to start with a very poor model of how the lift works, then try to improve based on loads and such
+		if(last==-1){
+			last=now;
+			return;
+		}
+		Time elapsed=now-last;
+		last=now;
+		static const double FREE_SPEED=10;//inches per second, totally made up
+		auto effective=effective_output(output);
+		auto move_dist=elapsed*FREE_SPEED*effective;
+		height+=move_dist;
+		height=min(height,MAX_HEIGHT);
+		height=max(height,MIN_HEIGHT);
+		old_output=effective;
+	}
 
 	Lift::Input now(){
 		return Lift::Input{
-			height>=MAX_HEIGHT-LIMIT_SWITCH_RANGE,
-			height<=MIN_HEIGHT+LIMIT_SWITCH_RANGE,
-			(int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION),
-			0
+			top_lim(),bottom_lim(),
+			(int)(height*CLICKS_PER_INCH),//(int)(height/(2*M_PI*SPROCKET_RADIUS)*TICKS_PER_REVOLUTION),
+			fabs(old_output)*18 //very approximate
 		};
 	}
 };
@@ -463,6 +493,7 @@ ostream& operator<<(ostream& o,Lift_sim const& a){
 	return o<<")";
 }
 
+//note: this is not accurate for the can lifter on the practice bot
 static const double GEAR_RATIO=10;//to 1
 
 //returns motor speed
@@ -526,6 +557,25 @@ int main(){
 
 	for(unsigned i=0;i<30;i++){
 		cout<<i<<"\t"<<acceleration_range(60,i)<<"\n";
+	}
+
+	Time now=0;
+	static const Time TIMESTEP=.01;
+	Lift_sim sim;
+	//Lift::Goal goal=Lift::Goal::max();
+	goal=Lift::Goal::go_to_height(30);
+	auto step=[&](){
+		auto status=a.estimator.get();
+		auto output=control(status,goal);
+		cout<<now<<"\t"<<sim.height<<"\t"<<sim.now()<<"\t"<<goal<<"\t"<<output<<"\t"<<status<<"\n";
+		sim.update(now,output);
+		a.estimator.update(now,sim.now(),output);
+		now+=TIMESTEP;
+	};
+	static const Time TIME_LIMIT=20;
+	for(unsigned i=0;i<30;i++) step();
+	while(now<TIME_LIMIT){
+		step();
 	}
 }
 #endif

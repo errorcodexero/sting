@@ -16,4 +16,6 @@ g++ -Wall -Werror -std=c++0x -DTOPLEVEL_TEST \
 	../util/countdown_timer.cpp\
 	combo_lift.cpp\
 	motor_check.cpp\
+	../util/input.cpp\
+	../util/output.cpp\
 	-o toplevel 2>&1 && ./toplevel 2>&1

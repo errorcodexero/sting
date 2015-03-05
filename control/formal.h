@@ -73,6 +73,12 @@ void tester(Part p, bool b=1){
 	test_ostream("statuses",(Status*)0);
 	test_ostream("goals",(Goal*)0);
 
+	for(auto a:examples((Input*)0)){
+		Robot_inputs all;
+		auto x=p.input_reader(p.input_reader(all,a));
+		assert(x==a);
+	}
+
 	{
 		set<Output> used;
 		for(auto status_detail:examples((Status_detail*)0)){

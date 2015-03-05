@@ -28,6 +28,16 @@ class Toplevel{
 		#undef X
 	};
 
+	class Input_reader{
+		Toplevel *parent;
+
+		public:
+		explicit Input_reader(Toplevel*);
+		Input operator()(Robot_inputs)const;
+		Robot_inputs operator()(Robot_inputs,Input)const;
+	};
+	Input_reader input_reader;
+
 	struct Output{
 		Output();
 		#define X(A,B,C) A::Output B;
@@ -101,6 +111,7 @@ std::set<Toplevel::Output> examples(Toplevel::Output*);
 std::set<Toplevel::Status> examples(Toplevel::Status*);
 std::set<Toplevel::Input> examples(Toplevel::Input*);
 bool operator<(Toplevel::Input const&,Toplevel::Input const&);
+bool operator==(Toplevel::Input const&,Toplevel::Input const&);
 
 bool operator==(Toplevel::Estimator,Toplevel::Estimator);
 bool operator!=(Toplevel::Estimator,Toplevel::Estimator);

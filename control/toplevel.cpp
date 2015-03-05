@@ -8,7 +8,9 @@ using namespace std;
 
 Toplevel::Toplevel():
 	kicker(0),
-	can_grabber(4),estimator(this),
+	can_grabber(4,6),
+	input_reader(this),
+	estimator(this),
 	output_applicator(this)
 {}
 
@@ -20,6 +22,25 @@ bool operator==(Toplevel const& a,Toplevel const& b){
 }
 
 bool operator!=(Toplevel const& a,Toplevel const& b){ return !(a==b); }
+
+Toplevel::Input_reader::Input_reader(Toplevel *p):parent(p){
+	assert(p);
+}
+
+Robot_inputs Toplevel::Input_reader::operator()(Robot_inputs all,Input in)const{
+	#define X(A,B,C) all=parent->B.input_reader(all,in.B);
+	TOPLEVEL_ITEMS
+	#undef X
+	return all;
+}
+
+Toplevel::Input Toplevel::Input_reader::operator()(Robot_inputs all)const{
+	return Toplevel::Input{
+		#define X(A,B,C) parent->B.input_reader(all),
+		TOPLEVEL_ITEMS
+		#undef X
+	};
+}
 
 Toplevel::Status status(Toplevel::Status_detail const& a){
 	/*return Toplevel::Status{
@@ -268,6 +289,13 @@ vector<string> not_ready(Toplevel::Status status,Toplevel::Goal g){
 	return r;
 }
 
+bool operator==(Toplevel::Input const& a,Toplevel::Input const& b){
+	#define X(A,B,C) if(a.B!=b.B) return 0;
+	TOPLEVEL_ITEMS
+	#undef X
+	return 1;
+}
+
 bool operator<(Toplevel::Input const& a,Toplevel::Input const& b){
 	#define X(A,B,C) if(a.B<b.B) return 1; if(b.B<a.B) return 0;
 	TOPLEVEL_ITEMS
@@ -333,6 +361,8 @@ set<Toplevel::Output> examples(Toplevel::Output*){
 
 #ifdef TOPLEVEL_TEST
 #include "formal.h"
+#include "../util/input.h"
+#include "../util/output.h"
 
 bool approx_equal(float a, float b){
 	return a==b;
@@ -351,11 +381,199 @@ bool approx_equal(T t,Maybe<T> m){
 	return approx_equal(t,*m);
 }
 
+/*Digital_in random(Digital_in* d){
+	return choose(examples(d));
+}
+
+Robot_inputs random_inputs(){
+	Robot_inputs r;
+	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
+		r.digital_io.in[i]=random_dio();
+	}
+	return r;
+}*/
+
+pair<Digital_in,Digital_in> create_pair(Digital_in*){
+	return make_pair(Digital_in::_0,Digital_in::_1);
+}
+
+pair<Volt,Volt> create_pair(Volt*){
+	return make_pair(0,1);
+}
+
+pair<double,double> create_pair(double*){
+	return make_pair(0,1);
+}
+
+pair<Talon_srx_input,Talon_srx_input> create_pair(Talon_srx_input*){
+	Talon_srx_input a;
+	a.encoder_position=1;
+	a.fwd_limit_switch=1;
+	a.rev_limit_switch=1;
+	a.a=1;
+	a.b=1;
+	a.velocity=1;
+	return make_pair(Talon_srx_input{},a);
+}
+
+pair<Pump::Input,Pump::Input> create_pair(Pump::Input*){
+	return make_pair(Pump::Input::FULL,Pump::Input::NOT_FULL);
+}
+
+pair<bool,bool> create_pair(bool*){
+	return make_pair(0,1);
+}
+
+pair<Robot_inputs,Robot_inputs> create_pair(Robot_inputs*){
+	pair<Robot_inputs,Robot_inputs> r;
+	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
+		auto p=create_pair((Digital_in*)0);
+		r.first.digital_io.in[i]=p.first;
+		r.second.digital_io.in[i]=p.second;
+	}
+	for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
+		auto p=create_pair((Volt*)0);
+		r.first.analog[i]=p.first;
+		r.second.analog[i]=p.second;
+	}
+	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
+		auto p=create_pair((Talon_srx_input*)0);
+		r.first.talon_srx[i]=p.first;
+		r.second.talon_srx[i]=p.second;
+	}
+	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+		auto p=create_pair((Can_jaguar_input*)0);
+		r.first.can_jaguar[i]=p.first;
+		r.second.can_jaguar[i]=p.second;
+	}*/
+	//driver station
+	//current
+	for(unsigned i=0;i<Robot_inputs::CURRENT;i++){
+		auto p=create_pair((double*)0);
+		r.first.current[i]=p.first;
+		r.second.current[i]=p.second;
+	}
+	auto p=create_pair((bool*)0);
+	r.first.pump=p.first;
+	r.second.pump=p.second;
+	//pump
+	return r;
+}
+
+pair<Digital_out,Digital_out> create_pair(Digital_out*){
+	return make_pair(Digital_out::one(),Digital_out::zero());
+}
+
+pair<Talon_srx_output,Talon_srx_output> create_pair(Talon_srx_output*){
+	Talon_srx_output a;
+	a.power_level=0;
+	Talon_srx_output b;
+	b.power_level=1;
+	return make_pair(a,b);
+}
+
+pair<Robot_outputs,Robot_outputs> create_pair(Robot_outputs*){
+	pair<Robot_outputs,Robot_outputs> r;
+	for(unsigned i=0;i<Robot_outputs::PWMS;i++){
+		auto p=create_pair((double*)0);
+		r.first.pwm[i]=p.first;
+		r.second.pwm[i]=p.second;
+	}
+	for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
+		auto p=create_pair((Solenoid_output*)0);
+		r.first.solenoid[i]=p.first;
+		r.second.solenoid[i]=p.second;
+	}
+	for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
+		auto p=create_pair((Digital_out*)0);
+		r.first.digital_io[i]=p.first;
+		r.second.digital_io[i]=p.second;
+	}
+	for(unsigned i=0;i<Robot_outputs::TALON_SRX_OUTPUTS;i++){
+		auto p=create_pair((Talon_srx_output*)0);
+		r.first.talon_srx[i]=p.first;
+		r.second.talon_srx[i]=p.second;
+	}
+	r.first.pump_auto=0;
+	r.second.pump_auto=1;
+	return r;
+}
+
+set<Input> different(Robot_inputs const& a,Robot_inputs const& b){
+	set<Input> r;
+	#define X(LEN,ITEM,EXP) \
+		for(unsigned i=0;i<LEN;i++){\
+			if(a.ITEM[i]!=b.ITEM[i]){\
+				r|=Input::EXP(i);\
+			}\
+		}
+	X(Robot_outputs::DIGITAL_IOS,digital_io.in,digital_io)
+	X(Robot_inputs::ANALOG_INPUTS,analog,analog)
+	X(Robot_inputs::TALON_SRX_INPUTS,talon_srx,talon_srx)
+	X(Robot_inputs::CURRENT,current,current)
+	#undef X
+	if(a.pump!=b.pump) r|=Input::pump();
+	return r;
+}
+
+template<typename T>
+set<Input> inputs(T part){
+	//need to make this happen both ways
+	auto p=create_pair((Robot_inputs*)0);
+	auto fwd=different(p.second,part.input_reader(p.second,part.input_reader(p.first)));
+	auto rev=different(p.first,part.input_reader(p.first,part.input_reader(p.second)));
+	return fwd|rev;
+}
+
+set<Output> different(Robot_outputs const& a,Robot_outputs const& b){
+	set<Output> r;
+	#define X(LEN,ITEM,EXP) \
+		for(unsigned i=0;i<Robot_outputs::LEN;i++){\
+			if(a.ITEM[i]!=b.ITEM[i]) r|=Output::EXP(i);\
+		}
+	X(PWMS,pwm,pwm)
+	X(SOLENOIDS,solenoid,solenoid)
+	X(DIGITAL_IOS,digital_io,digital_io)
+	X(TALON_SRX_OUTPUTS,talon_srx,talon_srx)
+	#undef X
+	if(a.pump_auto!=b.pump_auto) r|=Output::pump();
+	return r;
+}
+
+template<typename T>
+set<Output> outputs(T part){
+	auto p=create_pair((Robot_outputs*)0);
+	auto fwd=different(p.second,part.output_applicator(p.second,part.output_applicator(p.first)));
+	auto rev=different(p.first,part.output_applicator(p.first,part.output_applicator(p.second)));
+	return fwd|rev;
+}
+
 int main(){
 	Toplevel::Goal g;
 	cout<<g<<"\n";
 	Toplevel::Status status;
 	cout<<status<<"\n";
+
+	/*auto a=random_inputs();
+	auto b=random_inputs();*/
+	auto d=inputs(Toplevel{});
+	cout<<d<<"\n";
+
+	cout<<"Inputs:\n";
+	Toplevel t;
+	#define X(A,B,C) cout<<""#A<<inputs(t.B)<<"\n";
+	TOPLEVEL_ITEMS
+	#undef X
+
+	cout<<"Outputs:\n";
+	auto f=outputs(Toplevel{});
+	cout<<f<<"\n";
+
+	#define X(A,B,C) cout<<""#A<<outputs(t.B)<<"\n";
+	TOPLEVEL_ITEMS
+	#undef X
+
+	cout<<"demo:"<<outputs(Lift{1})<<"\n";
 
 	//tester(Toplevel{});
 	//Toplevel::Control control;

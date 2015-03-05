@@ -59,8 +59,22 @@ ostream& operator<<(ostream& o, Kicker::Output_applicator output_applicator) {
 	return o<<")";
 }
 
-bool operator<(Kicker::Input /*a*/,Kicker::Input /*b*/){
-	nyi
+Robot_inputs Kicker::Input_reader::operator()(Robot_inputs all,Input)const{ return all; }
+
+Kicker::Input Kicker::Input_reader::operator()(Robot_inputs)const{ return Kicker::Input{}; }
+
+Kicker::Input::Input(bool){}
+
+bool operator<(Kicker::Input,Kicker::Input){
+	return 0;
+}
+
+bool operator==(Kicker::Input,Kicker::Input){
+	return 1;
+}
+
+bool operator!=(Kicker::Input a,Kicker::Input b){
+	return !(a==b);
 }
 
 Kicker::Output_applicator::Output_applicator(int a):kicker_address(a){}
@@ -93,7 +107,11 @@ std::ostream& operator<<(std::ostream& o,Kicker::Output out){
 }
 
 std::set<Kicker::Input> examples(Kicker::Input*){
-	return set<Kicker::Input> {Kicker::Input{}};
+	set<Kicker::Input> s;
+	s.insert(Kicker::Input{});
+	assert(s.size());
+	return s;
+	//return set<Kicker::Input> {Kicker::Input{}};
 }
 
 std::set<Kicker::Output> examples(Kicker::Output*){ 

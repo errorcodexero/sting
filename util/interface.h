@@ -172,7 +172,7 @@ struct Robot_inputs{
 		
 	static const unsigned CURRENT =16;
 	std::array<double,CURRENT> current;
-	
+	bool pump;
 
 	Robot_inputs();
 };

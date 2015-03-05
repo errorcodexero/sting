@@ -3,12 +3,23 @@
 
 #include<set>
 #include "../util/interface.h"
+#include "quick.h"
 
 struct Lift{
+	#define LIFT_INPUT(X) X(bool,top) X(bool,bottom) X(int,ticks)
 	struct Input{
 		bool top,bottom;
 		int ticks;
 	};
+
+	struct Input_reader{
+		int can_address;
+
+		explicit Input_reader(int);
+		Input operator()(Robot_inputs)const;
+		Robot_inputs operator()(Robot_inputs,Input)const;
+	};
+	Input_reader input_reader;
 
 	typedef double Output;//motor power, in -1 to 1, assume 1=up
 
@@ -79,8 +90,7 @@ struct Lift{
 	explicit Lift(int);
 };
 
-std::ostream& operator<<(std::ostream&,Lift::Input const&);
-bool operator<(Lift::Input const&,Lift::Input const&);
+CMP1(Lift::Input)
 std::set<Lift::Input> examples(Lift::Input*);
 
 std::set<Lift::Output> examples(Lift::Output*);

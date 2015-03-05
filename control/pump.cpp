@@ -6,6 +6,15 @@
 
 using namespace std;
 
+Robot_inputs Pump::Input_reader::operator()(Robot_inputs all,Pump::Input in)const{
+	all.pump=(in==Input::FULL);
+	return all;
+}
+
+Pump::Input Pump::Input_reader::operator()(Robot_inputs all)const{
+	return all.pump?Input::FULL:Input::NOT_FULL;
+}
+
 set<Pump::Status> examples(Pump::Status*){
 	return {Pump::Status::FULL,Pump::Status::NOT_FULL};
 }

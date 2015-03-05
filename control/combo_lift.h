@@ -8,6 +8,16 @@ struct Combo_lift{
 		Lift::Input can,tote;
 	};
 
+	class Input_reader{
+		Combo_lift *parent;
+
+		public:
+		explicit Input_reader(Combo_lift*);
+		Input operator()(Robot_inputs)const;
+		Robot_inputs operator()(Robot_inputs,Input)const;
+	};
+	Input_reader input_reader;
+
 	struct Output{
 		Lift::Output can,tote;
 	};
@@ -56,6 +66,8 @@ struct Combo_lift{
 	Combo_lift();
 };
 
+bool operator==(Combo_lift::Input const&,Combo_lift::Input const&);
+bool operator!=(Combo_lift::Input const&,Combo_lift::Input const&);
 bool operator<(Combo_lift::Input const&,Combo_lift::Input const&);
 std::ostream& operator<<(std::ostream&,Combo_lift::Input const&);
 

@@ -39,6 +39,7 @@ NUMBERED_TYPES
 #undef X
 
 Input Input::driver_station(){ return Input(Type::DRIVER_STATION); }
+Input Input::pump(){ return Input(Type::PUMP); }
 
 bool operator<(Input const& a,Input const& b){
 	if(a.type()<b.type()) return 1;

@@ -37,6 +37,7 @@ class Output{
 	static Output pump();
 };
 
+bool operator<(Output const&,Output const&);
 std::ostream& operator<<(std::ostream&,Output const&);
 
 #endif

@@ -14,6 +14,12 @@ struct Drivebase{
 	#define DRIVEBASE_INPUT(X) X(SINGLE_ARG(std::array<double,MOTORS>),current)
 	DECLARE_STRUCT(Input,DRIVEBASE_INPUT)
 
+	struct Input_reader{
+		Input operator()(Robot_inputs)const;
+		Robot_inputs operator()(Robot_inputs,Input)const;
+	};
+	Input_reader input_reader;
+
 	#define DRIVEBASE_OUTPUT(X)\
 		X(double,l)\
 		X(double,r)\
@@ -65,6 +71,7 @@ std::ostream& operator<<(std::ostream&,Drivebase::Piston);
 
 std::ostream& operator<<(std::ostream&,Drivebase::Input const&);
 bool operator<(Drivebase::Input const&,Drivebase::Input const&);
+bool operator!=(Drivebase::Input const&,Drivebase::Input const&);
 std::set<Drivebase::Input> examples(Drivebase::Input*);
 
 std::ostream& operator<<(std::ostream&,Drivebase::Output const&);

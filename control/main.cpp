@@ -238,7 +238,7 @@ void Main::teleop(
 	}();
 }
 
-unsigned pdb_location(Drivebase::Motor m){
+unsigned pdb_location1(Drivebase::Motor m){
 	#define X(NAME,INDEX) if(m==Drivebase::NAME) return INDEX;
 	X(LEFT1,12)
 	X(LEFT2,13)
@@ -309,7 +309,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		array<double,Drivebase::MOTORS> r;
 		for(unsigned i=0;i<Drivebase::MOTORS;i++){
 			Drivebase::Motor m=(Drivebase::Motor)i;
-			r[i]=in.current[pdb_location(m)];
+			r[i]=in.current[pdb_location1(m)];
 		}
 		return r;
 	}()};

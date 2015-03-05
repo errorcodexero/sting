@@ -7,6 +7,34 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
+//IMPL_STRUCT(Lift::Lift::Input,LIFT_INPUT)
+
+int x;
+
+//Lift::Lift::Input(bool,bool,int,bool)nyi
+//Lift::Lift::Input(bool a,b,c,d){}
+
+CMP_OPS(Lift::Input,LIFT_INPUT)
+
+Lift::Input_reader::Input_reader(int i):can_address(i){}
+
+Robot_inputs Lift::Input_reader::operator()(Robot_inputs all,Input in)const{
+	auto &t=all.talon_srx[can_address];
+	t.fwd_limit_switch=in.top;
+	t.rev_limit_switch=in.bottom;
+	t.encoder_position=in.ticks;
+	return all;
+}
+
+Lift::Input Lift::Input_reader::operator()(Robot_inputs all)const{
+	auto &t=all.talon_srx[can_address];
+	return Input{
+		t.fwd_limit_switch,
+		t.rev_limit_switch,
+		t.encoder_position
+	};
+}
+
 Lift::Estimator::Estimator():last(Lift::Status_detail::error()),bottom_location(0){}
 
 void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
@@ -58,18 +86,7 @@ Lift::Output Lift::Output_applicator::operator()(Robot_outputs in)const{
 	return in.talon_srx[can_address].power_level;
 }
 
-std::ostream& operator<<(std::ostream& o,Lift::Input const& a){
-	o<<"Lift::Input(";
-	o<<a.top<<a.bottom<<" "<<a.ticks;
-	return o<<")";
-}
-
 #define CMP(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
-
-bool operator<(Lift::Input const& a,Lift::Input const& b){
-	CMP(top) CMP(bottom) CMP(ticks)
-	return 0;
-}
 
 std::set<Lift::Input> examples(Lift::Input*){
 	return {
@@ -336,7 +353,7 @@ set<Lift::Goal> examples(Lift::Goal*){
 	return goals;//{Lift::Goal::Mode::GO_TO_HEIGHT,Lift::Goal::Mode::DOWN,Lift::Goal::Mode::UP,Lift::Goal::Mode::STOP}; 
 }
 
-Lift::Lift(int can_address):output_applicator(can_address){}
+Lift::Lift(int can_address):input_reader(can_address),output_applicator(can_address){}
 
 bool ready(Lift::Status status,Lift::Goal goal){
 	switch(goal.mode()){

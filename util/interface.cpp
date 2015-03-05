@@ -465,7 +465,7 @@ ostream& operator<<(ostream& o,Digital_inputs const& a){
 }
 
 Robot_inputs::Robot_inputs():
-	now(0),orientation(0)
+	now(0),orientation(0),pump(0)
 {
 	for(unsigned i=0;i<ANALOG_INPUTS;i++){
 		//could make this be NAN instead

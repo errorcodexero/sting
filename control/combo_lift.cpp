@@ -33,9 +33,25 @@ using namespace std;
 
 #define NEQ(NAME) bool operator!=(Combo_lift::NAME const& a,Combo_lift::NAME const& b){ return !(a==b); }
 
+EQ(Input)
+NEQ(Input)
 COMPARE(Input)
 OUT(Input)
 EXAMPLES(Input)
+
+Combo_lift::Input_reader::Input_reader(Combo_lift *p):parent(p){
+	assert(p);
+}
+
+Combo_lift::Input Combo_lift::Input_reader::operator()(Robot_inputs a)const{
+	return Input{parent->can.input_reader(a),parent->tote.input_reader(a)};
+}
+
+Robot_inputs Combo_lift::Input_reader::operator()(Robot_inputs all,Input in)const{
+	all=parent->can.input_reader(all,in.can);
+	all=parent->tote.input_reader(all,in.tote);
+	return all;
+}
 
 EQ(Output)
 NEQ(Output)
@@ -118,7 +134,7 @@ Combo_lift::Output Combo_lift::Output_applicator::operator()(Robot_outputs a)con
 	};
 }
 
-Combo_lift::Combo_lift():can(1),tote(0),estimator(this),output_applicator(this){}
+Combo_lift::Combo_lift():input_reader(this),can(1),tote(0),estimator(this),output_applicator(this){}
 
 bool operator==(Combo_lift const& a,Combo_lift const& b){
 	return a.can==b.can && a.tote==b.tote;

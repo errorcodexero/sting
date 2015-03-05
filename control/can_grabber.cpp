@@ -6,8 +6,24 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
-ostream& operator<<(ostream& o,Can_grabber::Input a){
+Can_grabber::Input::Input(bool a,bool):sensor(a){}
+CMP_OPS(Can_grabber::Input,CAN_GRABBER_INPUT)
+
+/*ostream& operator<<(ostream& o,Can_grabber::Input a){
 	return o<<"Can_grabber::Input("<<a.sensor<<")";
+}*/
+
+Can_grabber::Input_reader::Input_reader(unsigned i):sensor_dio(i){
+	assert(i<Robot_outputs::DIGITAL_IOS);
+}
+
+Can_grabber::Input Can_grabber::Input_reader::operator()(Robot_inputs all)const{
+	return all.digital_io.in[sensor_dio]==Digital_in::_1;
+}
+
+Robot_inputs Can_grabber::Input_reader::operator()(Robot_inputs all,Input in)const{
+	all.digital_io.in[sensor_dio]=in.sensor?Digital_in::_1:Digital_in::_0;
+	return all;
 }
 
 ostream& operator<<(ostream& o,Can_grabber::Output a){
@@ -21,9 +37,9 @@ Can_grabber::Output control(Can_grabber::Status_detail status,Can_grabber::Goal 
 	return ready(status,goal)?Can_grabber::Output::OFF:Can_grabber::Output::ON;
 }
 
-bool operator<(Can_grabber::Input a,Can_grabber::Input b){
+/*bool operator<(Can_grabber::Input a,Can_grabber::Input b){
 	return a.sensor<b.sensor;
-}
+}*/
 
 Can_grabber::Estimator::Estimator():last(Can_grabber::Status_detail::MID_UP){}
 
@@ -73,7 +89,7 @@ Can_grabber::Status status(Can_grabber::Status_detail const& a){
 	return a;
 }
 
-Can_grabber::Can_grabber(int can_address):output_applicator(can_address){}
+Can_grabber::Can_grabber(int sensor_dio,int can_address):input_reader(sensor_dio),output_applicator(can_address){}
 
 bool ready(Can_grabber::Status status,Can_grabber::Goal goal){
 	if(goal==Can_grabber::Goal::TOP) return (status==Can_grabber::Status_detail::TOP);
@@ -153,6 +169,6 @@ bool operator!=(Can_grabber const& a,Can_grabber const& b){
 #include "formal.h"
 
 int main(){
-	tester(Can_grabber(4));
+	tester(Can_grabber(6,4));//numbers are totally made up
 }
 #endif

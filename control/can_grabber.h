@@ -4,12 +4,21 @@
 #include <set>
 #include "../util/interface.h"
 #include "../util/countdown_timer.h"
+#include "quick.h"
 
-struct Can_grabber {
-	struct Input {
-		bool sensor;
+struct Can_grabber{
+	#define CAN_GRABBER_INPUT(X) X(bool,sensor)
+	DECLARE_STRUCT(Input,CAN_GRABBER_INPUT)
+
+	struct Input_reader{
+		unsigned sensor_dio;
+
+		explicit Input_reader(unsigned);
+		Input operator()(Robot_inputs)const;
+		Robot_inputs operator()(Robot_inputs,Input)const;
 	};
-	
+	Input_reader input_reader;
+
 	enum class Output{ON,OFF};
 	
 	enum class Status_detail{TOP,MID_DOWN,BOTTOM,MID_UP};
@@ -40,12 +49,14 @@ struct Can_grabber {
 	
 	enum class Goal{TOP,BOTTOM};
 	
-	explicit Can_grabber(int);
+	explicit Can_grabber(int,int);
 };
+
+CMP1(Can_grabber::Input);
 bool operator!=(Can_grabber const&,Can_grabber const&);
-bool operator<(Can_grabber::Input,Can_grabber::Input);
+//bool operator<(Can_grabber::Input,Can_grabber::Input);
 bool operator!=(Can_grabber::Estimator const&,Can_grabber::Estimator const&);
-std::ostream& operator<<(std::ostream&,Can_grabber::Input);
+//std::ostream& operator<<(std::ostream&,Can_grabber::Input);
 std::ostream& operator<<(std::ostream&,Can_grabber::Output);
 std::ostream& operator<<(std::ostream&,Can_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Can_grabber::Status_detail);

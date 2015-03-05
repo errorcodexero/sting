@@ -6,6 +6,37 @@
 
 using namespace std;
 
+unsigned pdb_location(Drivebase::Motor m){
+        #define X(NAME,INDEX) if(m==Drivebase::NAME) return INDEX;
+        X(LEFT1,12)
+        X(LEFT2,13)
+        X(RIGHT1,14)
+        X(RIGHT2,15)
+        X(CENTER1,2)
+        X(CENTER2,3)
+        #undef X
+        assert(0);
+        //assert(m>=0 && m<Drivebase::MOTORS);
+}
+
+Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const{
+	for(unsigned i=0;i<MOTORS;i++){
+		all.current[pdb_location((Motor)i)]=in.current[i];
+	}
+	return all;
+}
+
+Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs in)const{
+	return Drivebase::Input{[&](){
+		array<double,Drivebase::MOTORS> r;
+		for(unsigned i=0;i<Drivebase::MOTORS;i++){
+			Drivebase::Motor m=(Drivebase::Motor)i;
+			r[i]=in.current[pdb_location(m)];
+		}
+		return r;
+	}()};
+}
+
 ostream& operator<<(ostream& o,Drivebase::Piston a){
 	#define X(NAME) if(a==Drivebase::Piston::NAME) return o<<""#NAME;
 	PISTON_STATES

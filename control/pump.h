@@ -17,6 +17,12 @@ struct Pump{
 	typedef Status Status_detail;
 	typedef Status Input;
 
+	struct Input_reader{
+		Robot_inputs operator()(Robot_inputs,Input)const;
+		Input operator()(Robot_inputs)const;
+	};
+	Input_reader input_reader;
+
 	struct Estimator{
 		Pump::Status status;
 

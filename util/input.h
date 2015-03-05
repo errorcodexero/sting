@@ -2,6 +2,7 @@
 #define INPUT_H
 
 #include<iosfwd>
+#include<set>
 
 #define INPUT_TYPES \
 	X(JOYSTICK) \
@@ -11,7 +12,8 @@
 	X(TALON_SRX) \
 	X(CAN_JAGUAR) \
 	X(DRIVER_STATION) \
-	X(CURRENT)
+	X(CURRENT)\
+	X(PUMP)
 
 class Input{
 	public:
@@ -40,8 +42,11 @@ class Input{
 	static Input can_jaguar(unsigned);
 	static Input driver_station();
 	static Input current(unsigned);
+	static Input pump();
 };
 
+std::set<Input> inputs();
+bool operator<(Input const&,Input const&);
 std::ostream& operator<<(std::ostream&,Input const&);
 
 #endif

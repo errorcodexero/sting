@@ -3,10 +3,19 @@
 
 #include<set>
 #include "../util/interface.h"
+#include "quick.h"
 
 struct Kicker{
-	struct Input{
+	#define KICKER_INPUT(X)
+	DECLARE_STRUCT(Input,KICKER_INPUT)
+	/*struct Input{
+	};*/
+
+	struct Input_reader{
+		Input operator()(Robot_inputs)const;
+		Robot_inputs operator()(Robot_inputs,Input)const;
 	};
+	Input_reader input_reader;
 
 	enum class Output{IN,OUT};
 	typedef Output Goal;
@@ -47,6 +56,8 @@ std::ostream& operator<<(std::ostream&,Kicker const&);
 
 bool operator!=(Kicker const&,Kicker const&);
 bool operator<(Kicker::Input,Kicker::Input);
+bool operator==(Kicker::Input,Kicker::Input);
+bool operator!=(Kicker::Input,Kicker::Input);
 bool operator==(Kicker::Estimator const&,Kicker::Estimator const&);
 bool operator!=(Kicker::Estimator const&,Kicker::Estimator const&);
 

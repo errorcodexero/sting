@@ -1,5 +1,6 @@
 #include "lift.h"
 #include <stdlib.h>
+#include <cmath>
 #include "../util/util.h"
 #include "../util/interface.h"
 
@@ -31,7 +32,8 @@ Lift::Input Lift::Input_reader::operator()(Robot_inputs all)const{
 }
 
 Lift::Estimator::Estimator():
-	last(Lift::Status_detail::error())
+	last(Lift::Status_detail::error()),
+	timer_start_height(0)
 {}
 
 static const float CLICKS_PER_INCH = 8*11.7892550438441;
@@ -42,9 +44,19 @@ Maybe_inline<double> Lift::Estimator::range()const{
 	return Maybe_inline<double>{(*top-*bottom)/CLICKS_PER_INCH};
 }
 
-void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
+void Lift::Estimator::update(Time time,Lift::Input in,Lift::Output){
 	if(in.top) top=in.ticks;
 	if(in.bottom) bottom=in.ticks;
+	
+	unsigned bottom_location=bottom?*bottom:0;
+	float height=(in.ticks-bottom_location)/CLICKS_PER_INCH;
+	stall_timer.update(time,1);
+	if(stall_timer.done()) last.stalled=1;
+	if(in.current<10 || fabs(height-timer_start_height)<1){
+		last.stalled=0;
+		stall_timer.set(1);
+		timer_start_height=height;
+	}
 
 	if(in.top){
 		if(in.bottom){
@@ -58,8 +70,7 @@ void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
 			last=Lift::Status_detail::bottom();
 			bottom=in.ticks;
 		}else{
-			unsigned bottom_location=bottom?*bottom:0;
-			last=Lift::Status_detail::mid(((in.ticks-bottom_location)/CLICKS_PER_INCH));
+			last=Lift::Status_detail::mid(height);
 		}
 	}
 	//cout<<endl<<"Bottom: "<<bottom_location<<endl<<"Ticks: "<<in.ticks<<endl<<endl;
@@ -107,7 +118,10 @@ std::set<Lift::Input> examples(Lift::Input*){
 
 std::set<Lift::Output> examples(Lift::Output*){ return {0,.45,-.45}; }
 
-Lift::Status_detail::Status_detail(){}
+Lift::Status_detail::Status_detail(): 
+	reached_ends(make_pair(0,0)),
+	stalled(0)
+{}
 
 Lift::Goal::Goal(){}
 
@@ -215,17 +229,19 @@ ostream& operator<<(ostream& o,Lift::Status_detail::Type a){
 
 std::ostream& operator<<(ostream& o,Lift::Status_detail const& a){
 	o<<"Lift::Status_detail(";
+	o<<" stalled:"<<a.stalled;
+	o<<" reached_ends:"<<a.reached_ends;
 	o<<a.type();
 	if(a.type()==Lift::Status_detail::Type::MID){
 		o<<" "<<a.inches_off_ground();
 	}
-	o<<" reached_ends:"<<a.reached_ends;
 	return o<<")";
 }
 
 bool operator<(Lift::Status_detail const& a,Lift::Status_detail const& b){
 	CMP(type())
 	CMP(reached_ends)
+	CMP(stalled)
 	if(a.type()==Lift::Status_detail::Type::MID){
 		return a.inches_off_ground()<b.inches_off_ground();
 	}
@@ -234,14 +250,14 @@ bool operator<(Lift::Status_detail const& a,Lift::Status_detail const& b){
 
 bool operator==(Lift::Status_detail const& a,Lift::Status_detail const& b){
 	if(a.type()!=b.type()) return 0;
-	return (a.type()!=Lift::Status_detail::Type::MID || a.inches_off_ground()==b.inches_off_ground()) && a.reached_ends==b.reached_ends;
+	return (a.type()!=Lift::Status_detail::Type::MID || a.inches_off_ground()==b.inches_off_ground()) && a.reached_ends==b.reached_ends && a.stalled==b.stalled;
 }
 
 bool operator!=(Lift::Status_detail const& a,Lift::Status_detail const& b){
 	return !(a==b);
 }
 
-std::set<Lift::Status_detail> examples(Lift::Status_detail*){
+std::set<Lift::Status_detail> examples(Lift::Status_detail*){//Does not include reached_ends or stalled
 	return {
 		Lift::Status_detail::top(),
 		Lift::Status_detail::bottom(),

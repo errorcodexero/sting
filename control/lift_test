@@ -1,1 +1,1 @@
-g++ -Wall -Wextra --std=c++11 -DLIFT_TEST -o lift lift.cpp ../util/interface.cpp ../util/jag_interface.cpp ../util/util.cpp ../util/driver_station_interface.cpp 2>&1 && ./lift 2>&1
+g++ -Wall -Wextra --std=c++11 -DLIFT_TEST -o lift lift.cpp ../util/interface.cpp ../util/jag_interface.cpp ../util/countdown_timer.cpp ../util/util.cpp ../util/driver_station_interface.cpp 2>&1 && ./lift 2>&1

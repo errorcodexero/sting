@@ -3,6 +3,7 @@
 
 #include<set>
 #include<utility>
+#include "../util/countdown_timer.h"
 #include "../util/interface.h"
 #include "../util/quick.h"
 
@@ -29,6 +30,7 @@ struct Lift{
 		public:
 		enum class Type{TOP,BOTTOM,MID,ERRORS};
 		std::pair<bool,bool> reached_ends;//first is the bottom and second is the top
+		bool stalled;
 		
 		private:
 		Status_detail();
@@ -57,6 +59,9 @@ struct Lift{
 		public:
 		Estimator();
 
+		Countdown_timer stall_timer; 
+		float timer_start_height;
+		
 		void update(Time,Input,Output);
 		Status_detail get()const;
 	};

@@ -30,22 +30,35 @@ Lift::Input Lift::Input_reader::operator()(Robot_inputs all)const{
 	};
 }
 
-Lift::Estimator::Estimator():last(Lift::Status_detail::error()),bottom_location(0){}
+Lift::Estimator::Estimator():
+	last(Lift::Status_detail::error())
+{}
+
+static const float CLICKS_PER_INCH = 8*11.7892550438441;
+
+//returns inches
+Maybe_inline<double> Lift::Estimator::range()const{
+	if(!top || !bottom) return Maybe_inline<double>{};
+	return Maybe_inline<double>{(*top-*bottom)/CLICKS_PER_INCH};
+}
 
 void Lift::Estimator::update(Time,Lift::Input in,Lift::Output){
+	if(in.top) top=in.ticks;
+	if(in.bottom) bottom=in.ticks;
+
 	if(in.top){
 		if(in.bottom){
 			last=Lift::Status_detail::error();
 		}else{
 			last=Lift::Status_detail::top();
-			bottom_location=in.ticks-5712;
+			bottom=in.ticks-5712;
 		}
 	}else{
 		if(in.bottom){
 			last=Lift::Status_detail::bottom();
-			bottom_location=in.ticks;
+			bottom=in.ticks;
 		}else{
-			static const float CLICKS_PER_INCH = 8*11.7892550438441;
+			unsigned bottom_location=bottom?*bottom:0;
 			last=Lift::Status_detail::mid(((in.ticks-bottom_location)/CLICKS_PER_INCH));
 		}
 	}
@@ -57,7 +70,7 @@ Lift::Status_detail Lift::Estimator::get()const{ return last; }
 
 ostream& operator<<(ostream& o, Lift::Estimator estimator) {
 	o<<"Lift::Estimator(";
-	o<<"Last: "<<estimator.last<<"Bottom Location: "<<estimator.bottom_location;
+	o<<"Last: "<<estimator.last<<"Bottom Location: "<<estimator.bottom;
 	return o<<")";
 }
 
@@ -253,7 +266,9 @@ bool operator==(Lift::Output_applicator const& a,Lift::Output_applicator const& 
 }
 
 bool operator==(Lift::Estimator const& a,Lift::Estimator const& b){
-	return a.last==b.last && a.bottom_location==b.bottom_location;
+	return a.last==b.last && 
+		a.top==b.top && 
+		a.bottom==b.bottom;
 }
 
 bool operator!=(Lift::Estimator const& a,Lift::Estimator const& b){

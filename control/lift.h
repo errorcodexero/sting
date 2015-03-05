@@ -48,13 +48,15 @@ struct Lift{
 
 	struct Estimator{
 		Status_detail last;
+		Maybe_inline<int> top,bottom;
 
+		Maybe_inline<double> range()const;
+
+		public:
 		Estimator();
 
 		void update(Time,Input,Output);
 		Status_detail get()const;
-		
-		double bottom_location;
 	};
 	Estimator estimator;
 

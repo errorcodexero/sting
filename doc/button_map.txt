@@ -31,7 +31,7 @@ Right Joystick(Can):
 B - Stop Lifter
 Y - Toggle Kicker
 Start - Tote Top Preset
-Back - Can Top Preset 
+Back - Can Level 5 Preset 
 Right Button - Go To Engage Kicker Height For A Tote On The Ground
 Left Trigger - Tote Level 5 Preset
-Right Trigger - Can  Level 5 Preset
+Right Trigger - Can  Top Preset

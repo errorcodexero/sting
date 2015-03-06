@@ -45,21 +45,33 @@ Can_grabber::Output control(Can_grabber::Status_detail status,Can_grabber::Goal 
 Can_grabber::Estimator::Estimator():last(Can_grabber::Status_detail::MID_UP){}
 
 void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber::Output out){
-	timer.update(time,1);
-	if (in.sensor) {
-		if (last==Status_detail::MID_UP) {
-			last=Status_detail::TOP;
-		}
-	} else if (out==Output::ON) {
-		if (last==Status_detail::BOTTOM) {
-			last=Status_detail::MID_UP;
-		} else if (last==Status_detail::TOP) {
-			last=Status_detail::MID_DOWN;
-			static const double SECONDS=.5;
-			timer.set(SECONDS);
-		} else if (timer.done()) {
-			last=Status_detail::BOTTOM;
-		}
+	static const double SECONDS=.5;
+
+	switch(last){
+		case Can_grabber::Status::TOP:
+			if(out==Output::ON){
+				last=Status::MID_DOWN;
+				timer.set(SECONDS);
+				timer.update(time,0);
+			}
+			break;
+		case Can_grabber::Status::MID_DOWN:
+			timer.update(time,out==Output::ON);
+			if(timer.done()){
+				last=Status::BOTTOM;
+			}
+			break;
+		case Can_grabber::Status::BOTTOM:
+			if(out==Output::ON){
+				last=Status::MID_UP;
+			}
+			break;
+		case Can_grabber::Status::MID_UP:
+			if(in.sensor){
+				last=Can_grabber::Status::TOP;
+			}
+			break;
+		default: assert(0);
 	}
 }
 

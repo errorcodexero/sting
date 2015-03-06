@@ -23,7 +23,7 @@
 -Cleanup stuff:
 	-use enum class more places
 	-use std::array in place of C arrays in several places
--Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968) -Logan
+-Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968) -Jacob
 -Automatic Operations
 	-auto-align
 		-test w/ totes

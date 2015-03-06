@@ -20,8 +20,8 @@ bool operator!=(Kicker::Output a,Kicker::Status_detail b){
 }
 
 void Kicker::Estimator::update(Time time,Kicker::Input /*in*/,Kicker::Output out){
-	static const float KICKER_IN_TIME=0.0;
-	static const float KICKER_OUT_TIME=0.0;
+	static const float KICKER_IN_TIME=0.1;
+	static const float KICKER_OUT_TIME=0.2;
 	if(out!=last_output){
 		output_start=time;
 		last_output=out;
@@ -125,10 +125,10 @@ Kicker::Status status(Kicker::Status_detail const& a){
 	return a;
 }
 
-Kicker::Output control(Kicker::Status_detail status,Kicker::Goal goal){
-	if(goal==Kicker::Goal::IN && status!=Kicker::Status_detail::IN) return Kicker::Output::IN;
-	if(goal==Kicker::Goal::OUT && status!=Kicker::Status_detail::OUT) return Kicker::Output::OUT;
-	return goal;
+Kicker::Output control(Kicker::Status_detail /*status*/,Kicker::Goal goal){
+	if(goal==Kicker::Goal::IN) return Kicker::Output::IN;
+	if(goal==Kicker::Goal::OUT) return Kicker::Output::OUT;
+	nyi
 }
 
 set<Kicker::Status_detail> examples(Kicker::Status_detail*){
@@ -197,7 +197,7 @@ int main(){
 			step();
 		}
 		assert(t<TIME_LIMIT);
-		cout<<"go to "<<goal<<"\n";
+		cout<<"go to: "<<goal<<"\n";
 	}
 }
 #endif

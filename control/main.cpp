@@ -18,12 +18,12 @@ Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_g
 double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow){
 	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
 	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
-	return pow(joystick.axis[axis], 3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
+	return pow(joystick.axis[axis],3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 
 template<typename T>//Compares two types to see if one is within a range
 bool in_range(T a,T b,T c){
-	return a<b+c && a>b-c;
+	return a<b+c&&a>b-c;
 }
 
 Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code 
@@ -32,8 +32,8 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 }
 
 float round_to_level(float level,float height){
-	for(unsigned int i=0; i<6; i++){
-		if(in_range(height,level*i,level/2)) return level*i;
+	for(unsigned int i=0;i<6;i++){
+		if(in_range(height,level*i,level/2))return level*i;
 	}
 	return 0.0;
 }
@@ -53,30 +53,30 @@ void Main::teleop(
 	static const float BACK_MOVE_POWER=.5;
 
 	Drivebase::Goal &goal=goals.drive;
-	if(!nudges[0].timer.done()) goal.x=-X_NUDGE_POWER;
-	else if(!nudges[1].timer.done()) goal.x=X_NUDGE_POWER;
+	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
+	else if(!nudges[1].timer.done())goal.x=X_NUDGE_POWER;
 	else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 
 	const double turbo_button= main_joystick.axis[Gamepad_axis::LTRIGGER];
 
-	if(!nudges[2].timer.done()) goal.y=-Y_NUDGE_POWER;
-	else if(!nudges[3].timer.done()) goal.y=Y_NUDGE_POWER;
-	else if(!back_turns[0].timer.done() || !back_turns[1].timer.done()) goal.y=BACK_MOVE_POWER;
-	else goal.y=set_drive_speed(main_joystick, 1, turbo_button, main_joystick.axis[Gamepad_axis::RTRIGGER]);
+	if(!nudges[2].timer.done())goal.y=-Y_NUDGE_POWER;
+	else if(!nudges[3].timer.done())goal.y=Y_NUDGE_POWER;
+	else if(!back_turns[0].timer.done()||!back_turns[1].timer.done())goal.y=BACK_MOVE_POWER;
+	else goal.y=set_drive_speed(main_joystick,1,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER]);
 
-	if(!nudges[4].timer.done()) goal.theta=-ROTATE_NUDGE_POWER;
+	if(!nudges[4].timer.done())goal.theta=-ROTATE_NUDGE_POWER;
 	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
-	else if(!back_turns[0].timer.done()) goal.theta=BACK_TURN_POWER;
-	else if(!back_turns[1].timer.done()) goal.theta=-BACK_TURN_POWER;
+	else if(!back_turns[0].timer.done())goal.theta=BACK_TURN_POWER;
+	else if(!back_turns[1].timer.done())goal.theta=-BACK_TURN_POWER;
 	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
 	static const auto NUDGE_CCW_BUTTON=Gamepad_button::RB,NUDGE_CW_BUTTON=Gamepad_button::LB;
 	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,Gamepad_button::Y,Gamepad_button::A,NUDGE_CCW_BUTTON,NUDGE_CW_BUTTON};
-	for (int i=0;i<6;i++) {
-		bool start=nudges[i].trigger(normal_nudge_enable && main_joystick.button[nudge_buttons[i]]);
-		if (start) nudges[i].timer.set(.1);
+	for(int i=0;i<6;i++){
+		bool start=nudges[i].trigger(normal_nudge_enable&&main_joystick.button[nudge_buttons[i]]);
+		if(start)nudges[i].timer.set(.1);
 		nudges[i].timer.update(in.now,1);
 	}
 
@@ -84,23 +84,23 @@ void Main::teleop(
 	if(!normal_nudge_enable){
 		//todo: add the part where we actually read the sensors
 		if(	
-			(main_joystick.button[NUDGE_LEFT_BUTTON] && in.digital_io.in[8]==Digital_in::_0) ||
-			(main_joystick.button[NUDGE_CW_BUTTON] && in.digital_io.in[9]==Digital_in::_0)
+			(main_joystick.button[NUDGE_LEFT_BUTTON]&&in.digital_io.in[8]==Digital_in::_0)||
+			(main_joystick.button[NUDGE_CW_BUTTON]&&in.digital_io.in[9]==Digital_in::_0)
 		){
 			goal.x=X_NUDGE_POWER;
 		}
 		if(
-			(main_joystick.button[NUDGE_RIGHT_BUTTON] && in.digital_io.in[7]==Digital_in::_0) ||
-			(main_joystick.button[NUDGE_CCW_BUTTON] && in.digital_io.in[9]==Digital_in::_0)
+			(main_joystick.button[NUDGE_RIGHT_BUTTON]&&in.digital_io.in[7]==Digital_in::_0)||
+			(main_joystick.button[NUDGE_CCW_BUTTON]&&in.digital_io.in[9]==Digital_in::_0)
 		){
 			goal.x=-X_NUDGE_POWER;
 		}
 	}
 	
 	static const unsigned int back_turn_buttons[2]={Gamepad_button::BACK,Gamepad_button::START};
-	for(int i=0;i<2;i++) {
+	for(int i=0;i<2;i++){
 		bool start=back_turns[i].trigger(main_joystick.button[back_turn_buttons[i]]);
-		if (start) back_turns[i].timer.set(1);
+		if(start)back_turns[i].timer.set(1);
 		back_turns[i].timer.update(in.now,1);
 	}
 	
@@ -123,8 +123,8 @@ void Main::teleop(
 			sticky_can_goal=Sticky_can_goal::BOTTOM;
 			can_priority=1;
 		}
-		Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
-		switch (section) {
+		Joystick_section section=joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
+		switch(section){
 			case Joystick_section::DOWN:
 				sticky_can_goal=Sticky_can_goal::LEVEL1;
 				can_priority=1;
@@ -188,8 +188,8 @@ void Main::teleop(
 			can_priority=0;
 			sticky_tote_goal=Sticky_tote_goal::BOTTOM;
 		}
-		Joystick_section section = joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
-		switch (section) {
+		Joystick_section section=joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
+		switch (section){
 			case Joystick_section::DOWN:
 				sticky_tote_goal=Sticky_tote_goal::LEVEL1;
 				can_priority=0;
@@ -228,7 +228,7 @@ void Main::teleop(
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1*LEVEL;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2*LEVEL;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3*LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4*LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4.5*LEVEL;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5*LEVEL;
 		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6*LEVEL;
 		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
@@ -378,7 +378,7 @@ template<typename T>
 vector<T> uniq(vector<T> v){
 	vector<T> r;
 	for(auto a:v){
-		if( !(r.size() && r[r.size()-1]==a) ){
+		if(!(r.size()&&r[r.size()-1]==a)){
 			r|=a;
 		}
 	}

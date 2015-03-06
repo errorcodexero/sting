@@ -1,34 +1,36 @@
+/*
 #ifndef    //bool piston_switch_b; PANEL2015_H
 #define PANEL2015_H 
 
-struct Level_buttons{
-	bool  
-}
-
 struct Panel{
-	enum Auto_mode{
+	enum class Auto_mode{
 		DO_NOTHING,MOVE,FULL_RUN
 	};
 	Auto_mode auto_mode;
-    float slide_pos;
+	enum class Level_buttons{
+		LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6
+	};
+	Level_buttons level_buttons;
+	enum class Operaton_buttons{
+		COLLECT_CURRENT,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP
+	};
+	float slide_pos;
     //Buttons:
-    bool move_arm_to_pos;
-    bool current_collect;
-    bool current_drop;
-    bool move_drop;
-    bool move_collect;
-    bool chute_collect;
-    bool lifter_off;
-    bool piston_aligner;
-    bool kicker_activate;
-    bool operation_buttons [4];
-    bool level_buttons [5];
+        bool move_arm_to_pos;
+        bool current_collect;
+        bool current_drop;
+        bool move_drop;
+        bool move_collect;
+        bool chute_collect;
+        bool lifter_off;
+        bool piston_aligner;
+        bool kicker_activate;
     //3 position Switches:
-    int target_type;
-    int move_arm_one;
-    int move_arm_cont;
-    int collect_mode;
-    int drop_mode;
+        int target_type;
+        int move_arm_one;
+        int move_arm_cont;
+        int collect_mode;
+        int drop_mode;
     
 	
 	Panel();
@@ -39,3 +41,4 @@ struct Panel{
 Panel interpret(Driver_station_input);
 
 #endif
+*/

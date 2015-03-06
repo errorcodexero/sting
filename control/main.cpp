@@ -8,6 +8,7 @@
 #include "../util/util.h"
 #include "toplevel_mode.h"
 #include "../input/util.h"
+#include "height.h"
 
 using namespace std;
 
@@ -25,9 +26,9 @@ bool in_range(T a,T b,T c){
 	return a<b+c && a>b-c;
 }
 
-Lift::Goal tote_lifter(float level,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code 
-	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && level>=ENGAGE_KICKER_HEIGHT) piston.update(1);
-	return Lift::Goal::go_to_height(level);
+Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code 
+	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT) piston.update(1);
+	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
 }
 
 float round_to_level(float level,float height){
@@ -107,6 +108,9 @@ void Main::teleop(
 	
 	piston.update(gunner_joystick.button[Gamepad_button::Y]);
 	
+	Lift_position can_lift_pos;
+	Lift_position tote_lift_pos;
+	
 	static const double LEVEL = 13.5;
 	pre_sticky_tote_goal=sticky_tote_goal;
 	goals.combo_lift.can=[&](){
@@ -149,17 +153,22 @@ void Main::teleop(
 			can_priority=1;
 			sticky_can_goal=Sticky_can_goal::TOP;
 		}
+		
 		cout<<toplevel_status<<"\n";
+
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
-		//if(sticky_can_goal==Sticky_can_goal::UP_LEVEL) return Lift::Goal::go_to_height(round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())+LEVEL);
-		//if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL) return Lift::Goal::go_to_height(round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())-LEVEL);
-		if(sticky_can_goal==Sticky_can_goal::LEVEL1) return Lift::Goal::go_to_height(LEVEL);
-		if(sticky_can_goal==Sticky_can_goal::LEVEL2) return Lift::Goal::go_to_height((2*LEVEL));
-		if(sticky_can_goal==Sticky_can_goal::LEVEL3) return Lift::Goal::go_to_height((3*LEVEL));
-		if(sticky_can_goal==Sticky_can_goal::LEVEL4) return Lift::Goal::go_to_height((4*LEVEL));
-		if(sticky_can_goal==Sticky_can_goal::LEVEL5) return Lift::Goal::go_to_height((5*LEVEL));
-		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) return Lift::Goal::go_to_height((6*LEVEL));
+		//if(sticky_can_goal==Sticky_can_goal::UP_LEVEL) can_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())+LEVEL;
+		//if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL) can_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())-LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1*LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2*LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3*LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4*LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5*LEVEL;
+		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6*LEVEL;
+		#define X(name) if(sticky_can_goal==Sticky_can_goal::name) return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0],find_height(can_lift_pos)[1],find_height(can_lift_pos)[2]});
+		X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
+		#undef X
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
@@ -170,13 +179,10 @@ void Main::teleop(
 			can_priority=0;
 		}
 		//if(gunner_joystick.button[Gamepad_button::LB]){
-		//	sticky_tote_goal=Sticky_tote_goal::STOP;
-		//	return Lift::Goal::up();
 		//}
 		if(gunner_joystick.button[Gamepad_button::RB]){
 			sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
 			can_priority=0;
-			//return Lift::Goal::up();
 		}
 		if(gunner_joystick.button[Gamepad_button::L_JOY]){
 			can_priority=0;
@@ -213,17 +219,21 @@ void Main::teleop(
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
 			can_priority=0;
 		}
+
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
-		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) return Lift::Goal::go_to_height(ENGAGE_KICKER_HEIGHT);
-		//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) return Lift::Goal::go_to_height(round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())+LEVEL);
-		//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) return Lift::Goal::go_to_height(round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())-LEVEL);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) return tote_lifter((1*LEVEL),ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) return tote_lifter((2*LEVEL),ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) return tote_lifter((3*LEVEL),ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) return tote_lifter((4.5*LEVEL),ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) return tote_lifter((5*LEVEL),ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
-		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) return tote_lifter((6*LEVEL),ENGAGE_KICKER_HEIGHT,toplevel_status,piston);
+		//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) tote_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())+LEVEL;
+		//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) tote_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())-LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.stacked_bins=ENGAGE_KICKER_HEIGHT;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1*LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2*LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3*LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4*LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5*LEVEL;
+		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6*LEVEL;
+		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
+		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
+		#undef X
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();

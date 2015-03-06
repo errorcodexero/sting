@@ -6,6 +6,7 @@
 #include "../util/countdown_timer.h"
 #include "../util/interface.h"
 #include "../util/quick.h"
+#include "height.h"
 
 struct Lift{
 	#define LIFT_INPUT(X) X(bool,top) X(bool,bottom) X(int,ticks) X(double,current)
@@ -85,13 +86,15 @@ struct Lift{
 		Goal();
 		
 		Mode mode_;
-		double height_;
+		double height_min;
+		double height_max;
+		double height_target;
 		
 		public:
 		Mode mode()const;
-		double height()const;
+		std::array<double,3> height()const;
 		
-		static Goal go_to_height(double);
+		static Goal go_to_height(std::array<double,3>);
 		static Goal up();
 		static Goal down();
 		static Goal stop();

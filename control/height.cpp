@@ -40,27 +40,27 @@ vector<Lift_position> lift_positions(){
 
 //returns inches
 //everything is in inches
-//std::array<float,3> findHeight(bool pickup,bool is_can, bool on_step,bool placed_on_scoring,int stacked_bins){
-std::array<float,3> findHeight(Lift_position const& a){
-	const float HEIGHT_OF_SCORING_PLATFORM = 1.96;
-	const float HEIGHT_OF_BIN = 12.1;
+//std::array<float,3> find_height(bool pickup,bool is_can, bool on_step,bool placed_on_scoring,int stacked_bins){
+std::array<float,3> find_height(Lift_position const& a){
+	const float HEIGHT_OF_SCORING_PLATFORM=1.96;
+	const float HEIGHT_OF_BIN=13.5;
 	//const float HEIGHT_OF_CAN = 29;//18
-	const float HEIGHT_OF_STEP = 6.25;
+	const float HEIGHT_OF_STEP=6.25;
 	const float TO_CAN_RIB=21;//used ratio of picture pixels to get height
-	float target = 0;
+	float target=0;
 	if(a.placed_on_scoring){
-		target += HEIGHT_OF_SCORING_PLATFORM;
+		target+=HEIGHT_OF_SCORING_PLATFORM;
 	}else if(a.on_step){
-		target += HEIGHT_OF_STEP;
+		target+=HEIGHT_OF_STEP;
 	}
-	target+=(a.stacked_bins* HEIGHT_OF_BIN);
+	target+=a.stacked_bins*HEIGHT_OF_BIN;
 	float positive_tolerance=2;
 	float negative_tolerance=2;
 	if(a.is_can){
 		target+=TO_CAN_RIB;
 		if(a.pickup){
 			static const float CAN_PICKUP_MARGIN=1.5;
-			target -= CAN_PICKUP_MARGIN;
+			target-=CAN_PICKUP_MARGIN;
 			positive_tolerance=CAN_PICKUP_MARGIN;
 		}else{
 			static const float CAN_HOLD_MARGIN=3;
@@ -82,11 +82,11 @@ std::array<float,3> findHeight(Lift_position const& a){
 }
 
 double LiftToBar(double liftHeight) {
-	return liftHeight < 58 ? (1.06 * liftHeight) + 3.25 : (3.12 * liftHeight) - 116;
+	return liftHeight<58?(1.06*liftHeight)+3.25: (3.12*liftHeight)-116;
 }
 
 double BarToLift(double barHeight) {
-	return barHeight < 58 ? (barHeight - 3.25) / 1.06 : (barHeight + 116) / 3.12;
+	return barHeight<58?(barHeight-3.25)/1.06: (barHeight+116)/3.12;
 }
 
 #ifdef HEIGHT_TEST
@@ -122,12 +122,12 @@ T max(vector<T> v){
 
 int main(){
 	Lift_position l{1,true,false,false,1};
-	std::array<float,3> x = findHeight(l);
+	std::array<float,3> x =find_height(l);
 	std::cout<<"Min: "<<x[0]<<" Target: "<<x[1]<<" Max: "<<x[2]<<"\n";
 
 	vector<float> heights;
 	for(auto pos:lift_positions()){
-		auto h=findHeight(pos);
+		auto h=find_height(pos);
 		cout<<pos<<h<<"\n";
 		heights|=h;
 	}

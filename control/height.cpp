@@ -4,6 +4,14 @@
 
 using namespace std;
 
+Lift_position::Lift_position():
+	pickup(0),
+	is_can(0),
+	on_step(0),
+	placed_on_scoring(0),
+	stacked_bins(0.0)
+{}
+
 std::ostream& operator<<(std::ostream& o,Lift_position const& a){
 	o<<"Lift_position( ";
 	#define X(NAME) o<<""#NAME<<":"<<a.NAME<<" ";
@@ -29,7 +37,13 @@ vector<Lift_position> lift_positions(){
 				if(!on_step) placed_on_scoring_options|=true;
 				for(auto placed_on_scoring:placed_on_scoring_options){
 					for(auto bins:range(6)){
-						r|=Lift_position{pickup,is_can,on_step,placed_on_scoring,bins};
+						Lift_position l;
+						l.pickup=pickup;
+						l.is_can=is_can;
+						l.on_step=on_step;
+						l.placed_on_scoring=placed_on_scoring;
+						l.stacked_bins=bins;
+						r|=l;
 					}
 				}
 			}
@@ -121,7 +135,12 @@ T max(vector<T> v){
 }
 
 int main(){
-	Lift_position l{1,true,false,false,1};
+	Lift_position l;
+	l.pickup=1;
+	l.is_can=1;
+	l.on_step=0;
+	l.placed_on_scoring=0;
+	l.stacked_bins=1;
 	std::array<float,3> x =find_height(l);
 	std::cout<<"Min: "<<x[0]<<" Target: "<<x[1]<<" Max: "<<x[2]<<"\n";
 

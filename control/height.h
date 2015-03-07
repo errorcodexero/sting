@@ -7,6 +7,7 @@
 struct Lift_position{
 	bool pickup,is_can,on_step,placed_on_scoring;
 	unsigned stacked_bins;
+	Lift_position();
 };
 std::ostream& operator<<(std::ostream&,Lift_position const&);
 std::vector<Lift_position> lift_positions();

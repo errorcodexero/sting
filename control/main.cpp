@@ -164,7 +164,7 @@ void Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL4){
+		if(sticky_can_goal==Sticky_can_goal::LEVEL4){ 
 			can_lift_pos.add_half=1;
 			can_lift_pos.stacked_bins=4;
 		}

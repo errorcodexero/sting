@@ -17,7 +17,7 @@ Lift_position::Lift_position():
 std::ostream& operator<<(std::ostream& o,Lift_position const& a){
 	o<<"Lift_position( ";
 	#define X(NAME) o<<""#NAME<<":"<<a.NAME<<" ";
-	X(pickup) X(is_can) X(on_step) X(placed_on_scoring) X(stacked_bins)
+	X(pickup) X(is_can) X(on_step) X(placed_on_scoring) X(stacked_bins) X(engage_kicker) X(add_half)
 	#undef X
 	return o<<")";
 }
@@ -38,14 +38,20 @@ vector<Lift_position> lift_positions(){
 				placed_on_scoring_options|=false;
 				if(!on_step) placed_on_scoring_options|=true;
 				for(auto placed_on_scoring:placed_on_scoring_options){
-					for(auto bins:range(6)){
-						Lift_position l;
-						l.pickup=pickup;
-						l.is_can=is_can;
-						l.on_step=on_step;
-						l.placed_on_scoring=placed_on_scoring;
-						l.stacked_bins=bins;
-						r|=l;
+					for(auto engage_kicker:bools){
+						for(auto add_half:bools){
+							for(auto bins:range(6)){
+								Lift_position l;
+								l.pickup=pickup;
+								l.is_can=is_can;
+								l.on_step=on_step;
+								l.placed_on_scoring=placed_on_scoring;
+								l.stacked_bins=bins;
+								l.engage_kicker=engage_kicker;
+								l.add_half=add_half;
+								r|=l;
+							}
+						}
 					}
 				}
 			}

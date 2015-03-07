@@ -220,6 +220,8 @@ bool ready(Combo_lift::Status const& a,Combo_lift::Goal const& b){
 
 #ifdef COMBO_LIFT_TEST
 int main(){
-	tester(Combo_lift(), 0);
+	Tester_mode m;
+	m.check_outputs_exhaustive=0;
+	tester(Combo_lift(), m);
 }
 #endif

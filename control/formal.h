@@ -9,12 +9,6 @@
 #include "../util/interface.h"
 #include "../util/util.h"
 
-template<typename T>
-std::set<T>& operator|=(std::set<T>& s,T t){
-	s.insert(t);
-	return s;
-}
-
 template<
 	typename Part,
 	typename Input,
@@ -55,8 +49,13 @@ void test_ostream(std::string heading,T* t){
 	std::cout<<"\n";
 }
 
+struct Tester_mode{
+	bool check_outputs_exhaustive=1;
+	bool check_multiple_outputs=1;
+};
+
 template<typename Part>
-void tester(Part p, bool b=1){
+void tester(Part p,Tester_mode mode=Tester_mode{}){
 	using namespace std;
 
 	typedef typename Part::Input Input;
@@ -86,10 +85,10 @@ void tester(Part p, bool b=1){
 				used|=control(status_detail,goal);
 			}
 		}
-		if(used.size()<2){
+		if(mode.check_multiple_outputs && used.size()<2){
 			assert(0);
 		}
-		if(b && used!=examples((Output*)0)){
+		if(mode.check_outputs_exhaustive && used!=examples((Output*)0)){
 			cout<<"used:"<<used<<"\n";
 			cout<<"examples:"<<examples((Output*)0)<<"\n";
 			//test failed
@@ -152,7 +151,7 @@ void tester(Part p, bool b=1){
 				NYI
 			}
 		}
-		if(outputs.size()<2){
+		if(mode.check_multiple_outputs && outputs.size()<2){
 			cout<<"found:"<<outputs<<"\n";
 			//test fail becuase it doesn't actually control anything
 			NYI

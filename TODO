@@ -9,7 +9,6 @@ HIGH PRIORITY:
 	-Grab can
 		-Can grabber:
 			-check that the IO number in code is correct
-			-see if ought to have two seperate parts if the halves are controlled individually
 	-Selection Method
 -Bug fixes
 	

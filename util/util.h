@@ -97,6 +97,12 @@ std::ostream& operator<<(std::ostream& o,std::array<T,LEN> const& a){
 }
 
 template<typename T>
+std::set<T>& operator|=(std::set<T> &a,T t){
+	a.insert(t);
+	return a;
+}
+
+template<typename T>
 std::set<T> operator|(std::set<T> a,std::set<T> const& b){
 	for(auto elem:b) a|=elem;
 	return a;

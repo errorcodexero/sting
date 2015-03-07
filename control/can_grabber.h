@@ -38,7 +38,7 @@ struct Can_grabber{
 	Estimator estimator;
 	
 	struct Output_applicator{
-		int can_address;
+		int pwm;
 
 		explicit Output_applicator(int);
 

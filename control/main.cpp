@@ -294,7 +294,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	auto r=toplevel.output_applicator(Robot_outputs{},r_out);
 	r=force(r);
 
-	Lift::Input can_input;
+	/*Lift::Input can_input;
 	can_input.top=in.talon_srx[1].fwd_limit_switch;
 	can_input.bottom=in.talon_srx[1].rev_limit_switch;
 	can_input.ticks=in.talon_srx[1].encoder_position;
@@ -310,18 +310,21 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			r[i]=in.current[pdb_location1(m)];
 		}
 		return r;
-	}()};
+	}()};*/
+
+	auto input=toplevel.input_reader(in);
 
 	toplevel.estimator.update(
 		in.now,
-		Toplevel::Input{
+		input,
+		/*Toplevel::Input{
 			{can_input,tote_input},
 			Kicker::Input{},
 			drive_in,
 			Pump::Input::NOT_FULL,
 			Can_grabber::Input{1}, //todo: make this actually ready from a digital io
 			Tote_sensors::Input{0,0,0}
-		},
+		},*/
 		toplevel.output_applicator(r)
 	);
 	return r;

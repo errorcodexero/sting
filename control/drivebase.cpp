@@ -23,18 +23,36 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 	for(unsigned i=0;i<MOTORS;i++){
 		all.current[pdb_location((Motor)i)]=in.current[i];
 	}
+	auto set=[&](unsigned index,Digital_in value){
+		all.digital_io.in[index]=value;
+	};
+	auto encoder=[&](unsigned a,unsigned b,Encoder_info e){
+		set(a,e.first);
+		set(b,e.second);
+	};
+	encoder(0,1,in.left);
+	encoder(2,3,in.right);
+	encoder(4,5,in.center);
 	return all;
 }
 
 Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs in)const{
-	return Drivebase::Input{[&](){
-		array<double,Drivebase::MOTORS> r;
-		for(unsigned i=0;i<Drivebase::MOTORS;i++){
-			Drivebase::Motor m=(Drivebase::Motor)i;
-			r[i]=in.current[pdb_location(m)];
-		}
-		return r;
-	}()};
+	auto encoder_info=[&](unsigned a,unsigned b){
+		return make_pair(in.digital_io.in[a],in.digital_io.in[b]);
+	};
+	return Drivebase::Input{
+		[&](){
+			array<double,Drivebase::MOTORS> r;
+			for(unsigned i=0;i<Drivebase::MOTORS;i++){
+				Drivebase::Motor m=(Drivebase::Motor)i;
+				r[i]=in.current[pdb_location(m)];
+			}
+			return r;
+		}(),
+		encoder_info(0,1),
+		encoder_info(2,3),
+		encoder_info(4,5)
+	};
 }
 
 ostream& operator<<(ostream& o,Drivebase::Piston a){
@@ -95,7 +113,11 @@ set<Drivebase::Output> examples(Drivebase::Output*){
 }
 
 set<Drivebase::Input> examples(Drivebase::Input*){
-	return {Drivebase::Input{{0,0,0}}};
+	auto d=Digital_in::_0;
+	auto p=make_pair(d,d);
+	return {Drivebase::Input{
+		{0,0,0},p,p,p
+	}};
 }
 
 Drivebase::Status_detail Drivebase::Estimator::get()const{

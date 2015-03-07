@@ -11,7 +11,14 @@
 struct Drivebase{
 	enum Motor{LEFT1,LEFT2,RIGHT1,RIGHT2,CENTER1,CENTER2,MOTORS};
 
-	#define DRIVEBASE_INPUT(X) X(SINGLE_ARG(std::array<double,MOTORS>),current)
+	//This should eventually have counters or something
+	typedef std::pair<Digital_in,Digital_in> Encoder_info;
+
+	#define DRIVEBASE_INPUT(X) \
+		X(SINGLE_ARG(std::array<double,MOTORS>),current)\
+		X(Encoder_info,left)\
+		X(Encoder_info,right)\
+		X(Encoder_info,center)
 	DECLARE_STRUCT(Input,DRIVEBASE_INPUT)
 
 	struct Input_reader{

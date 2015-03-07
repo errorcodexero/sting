@@ -92,17 +92,17 @@ ostream& operator<<(ostream& o, Can_grabber::Estimator estimator) {
 
 ostream& operator<<(ostream& o, Can_grabber::Output_applicator output_applicator) {
 	o<<"Can_grabber::Output_applicator(";
-	o<<"Can Address: "<<output_applicator.can_address;
+	o<<"Can Address: "<<output_applicator.pwm;
 	return o<<")";
 }
 
-Can_grabber::Output_applicator::Output_applicator(int a):can_address(a){}
+Can_grabber::Output_applicator::Output_applicator(int a):pwm(a){}
 
 Can_grabber::Status status(Can_grabber::Status_detail const& a){
 	return a;
 }
 
-Can_grabber::Can_grabber(int sensor_dio,int can_address):input_reader(sensor_dio),output_applicator(can_address){}
+Can_grabber::Can_grabber(int sensor_dio,int pwm):input_reader(sensor_dio),output_applicator(pwm){}
 
 bool ready(Can_grabber::Status status,Can_grabber::Goal goal){
 	if(goal==Can_grabber::Goal::TOP) return (status==Can_grabber::Status_detail::TOP);
@@ -150,12 +150,12 @@ ostream& operator<<(ostream& o,Can_grabber::Goal a){
 }
 
 Robot_outputs Can_grabber::Output_applicator::operator()(Robot_outputs r,Output out)const{
-	r.pwm[can_address]=(out==Can_grabber::Output::ON)?.5:0;
+	r.pwm[pwm]=(out==Can_grabber::Output::ON)?.5:0;
 	return r;
 }
 
 Can_grabber::Output Can_grabber::Output_applicator::operator()(Robot_outputs r)const{
-	return (r.pwm[can_address]>.25)?Can_grabber::Output::ON:Can_grabber::Output::OFF;
+	return (r.pwm[pwm]>.25)?Can_grabber::Output::ON:Can_grabber::Output::OFF;
 }
 
 bool operator==(Can_grabber::Estimator const& a,Can_grabber::Estimator const& b){
@@ -165,7 +165,7 @@ bool operator==(Can_grabber::Estimator const& a,Can_grabber::Estimator const& b)
 bool operator!=(Can_grabber::Estimator const& a,Can_grabber::Estimator const& b){ return !(a==b); }
 
 bool operator==(Can_grabber::Output_applicator const& a,Can_grabber::Output_applicator const& b){
-	return a.can_address==b.can_address;
+	return a.pwm==b.pwm;
 }
 
 bool operator==(Can_grabber const& a,Can_grabber const& b){

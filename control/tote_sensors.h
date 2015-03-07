@@ -34,6 +34,7 @@ struct Tote_sensors{
 
 bool operator<(Tote_sensors::Input const&,Tote_sensors::Input const&);
 bool operator==(Tote_sensors::Input const&,Tote_sensors::Input const&);
+bool operator!=(Tote_sensors::Input const&,Tote_sensors::Input const&);
 std::ostream& operator<<(std::ostream&,Tote_sensors::Input const&);
 
 bool operator<(Tote_sensors::Output,Tote_sensors::Output);
@@ -41,6 +42,9 @@ bool operator==(Tote_sensors::Output,Tote_sensors::Output);
 bool operator!=(Tote_sensors::Output,Tote_sensors::Output);
 std::ostream& operator<<(std::ostream&,Tote_sensors::Output);
 
+bool operator!=(Tote_sensors::Estimator const&,Tote_sensors::Estimator const&);
+
+bool operator!=(Tote_sensors const&,Tote_sensors const&);
 std::ostream& operator<<(std::ostream&,Tote_sensors const&);
 
 Tote_sensors::Output control(Tote_sensors::Status,Tote_sensors::Goal);

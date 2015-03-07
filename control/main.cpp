@@ -319,7 +319,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			Kicker::Input{},
 			drive_in,
 			Pump::Input::NOT_FULL,
-			Can_grabber::Input{1} //todo: make this actually ready from a digital io
+			Can_grabber::Input{1}, //todo: make this actually ready from a digital io
+			Tote_sensors::Input{0,0,0}
 		},
 		toplevel.output_applicator(r)
 	);

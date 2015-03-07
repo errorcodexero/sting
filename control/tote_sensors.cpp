@@ -5,8 +5,6 @@
 
 using namespace std;
 
-#define nyi { cout<<"error "<<__LINE__<<"\n"; exit(44); }
-
 //todo: check these constants
 static const unsigned IO_LEFT=7,IO_RIGHT=8,IO_CENTER=9;
 
@@ -27,6 +25,8 @@ Robot_inputs Tote_sensors::Input_reader::operator()(Robot_inputs all,Tote_sensor
 	return all;
 }
 
+bool operator==(Tote_sensors::Input_reader,Tote_sensors::Input_reader){ return 1; }
+
 bool operator<(Tote_sensors::Input const& a,Tote_sensors::Input const& b){
 	#define CMP(NAME) if(a.NAME<b.NAME) return 1; if(b.NAME<a.NAME) return 0;
 	CMP(left) CMP(right) CMP(center)
@@ -37,6 +37,8 @@ bool operator<(Tote_sensors::Input const& a,Tote_sensors::Input const& b){
 bool operator==(Tote_sensors::Input const& a,Tote_sensors::Input const& b){
 	return a.left==b.left && a.right==b.right && a.center==b.center;
 }
+
+bool operator!=(Tote_sensors::Input const& a,Tote_sensors::Input const& b){ return !(a==b); }
 
 set<Tote_sensors::Input> examples(Tote_sensors::Input*){
 	set<Tote_sensors::Input> r;
@@ -75,6 +77,12 @@ Tote_sensors::Status_detail Tote_sensors::Estimator::get()const{
 	return Tote_sensors::Status_detail{};
 }
 
+bool operator==(Tote_sensors::Estimator const&,Tote_sensors::Estimator const&){ return 1; }
+
+bool operator!=(Tote_sensors::Estimator const& a,Tote_sensors::Estimator const& b){
+	return !(a==b);
+}
+
 Robot_outputs Tote_sensors::Output_applicator::operator()(Robot_outputs a,Output)const{
 	return a;
 }
@@ -82,6 +90,14 @@ Robot_outputs Tote_sensors::Output_applicator::operator()(Robot_outputs a,Output
 Tote_sensors::Output Tote_sensors::Output_applicator::operator()(Robot_outputs)const{
 	return Tote_sensors::Output{};
 }
+
+bool operator==(Tote_sensors::Output_applicator,Tote_sensors::Output_applicator){ return 1; }
+
+bool operator==(Tote_sensors const& a,Tote_sensors const& b){
+	return a.input_reader==b.input_reader && a.estimator==b.estimator && a.output_applicator==b.output_applicator;
+}
+
+bool operator!=(Tote_sensors const& a,Tote_sensors const& b){ return !(a==b); }
 
 ostream& operator<<(ostream& o,Tote_sensors const&){
 	return o<<"Tote_sensors";

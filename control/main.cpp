@@ -111,7 +111,7 @@ void Main::teleop(
 	Lift_position can_lift_pos;
 	Lift_position tote_lift_pos;
 	
-	static const double LEVEL = 13.5;
+	//static const double LEVEL = 13.5;
 	pre_sticky_tote_goal=sticky_tote_goal;
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
@@ -160,13 +160,15 @@ void Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		//if(sticky_can_goal==Sticky_can_goal::UP_LEVEL) can_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())+LEVEL;
 		//if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL) can_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())-LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1*LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2*LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3*LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4*LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5*LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4;
+		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
 		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6*LEVEL;
-		#define X(name) if(sticky_can_goal==Sticky_can_goal::name) return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0],find_height(can_lift_pos)[1],find_height(can_lift_pos)[2]});
+		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
+			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0],find_height(can_lift_pos)[1],find_height(can_lift_pos)[2]}); \
+		}
 		X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
@@ -219,17 +221,20 @@ void Main::teleop(
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
 			can_priority=0;
 		}
-
+		tote_lift_pos.pickup=1;
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) tote_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())+LEVEL;
 		//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) tote_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())-LEVEL;
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.stacked_bins=ENGAGE_KICKER_HEIGHT;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1*LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2*LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3*LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4.5*LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5*LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3;
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4){
+			tote_lift_pos.pickup=0;
+			tote_lift_pos.stacked_bins=4;
+		}
+		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
 		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6*LEVEL;
 		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
 		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/

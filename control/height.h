@@ -5,7 +5,7 @@
 #include<vector>
 
 struct Lift_position{
-	bool pickup,is_can,on_step,placed_on_scoring;
+	bool pickup,is_can,on_step,placed_on_scoring,engage_kicker,add_half;
 	unsigned stacked_bins;
 	Lift_position();
 };

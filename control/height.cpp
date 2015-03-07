@@ -9,6 +9,8 @@ Lift_position::Lift_position():
 	is_can(0),
 	on_step(0),
 	placed_on_scoring(0),
+	engage_kicker(0),
+	add_half(0),
 	stacked_bins(0.0)
 {}
 
@@ -59,6 +61,7 @@ std::array<float,3> find_height(Lift_position const& a){
 	//const float HEIGHT_OF_CAN = 29;//18
 	const float HEIGHT_OF_BIN=13.5;
 	float target=a.stacked_bins*HEIGHT_OF_BIN;
+	if(a.add_half) target+=HEIGHT_OF_BIN*.5;
 	if(a.placed_on_scoring){
 		const float HEIGHT_OF_SCORING_PLATFORM=1.96;
 		target+=HEIGHT_OF_SCORING_PLATFORM;
@@ -91,6 +94,8 @@ std::array<float,3> find_height(Lift_position const& a){
 			target+=BIN_HOLD_MARGIN;
 		}*/
 	}
+	static const float ENGAGE_KICKER_HEIGHT=2.9;
+	if(a.engage_kicker) target=ENGAGE_KICKER_HEIGHT;
 	return std::array<float,3>{{target-negative_tolerance,target,target+positive_tolerance}};
 }
 

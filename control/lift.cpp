@@ -176,8 +176,8 @@ std::array<double,3> Lift::Goal::height()const{
 	assert(mode_==Lift::Goal::Mode::GO_TO_HEIGHT);
 	std::array<double,3> heights;
 	heights[0]=height_min;
-	heights[1]=height_max;
-	heights[2]=height_target;
+	heights[1]=height_target;
+	heights[2]=height_max;
 	return heights;
 }
 
@@ -282,7 +282,7 @@ std::ostream& operator<<(std::ostream& o,Lift::Goal a){
 	o<<"mode: "<<a.mode();
 	if(a.mode()==Lift::Goal::Mode::GO_TO_HEIGHT){
 		std::array<double,3> heights=a.height();
-		o<<" height: min"<<heights[0]<<",max "<<heights[1]<<",target:"<<heights[2];
+		o<<" height: min"<<heights[0]<<",target: "<<heights[1]<<",max:"<<heights[2];
 	}
 	return o;
 }
@@ -325,7 +325,7 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 			case Lift::Status_detail::Type::MID:
 				{
 					std::array<double,3> heights=goal.height();
-					double error = heights[2]-status.inches_off_ground();
+					double error = heights[1]-status.inches_off_ground();
 					//cout<<endl<<"Error: "<<error<<endl<<endl;
 					double desired_output_power =error*P;
 					//cout<<"Desired Output Power: "<<desired_output_power<<endl<<endl;

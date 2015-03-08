@@ -18,6 +18,7 @@ HIGH PRIORITY:
 -
 
 NOT AS HIGH PRIORITY:
+-Add a slow button for the lifters
 -Drivebase wheel encoders
 	-Get all A/B lines working (electrical)
 	-Turn on counting mode & see if works

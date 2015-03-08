@@ -48,7 +48,7 @@ void Main::teleop(
 ){
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 	static const float Y_NUDGE_POWER=.2;
-	static const float ROTATE_NUDGE_POWER=.15;
+	static const float ROTATE_NUDGE_POWER=.7;
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;

@@ -27,7 +27,7 @@ bool in_range(T a,T b,T c){
 }
 
 Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code 
-	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1) piston.update(1);
+	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+3) piston.update(1);
 	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
 }
 
@@ -165,7 +165,7 @@ void Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL4){ 
-			can_lift_pos.add_half=1;
+			//can_lift_pos.add_half=1;
 			can_lift_pos.stacked_bins=4;
 		}
 		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
@@ -237,6 +237,8 @@ void Main::teleop(
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
 		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6;
+		cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
+
 		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
 		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X

@@ -24,10 +24,10 @@ struct Main{
 
 	Posedge_toggle piston;
 	
-	enum class Sticky_can_goal{STOP,BOTTOM,UP_LEVEL,DOWN_LEVEL,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6,TOP};
+	enum class Sticky_can_goal{STOP,BOTTOM,TOP,/*UP_LEVEL,DOWN_LEVEL,*/LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5/*,LEVEL6*/};
 	Sticky_can_goal sticky_can_goal;
 	
-	enum class Sticky_tote_goal{STOP,ENGAGE_KICKER,BOTTOM,UP_LEVEL,DOWN_LEVEL,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6,TOP};
+	enum class Sticky_tote_goal{STOP,BOTTOM,TOP,ENGAGE_KICKER,/*UP_LEVEL,DOWN_LEVEL,*/LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5/*,LEVEL6*/};
 	Sticky_tote_goal sticky_tote_goal;
 	Sticky_tote_goal pre_sticky_tote_goal;
 	bool can_priority;

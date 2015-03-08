@@ -28,7 +28,7 @@ vector<unsigned> range(unsigned lim){
 	return r;
 }
 
-vector<Lift_position> lift_positions(){
+vector<Lift_position> examples(){
 	vector<bool> bools{0,1};
 	vector<Lift_position> r;
 	for(auto pickup:bools){
@@ -62,12 +62,17 @@ vector<Lift_position> lift_positions(){
 
 //returns inches
 //everything is in inches
-//std::array<float,3> find_height(bool pickup,bool is_can, bool on_step,bool placed_on_scoring,int stacked_bins){
 std::array<float,3> find_height(Lift_position const& a){
 	//const float HEIGHT_OF_CAN = 29;//18
-	const float HEIGHT_OF_BIN=13.5;
-	float target=a.stacked_bins*HEIGHT_OF_BIN;
-	if(a.add_half) target+=HEIGHT_OF_BIN*.5;
+	float target=0.0;
+	if(!a.engage_kicker){
+		const float HEIGHT_OF_BIN=13.5;
+		target=a.stacked_bins*HEIGHT_OF_BIN;
+		if(a.add_half) target+=HEIGHT_OF_BIN*.5;
+	}else{
+		static const float ENGAGE_KICKER_HEIGHT=2.9;
+		target=ENGAGE_KICKER_HEIGHT;
+	}
 	if(a.placed_on_scoring){
 		const float HEIGHT_OF_SCORING_PLATFORM=1.96;
 		target+=HEIGHT_OF_SCORING_PLATFORM;
@@ -100,8 +105,6 @@ std::array<float,3> find_height(Lift_position const& a){
 			target+=BIN_HOLD_MARGIN;
 		}*/
 	}
-	static const float ENGAGE_KICKER_HEIGHT=2.9;
-	if(a.engage_kicker) target=ENGAGE_KICKER_HEIGHT;
 	return std::array<float,3>{{target-negative_tolerance,target,target+positive_tolerance}};
 }
 
@@ -155,7 +158,7 @@ int main(){
 	std::cout<<"Min: "<<x[0]<<" Target: "<<x[1]<<" Max: "<<x[2]<<"\n";
 
 	vector<float> heights;
-	for(auto pos:lift_positions()){
+	for(auto pos:examples()){
 		auto h=find_height(pos);
 		cout<<pos<<h<<"\n";
 		heights|=h;

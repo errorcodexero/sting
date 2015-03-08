@@ -57,7 +57,7 @@ void Main::teleop(
 	else if(!nudges[1].timer.done())goal.x=X_NUDGE_POWER;
 	else goal.x=main_joystick.axis[Gamepad_axis::LEFTX];
 
-	const double turbo_button= main_joystick.axis[Gamepad_axis::LTRIGGER];
+	const double turbo_button=main_joystick.axis[Gamepad_axis::LTRIGGER];
 
 	if(!nudges[2].timer.done())goal.y=-Y_NUDGE_POWER;
 	else if(!nudges[3].timer.done())goal.y=Y_NUDGE_POWER;
@@ -159,6 +159,7 @@ void Main::teleop(
 		can_lift_pos.add_half=0;
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
+		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
 		//if(sticky_can_goal==Sticky_can_goal::UP_LEVEL) can_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())+1;
 		//if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL) can_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.can.inches_off_ground())-1;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1;
@@ -175,7 +176,6 @@ void Main::teleop(
 		}
 		X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X
-		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.tote=[&](){
@@ -228,6 +228,7 @@ void Main::teleop(
 		tote_lift_pos.engage_kicker=0;
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
+		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) tote_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())+1;
 		//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) tote_lift_pos.stacked_bins=round_to_level(LEVEL,toplevel_status.combo_lift.tote.inches_off_ground())-1;
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;//=ENGAGE_KICKER_HEIGHT;
@@ -240,7 +241,6 @@ void Main::teleop(
 		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
 		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X
-		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.can_priority=can_priority;

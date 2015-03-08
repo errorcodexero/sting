@@ -218,7 +218,7 @@ class To_crio
 	DIO_controls digital_io;
 	VictorSP *pwm[Robot_outputs::PWMS];
 	//Relay *relay[Robot_outputs::RELAYS];
-	//AnalogInput *analog_in[Robot_inputs::ANALOG_INPUTS];
+	AnalogInput *analog_in[Robot_inputs::ANALOG_INPUTS];
 	int error_code;
 	USER_CODE main;
 	int skipped;
@@ -261,8 +261,8 @@ public:
 		}
 
 		for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
-			//analog_in[i]=new AnalogInput(i);
-			//if(!analog_in[i]) error_code|=8;
+			analog_in[i]=new AnalogInput(i);
+			if(!analog_in[i]) error_code|=8;
 		}
 
 		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
@@ -301,7 +301,7 @@ public:
 	int read_analog(Robot_inputs &r){
 		int error=0;
 		for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
-			if(r.analog[i]){
+			if(analog_in[i]){
 				r.analog[i]=.666;//analog_in[i]->GetVoltage();
 			}else{
 				error=64;

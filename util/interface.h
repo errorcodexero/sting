@@ -161,7 +161,7 @@ struct Robot_inputs{
 	//std::array<Digital_in,Robot_outputs::DIGITAL_IOS> digital_io;
 	Digital_inputs digital_io;	
 
-	static const unsigned ANALOG_INPUTS=8;
+	static const unsigned ANALOG_INPUTS=4;
 	std::array<Volt,ANALOG_INPUTS> analog;
 
 	static const unsigned TALON_SRX_INPUTS=2;

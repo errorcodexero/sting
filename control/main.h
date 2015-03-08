@@ -9,7 +9,7 @@
 #include "toplevel.h"
 
 struct Main{
-	enum class Mode{TELEOP,AUTO_MOVE};
+	enum class Mode{TELEOP,AUTO_MOVE,AUTO_GRAB,AUTO_BACK,AUTO_RELEASE};
 	Mode mode;
 	
 	Force_interface force;
@@ -39,7 +39,7 @@ struct Main{
 	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
 	Nudge back_turns[2];//Backwards and left, Backwards and right
 	
-	void teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Toplevel::Goal&,Toplevel::Status_detail&);
+	Toplevel::Goal teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Toplevel::Status_detail&);
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };

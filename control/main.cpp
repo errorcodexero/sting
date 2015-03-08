@@ -39,13 +39,14 @@ float round_to_level(float level,float height){
 	return 0.0;
 }
 
-void Main::teleop(
+Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Toplevel::Goal &goals,
 	Toplevel::Status_detail& toplevel_status
 ){
+	Toplevel::Goal goals;
+
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 	static const float Y_NUDGE_POWER=.2;
 	static const float ROTATE_NUDGE_POWER=.7;
@@ -252,6 +253,8 @@ void Main::teleop(
 		}
 		return Kicker::Goal::IN;
 	}();
+
+	return goals;
 }
 
 unsigned pdb_location1(Drivebase::Motor m){
@@ -267,11 +270,36 @@ unsigned pdb_location1(Drivebase::Motor m){
 	//assert(m>=0 && m<Drivebase::MOTORS);
 }
 
+Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch){
+	switch(m){
+		case Main::Mode::TELEOP:
+			if(autonomous_start){
+				//todo: make this depend on a switch or something.
+				return Main::Mode::AUTO_MOVE;
+			}
+			return m;
+		case Main::Mode::AUTO_MOVE:
+			//encoders? going to use time for now
+			if(!autonomous || since_switch>2) return Main::Mode::TELEOP;
+		case Main::Mode::AUTO_GRAB:
+			if(!autonomous) return Main::Mode::TELEOP;
+			if(status.can_grabber==Can_grabber::Status::BOTTOM) return Main::Mode::AUTO_BACK;
+			return m;
+		case Main::Mode::AUTO_BACK:
+			if(!autonomous) return Main::Mode::TELEOP;
+			//timer is up - could use encoders once those work
+			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
+			return m;
+		case Main::Mode::AUTO_RELEASE:
+			if(status.can_grabber==Can_grabber::Status::TOP || !autonomous) return Main::Mode::TELEOP;
+			return m;
+		default: assert(0);
+	}
+}
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[Gamepad_axis::LEFTX];
 	Joystick_data gunner_joystick=in.joystick[Gamepad_axis::LEFTY];
-	since_switch.update(in.now,0);
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -287,22 +315,39 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	if (in.digital_io.encoder[1]) cout<<"Wheel 2: "<<*in.digital_io.encoder[1]<<"\n";
 	if (in.digital_io.encoder[2]) cout<<"Wheel 3: "<<*in.digital_io.encoder[2]<<"\n";
 	bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
-	if(autonomous_start_now) mode=Mode::AUTO_MOVE;
 	since_auto_start.update(in.now,autonomous_start_now);
 	//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
+	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
+
 	Toplevel::Goal goals;
 	//Drivebase::Status_detail status_detail = drivebase.estimator.get();
 	
-	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
-	if(1 || mode==Mode::TELEOP){
-		teleop(in,main_joystick,gunner_joystick,goals,toplevel_status);
+	switch(mode){
+		case Mode::TELEOP:
+			goals=teleop(in,main_joystick,gunner_joystick,toplevel_status);
+			break;
+		case Mode::AUTO_MOVE:
+			goals.drive.x=0;
+			goals.drive.y=-.6;
+			goals.drive.theta=0;
+			break;
+		case Mode::AUTO_GRAB:
+			goals.can_grabber=Can_grabber::Goal::BOTTOM;
+			break;
+		case Mode::AUTO_BACK:
+			goals.can_grabber=Can_grabber::Goal::BOTTOM;
+			goals.drive.y=.6;
+			break;
+		case Mode::AUTO_RELEASE:
+			//by default the can grabber wants to be up, so let that happen here
+			break;
+		default: assert(0);
 	}
-	else if(mode==Mode::AUTO_MOVE){
-		goals.drive.x=0;
-		goals.drive.y=0;
-		goals.drive.theta=0;
-	}
+
+	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed());
+	since_switch.update(in.now,mode!=next);
+	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;
 	//cout<<"Tote: "<<lift_tote<<endl;	
 	//Drivebase::Output out = control(status_detail, goal);

@@ -16,7 +16,7 @@ using namespace std;
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
 double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow){
-	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
+	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed 
 	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
 	return pow(joystick.axis[axis],3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }

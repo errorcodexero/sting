@@ -39,4 +39,3 @@ Can:
    Right Trigger - Can  Top 
 Kicker:
    Y - Toggle Kicker
-

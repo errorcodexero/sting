@@ -297,10 +297,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	if (in.digital_io.encoder[1]) cout<<"Wheel 2: "<<*in.digital_io.encoder[1]<<endl;
 	if (in.digital_io.encoder[2]) cout<<"Wheel 3: "<<*in.digital_io.encoder[2]<<endl;
 	bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
-	if(autonomous_start_now){
-		//TODO: Read a switch that chooses which autonomous to do
-		mode=Mode::AUTO_MOVE;
-	}
 	since_auto_start.update(in.now,autonomous_start_now);
 	//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
@@ -315,7 +311,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;
-			goals.drive.y=.3;
+			goals.drive.y=-.6;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_GRAB:
@@ -323,7 +319,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			break;
 		case Mode::AUTO_BACK:
 			goals.can_grabber=Can_grabber::Goal::BOTTOM;
-			goals.drive.y=-.3;
+			goals.drive.y=.6;
 			break;
 		case Mode::AUTO_RELEASE:
 			//by default the can grabber wants to be up, so let that happen here

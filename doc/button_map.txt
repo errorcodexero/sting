@@ -16,22 +16,27 @@ Right Trigger - Slow
 
 Gunner Controller
 -------------------
-Left Joystick(Tote):
-   Press - Tote Bottom Preset
-   Down - Tote Level 1
-   Left - Tote Level 2
-   Right - Tote Level 3
-   Up - Tote Level 4
-Right Joystick(Can):
-   Press - Can Bottom Preset
-   Down - Can Level 1
-   Left - Can Level 2
-   Right - Can Level 3
-   Up - Can Level 4
-B - Stop Lifter
-Y - Toggle Kicker
-Start - Tote Top Preset
-Back - Can Level 5 Preset 
-Right Button - Go To Engage Kicker Height For A Tote On The Ground
-Left Trigger - Tote Level 5 Preset
-Right Trigger - Can  Top Preset
+Tote:
+   B - Stop 
+   Left Joystick:
+      Press - Bottom 
+      Down - Level 1
+      Left - Level 2
+      Right - Level 3
+      Up - Level 4
+      Left Trigger - Tote Level 5 
+      Start - Tote Top 
+   Right Button - Go To Engage Kicker Height
+Can:
+   B - Stop 
+   Right Joystick:
+      Press - Bottom 
+      Down - Level 1
+      Left - Level 2
+      Right - Level 3
+      Up - Level 4
+   Back - Can Level 5  
+   Right Trigger - Can  Top 
+Kicker:
+   Y - Toggle Kicker
+

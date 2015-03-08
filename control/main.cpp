@@ -118,10 +118,13 @@ void Main::teleop(
 			sticky_can_goal=Sticky_can_goal::STOP;
 			can_priority=1;
 		}
-		
 		if(gunner_joystick.button[Gamepad_button::R_JOY]){
 			sticky_can_goal=Sticky_can_goal::BOTTOM;
 			can_priority=1;
+		}
+		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
+			can_priority=1;
+			sticky_can_goal=Sticky_can_goal::TOP;
 		}
 		Joystick_section section=joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
 		switch(section){
@@ -149,10 +152,6 @@ void Main::teleop(
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
-		if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]>0){
-			can_priority=1;
-			sticky_can_goal=Sticky_can_goal::TOP;
-		}
 		
 		cout<<toplevel_status<<"\n";
 
@@ -179,20 +178,24 @@ void Main::teleop(
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.tote=[&](){
+		//if(gunner_joystick.button[Gamepad_button::LB]){
+		//}
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_tote_goal=Sticky_tote_goal::STOP;
 			can_priority=0;
 		}
-		//if(gunner_joystick.button[Gamepad_button::LB]){
-		//}
-		if(gunner_joystick.button[Gamepad_button::RB]){
-			sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
-			can_priority=0;
-		}
 		if(gunner_joystick.button[Gamepad_button::L_JOY]){
 			can_priority=0;
 			sticky_tote_goal=Sticky_tote_goal::BOTTOM;
+		}
+		if(gunner_joystick.button[Gamepad_button::BACK]){
+			sticky_tote_goal=Sticky_tote_goal::TOP;
+			can_priority=0;
+		}
+		if(gunner_joystick.button[Gamepad_button::RB]){
+			sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
+			can_priority=0;
 		}
 		Joystick_section section=joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
 		switch (section){
@@ -216,10 +219,6 @@ void Main::teleop(
 				break;
 			default:
 				assert(0);
-		}
-		if(gunner_joystick.button[Gamepad_button::BACK]){
-			sticky_tote_goal=Sticky_tote_goal::TOP;
-			can_priority=0;
 		}
 		if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;

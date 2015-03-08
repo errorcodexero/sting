@@ -157,7 +157,6 @@ Toplevel::Goal Main::teleop(
 		
 		cout<<toplevel_status<<"\n";
 
-		can_lift_pos.add_half=0;
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
@@ -166,10 +165,7 @@ Toplevel::Goal Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
-		if(sticky_can_goal==Sticky_can_goal::LEVEL4){ 
-			//can_lift_pos.add_half=1;
-			can_lift_pos.stacked_bins=4;
-		}
+		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
 		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6;
 		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \

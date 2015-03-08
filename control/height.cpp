@@ -10,14 +10,14 @@ Lift_position::Lift_position():
 	on_step(0),
 	placed_on_scoring(0),
 	engage_kicker(0),
-	add_half(0),
+	drop(0),
 	stacked_bins(0.0)
 {}
 
 std::ostream& operator<<(std::ostream& o,Lift_position const& a){
 	o<<"Lift_position( ";
 	#define X(NAME) o<<""#NAME<<":"<<a.NAME<<" ";
-	X(pickup) X(is_can) X(on_step) X(placed_on_scoring) X(stacked_bins) X(engage_kicker) X(add_half)
+	X(pickup) X(is_can) X(on_step) X(placed_on_scoring) X(stacked_bins) X(engage_kicker) X(drop)
 	#undef X
 	return o<<")";
 }
@@ -39,7 +39,7 @@ vector<Lift_position> examples(){
 				if(!on_step) placed_on_scoring_options|=true;
 				for(auto placed_on_scoring:placed_on_scoring_options){
 					for(auto engage_kicker:bools){
-						for(auto add_half:bools){
+						for(auto drop:bools){
 							for(auto bins:range(6)){
 								Lift_position l;
 								l.pickup=pickup;
@@ -48,7 +48,7 @@ vector<Lift_position> examples(){
 								l.placed_on_scoring=placed_on_scoring;
 								l.stacked_bins=bins;
 								l.engage_kicker=engage_kicker;
-								l.add_half=add_half;
+								l.drop=drop;
 								r|=l;
 							}
 						}
@@ -60,18 +60,20 @@ vector<Lift_position> examples(){
 	return r;
 }
 
-//returns inches
-//everything is in inches
+//in inches
 std::array<float,3> find_height(Lift_position const& a){
-	//const float HEIGHT_OF_CAN = 29;//18
+	//const float HEIGHT_OF_CAN = 28.2;
 	float target=0.0;
 	if(!a.engage_kicker){
-		const float HEIGHT_OF_BIN=13.5;
+		const float HEIGHT_OF_BIN=12.1;
 		target=a.stacked_bins*HEIGHT_OF_BIN;
-		if(a.add_half) target+=HEIGHT_OF_BIN*.5;
 	}else{
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		target=ENGAGE_KICKER_HEIGHT;
+	}
+	if(a.drop){
+		const float DROP_HEIGHT=2.0;
+		target-=DROP_HEIGHT;
 	}
 	if(a.placed_on_scoring){
 		const float HEIGHT_OF_SCORING_PLATFORM=1.96;
@@ -100,10 +102,10 @@ std::array<float,3> find_height(Lift_position const& a){
 			static const float BIN_PICKUP_MARGIN=1;
 			target-=BIN_PICKUP_MARGIN;
 			positive_tolerance=BIN_PICKUP_MARGIN;
-		}/*else{
-			static const float BIN_HOLD_MARGIN=4;
+		}else{
+			static const float BIN_HOLD_MARGIN=1.4;
 			target+=BIN_HOLD_MARGIN;
-		}*/
+		}
 	}
 	return std::array<float,3>{{target-negative_tolerance,target,target+positive_tolerance}};
 }

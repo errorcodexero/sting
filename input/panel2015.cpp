@@ -6,9 +6,9 @@
 using namespace std;
 
 Panel::Panel():
-	auto_mode(0),
-	level_buttons(0),
-	operation_buttons(1),
+	auto_mode(Auto_mode::DO_NOTHING),
+	level_buttons(Level_buttons::LEVEL0),
+	operation_buttons(Operation_buttons::DROP_CURRENT),
 	slide_pos(0.0),
 	move_arm_to_pos(0),
 	current_collect(0),
@@ -58,7 +58,16 @@ Panel::Auto_mode automodeconvert(int potin){
 Panel interpret(Driver_station_input d){
 	Panel panel;
 	{
-	int i=interpret_10_turn_pot(d.analog[0]/3.3*5);
+	Volt volt=d.analog[0]/3.3*5;
+	int i=interpret_10_turn_pot(volt);
 	panel.auto_mode=automodeconvert(i);
 	}
+	return panel;
 }
+
+#ifdef PANEL2015_TEST
+int main(){
+
+	return 0;
+}
+#endif

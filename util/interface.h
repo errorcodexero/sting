@@ -155,13 +155,13 @@ struct Robot_inputs{
 	Robot_mode robot_mode;
 	Time now;//time since boot.
 
-	static const unsigned JOYSTICKS=2; //limitation of FRC coms was 4, now highter
+	static const unsigned JOYSTICKS=3; //limitation of FRC coms was 4, now highter
 	std::array<Joystick_data,JOYSTICKS> joystick;
 
 	//std::array<Digital_in,Robot_outputs::DIGITAL_IOS> digital_io;
 	Digital_inputs digital_io;	
 
-	static const unsigned ANALOG_INPUTS=8;
+	static const unsigned ANALOG_INPUTS=4;
 	std::array<Volt,ANALOG_INPUTS> analog;
 
 	static const unsigned TALON_SRX_INPUTS=2;

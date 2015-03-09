@@ -1,7 +1,7 @@
 MUST HAVE BY WILSONVILLE:
 -Firmware Updates
 	-Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968
-	-See marchupdates in ../doc
+	-See marchupdates in /doc/marchupdates.ods
 
 HIGH PRIORITY:
 -Autonomous
@@ -18,6 +18,8 @@ HIGH PRIORITY:
 -
 
 NOT AS HIGH PRIORITY:
+-Figure out chute_collect in panel2015
+-Add a slow button for the lifters
 -Drivebase wheel encoders
 	-Get all A/B lines working (electrical)
 	-Turn on counting mode & see if works

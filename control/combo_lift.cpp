@@ -163,7 +163,7 @@ double status_height(Lift::Status_detail status){
 //returns inches
 double goal_height(Lift::Status_detail status,Lift::Goal goal){
 	switch(goal.mode()){
-		case Lift::Goal::Mode::GO_TO_HEIGHT: return goal.height();
+		case Lift::Goal::Mode::GO_TO_HEIGHT: return goal.height()[2];
 		case Lift::Goal::Mode::UP: return MAX_LIFT_HEIGHT;
 		case Lift::Goal::Mode::DOWN: return 0;
 		case Lift::Goal::Mode::STOP: return status_height(status);
@@ -179,13 +179,13 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	static const auto CAN_LIFT_SPEED=27;//inches per second, this is made up
 
 	if(goal.can.mode()==Lift::Goal::Mode::UP){
-		goal.can=Lift::Goal::go_to_height(61);
+		goal.can=Lift::Goal::go_to_height(std::array<double,3>{60,61,65});
 	}
 
 	if(goal.can_priority){	
 		//auto keepout_limit=max(status_height(status.can)-LIFT_SPEED,c);
 		auto keepout_limit=status_height(status.can)-CAN_LIFT_SPEED;
-		Lift::Goal limit_goal = (keepout_limit > .5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::down(); 
+		Lift::Goal limit_goal = (keepout_limit > .5) ? Lift::Goal::go_to_height(std::array<double,3>{keepout_limit-2,keepout_limit,keepout_limit+2}): Lift::Goal::down(); 
 		
 		return Combo_lift::Goal{
 			goal.can,
@@ -195,7 +195,7 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	}
 	//auto keepout_limit=min(status_height(status.tote)+LIFT_SPEED,t);
 	auto keepout_limit=status_height(status.tote)+TOTE_LIFT_SPEED;
-	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(keepout_limit) : Lift::Goal::go_to_height(61); 
+	Lift::Goal limit_goal = (keepout_limit < 55.5) ? Lift::Goal::go_to_height(std::array<double,3>{keepout_limit-2,keepout_limit,keepout_limit+2}): Lift::Goal::go_to_height(std::array<double,3>{60,61,65}); 
 	return Combo_lift::Goal{
 		(keepout_limit>c)?limit_goal:goal.can,
 		goal.tote,

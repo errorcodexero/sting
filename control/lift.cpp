@@ -172,9 +172,13 @@ Lift::Goal::Mode Lift::Goal::mode()const{
 	return mode_;
 }
 
-double Lift::Goal::height()const{
+std::array<double,3> Lift::Goal::height()const{
 	assert(mode_==Lift::Goal::Mode::GO_TO_HEIGHT);
-	return height_;
+	std::array<double,3> heights;
+	heights[0]=height_min;
+	heights[1]=height_target;
+	heights[2]=height_max;
+	return heights;
 }
 
 Lift::Goal Lift::Goal::up(){
@@ -195,11 +199,12 @@ Lift::Goal Lift::Goal::stop(){
 	return r;
 }
 
-Lift::Goal Lift::Goal::go_to_height(double d){
+Lift::Goal Lift::Goal::go_to_height(std::array<double, 3> heights){
 	Lift::Goal r;
 	r.mode_=Lift::Goal::Mode::GO_TO_HEIGHT;
-	cout<<" HEIGHT: "<<d<<endl;
-	r.height_=d;
+	r.height_min=heights[0];
+	r.height_target=heights[1];
+	r.height_max=heights[2];
 	return r;
 }
 
@@ -275,7 +280,10 @@ std::ostream& operator<<(std::ostream& o,Lift::Goal::Mode a){
 
 std::ostream& operator<<(std::ostream& o,Lift::Goal a){
 	o<<"mode: "<<a.mode();
-	if(a.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) o<<" height:"<<a.height();
+	if(a.mode()==Lift::Goal::Mode::GO_TO_HEIGHT){
+		std::array<double,3> heights=a.height();
+		o<<" height: min"<<heights[0]<<",target: "<<heights[1]<<",max:"<<heights[2];
+	}
 	return o;
 }
 
@@ -316,7 +324,8 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 		switch (status.type()) {
 			case Lift::Status_detail::Type::MID:
 				{
-					double error = goal.height()-status.inches_off_ground();
+					std::array<double,3> heights=goal.height();
+					double error = heights[1]-status.inches_off_ground();
 					//cout<<endl<<"Error: "<<error<<endl<<endl;
 					double desired_output_power =error*P;
 					//cout<<"Desired Output Power: "<<desired_output_power<<endl<<endl;
@@ -370,7 +379,7 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 
 set<Lift::Goal> examples(Lift::Goal*){ 
 	set<Lift::Goal> goals;
-	Lift::Goal goal=goal.go_to_height(0);
+	Lift::Goal goal=goal.go_to_height(std::array<double,3>{0,0,0});
 	goals.insert(goal);
 	goal=goal.down();
 	goals.insert(goal);
@@ -563,7 +572,7 @@ int main(){
 	static const Time TIMESTEP=.01;
 	Lift_sim sim;
 	//Lift::Goal goal=Lift::Goal::max();
-	goal=Lift::Goal::go_to_height(30);
+	goal=Lift::Goal::go_to_height(std::array<double,3>{27,30,33});
 	auto step=[&](){
 		auto status=a.estimator.get();
 		auto output=control(status,goal);

@@ -1,0 +1,1 @@
+g++ -Wall -Wextra --std=c++11 -DPANEL2015_TEST panel2015.cpp  ../util/util.cpp 2>&1 && ./kicker 2>&1

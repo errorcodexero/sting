@@ -18,6 +18,7 @@ HIGH PRIORITY:
 -
 
 NOT AS HIGH PRIORITY:
+-Figure out chute_collect in panel2015
 -Add a slow button for the lifters
 -Drivebase wheel encoders
 	-Get all A/B lines working (electrical)

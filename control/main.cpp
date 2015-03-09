@@ -43,6 +43,7 @@ Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
+	Joystick_data const& /*8oi_joystick*/,
 	Toplevel::Status_detail& toplevel_status
 ){
 	Toplevel::Goal goals;
@@ -294,8 +295,9 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 }
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
-	Joystick_data main_joystick=in.joystick[Gamepad_axis::LEFTX];
-	Joystick_data gunner_joystick=in.joystick[Gamepad_axis::LEFTY];
+	Joystick_data main_joystick=in.joystick[0];
+	Joystick_data gunner_joystick=in.joystick[1];
+	Joystick_data oi_joystick=in.joystick[2];
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -321,7 +323,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	
 	switch(mode){
 		case Mode::TELEOP:
-			goals=teleop(in,main_joystick,gunner_joystick,toplevel_status);
+			goals=teleop(in,main_joystick,gunner_joystick,oi_joystick,toplevel_status);
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;

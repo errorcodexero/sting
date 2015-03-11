@@ -394,7 +394,7 @@ Lift::Lift(int can_address):input_reader(can_address),output_applicator(can_addr
 
 bool ready(Lift::Status status,Lift::Goal goal){
 	switch(goal.mode()){
-		case Lift::Goal::Mode::GO_TO_HEIGHT: return 1;
+		case Lift::Goal::Mode::GO_TO_HEIGHT: return (status.inches_off_ground()>goal.height()[0] && status.inches_off_ground()<goal.height()[2]);
 		case Lift::Goal::Mode::DOWN: return status.type()==Lift::Status::Type::BOTTOM;
 		case Lift::Goal::Mode::UP: return status.type()==Lift::Status::Type::TOP;
 		case Lift::Goal::Mode::STOP: return 1;

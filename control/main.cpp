@@ -16,8 +16,8 @@ using namespace std;
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
 double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow){
-	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed 
-	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
+	static const float DEFAULT_SPEED=.3;//Change these value to change the default speed 
+	static const float SLOW_BY=.7;//Change this value to change the percentage of the default speed the slow button slows
 	return pow(joystick.axis[axis],3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
 }
 
@@ -50,7 +50,7 @@ Toplevel::Goal Main::teleop(
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 	static const float Y_NUDGE_POWER=.2;
-	static const float ROTATE_NUDGE_POWER=.7;
+	static const float ROTATE_NUDGE_POWER=.6;
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;
@@ -71,7 +71,7 @@ Toplevel::Goal Main::teleop(
 	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 	else if(!back_turns[0].timer.done())goal.theta=BACK_TURN_POWER;
 	else if(!back_turns[1].timer.done())goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER]);//theta is /2 so rotation is reduced to prevent bin tipping.
+	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER])*.7;//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;

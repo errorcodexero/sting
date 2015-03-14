@@ -114,6 +114,8 @@ Toplevel::Goal Main::teleop(
 	
 	Lift_position can_lift_pos;
 	Lift_position tote_lift_pos;
+
+	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	
 	//static const double TOTE_HEIGHT = 13.5;
 	pre_sticky_tote_goal=sticky_tote_goal;
@@ -170,8 +172,9 @@ Toplevel::Goal Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
 		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6;
+		double offset=down2?-2:0;
 		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
-			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0],find_height(can_lift_pos)[1],find_height(can_lift_pos)[2]}); \
+			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 		}
 		X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X

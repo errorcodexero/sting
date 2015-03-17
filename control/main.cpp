@@ -15,10 +15,11 @@ using namespace std;
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
-double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow){
-	static const float DEFAULT_SPEED=.3;//Change these value to change the default speed 
-	static const float SLOW_BY=.7;//Change this value to change the percentage of the default speed the slow button slows
-	return pow(joystick.axis[axis],3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(DEFAULT_SPEED*SLOW_BY)*slow);
+double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow,bool turning=0){
+	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
+	static const float TURNING_SLOW=.33;
+	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
+	return pow(joystick.axis[axis],3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(((DEFAULT_SPEED*SLOW_BY)*slow)+((DEFAULT_SPEED*TURNING_SLOW)*turning)));
 }
 
 template<typename T>//Compares two types to see if one is within a range
@@ -50,7 +51,8 @@ Toplevel::Goal Main::teleop(
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 	static const float Y_NUDGE_POWER=.2;
-	static const float ROTATE_NUDGE_POWER=.6;
+
+	static const float ROTATE_NUDGE_POWER=.5;
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;
@@ -71,7 +73,7 @@ Toplevel::Goal Main::teleop(
 	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 	else if(!back_turns[0].timer.done())goal.theta=BACK_TURN_POWER;
 	else if(!back_turns[1].timer.done())goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER])*.7;//theta is /2 so rotation is reduced to prevent bin tipping.
+	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],1);//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
@@ -112,7 +114,10 @@ Toplevel::Goal Main::teleop(
 	piston.update(gunner_joystick.button[Gamepad_button::Y]);
 	
 	Lift_position can_lift_pos;
+	can_lift_pos.is_can=1;
 	Lift_position tote_lift_pos;
+
+	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	
 	//static const double TOTE_HEIGHT = 13.5;
 	pre_sticky_tote_goal=sticky_tote_goal;
@@ -169,8 +174,9 @@ Toplevel::Goal Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
 		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6;
+		double offset=down2?-2:0;
 		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
-			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0],find_height(can_lift_pos)[1],find_height(can_lift_pos)[2]}); \
+			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 		}
 		X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X
@@ -277,7 +283,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			return m;
 		case Main::Mode::AUTO_MOVE:
 			//encoders? going to use time for now
-			if(!autonomous || since_switch>2) return Main::Mode::TELEOP;
+			if(!autonomous || since_switch>1.7) return Main::Mode::TELEOP;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
 			if(status.can_grabber==Can_grabber::Status::BOTTOM) return Main::Mode::AUTO_BACK;

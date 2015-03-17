@@ -113,6 +113,7 @@ Toplevel::Goal Main::teleop(
 	piston.update(gunner_joystick.button[Gamepad_button::Y]);
 	
 	Lift_position can_lift_pos;
+	can_lift_pos.is_can=1;
 	Lift_position tote_lift_pos;
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];

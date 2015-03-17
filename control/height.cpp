@@ -85,12 +85,12 @@ std::array<float,3> find_height(Lift_position const& a){
 	float positive_tolerance=2;
 	float negative_tolerance=2;
 	int bins=a.stacked_bins;
-	if(bins==1) target+=3;
-	else if(bins==2) target-=3;
-	else if(bins==4) target-=2;
-	else if(bins==5) target-=2.5;
-	else if(a.is_can){
-		const float TO_CAN_RIB=21;//used ratio of picture pixels to get height
+	if(a.is_can){
+		if(bins==1) target+=3;
+		else if(bins==2) target-=3;
+		else if(bins==4) target-=2;
+		else if(bins==5) target-=2.5;
+		/*const float TO_CAN_RIB=21;//used ratio of picture pixels to get height
 		target+=TO_CAN_RIB;
 		if(a.pickup){
 			static const float CAN_PICKUP_MARGIN=1.5;
@@ -99,8 +99,9 @@ std::array<float,3> find_height(Lift_position const& a){
 		}else{
 			static const float CAN_HOLD_MARGIN=3;
 			target+=CAN_HOLD_MARGIN;
-		}
-	}else{
+		}*/
+	}
+	{
 		/*static const float TO_BIN_HANDLE=10;//measured
 		target+=TO_BIN_HANDLE;*/
 		if(a.pickup){

@@ -35,7 +35,7 @@ NOT AS HIGH PRIORITY:
 	-put in outputs
 		-into framework
 		-figure out if need to reprogram the TI launchpad 
--Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/ Serial Number:M79X91968) -Jacob
+-Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/) - Jacob
 -Automatic Operations
 	-auto-align
 		-test w/ totes

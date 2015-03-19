@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
+#include<iomanip>
 #include "util.h"
 
 using namespace std;
@@ -373,7 +374,8 @@ ostream& operator<<(ostream& o,Joystick_data a){
 	o<<"Joystick_data(";
 	o<<"axes:";
 	for(unsigned i=0;i<JOY_AXES;i++){
-		o<<a.axis[i]<<" ";
+		//o<<setprecision(2)<<a.axis[i]<<" ";
+		o<<setw(5)<<fixed<<setprecision(2)<<a.axis[i]<<" ";
 	}
 	o<<"buttons:";
 	for(unsigned i=0;i<JOY_BUTTONS;i++){

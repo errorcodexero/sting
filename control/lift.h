@@ -92,7 +92,6 @@ struct Lift{
 		
 		public:
 		Mode mode()const;
-		bool slow;
 		std::array<double,3> height()const;
 		
 		static Goal go_to_height(std::array<double,3>);

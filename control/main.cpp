@@ -160,11 +160,6 @@ Toplevel::Goal Main::teleop(
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
-		if(gunner_joystick.button[Gamepad_button::X]){
-			goals.combo_lift.can.slow=1;
-		}else{
-			goals.combo_lift.can.slow=0;
-		}
 		
 		cout<<toplevel_status<<"\n";
 
@@ -233,11 +228,6 @@ Toplevel::Goal Main::teleop(
 		if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
 			can_priority=0;
-		}
-		if(gunner_joystick.button[Gamepad_button::X]){
-			goals.combo_lift.can.slow=1;
-		}else{
-			goals.combo_lift.can.slow=0;
 		}
 		tote_lift_pos.engage_kicker=0;
 		

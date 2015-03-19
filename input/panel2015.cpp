@@ -62,6 +62,18 @@ Panel interpret(Driver_station_input d){
 	int i=interpret_10_turn_pot(volt);
 	panel.auto_mode=automodeconvert(i);
 	}
+	{
+	//Operation Buttons
+	float op=d.analog[2];
+	if(op<=1&&op>=.5)panel.level_buttons=Panel::Level_buttons::LEVEL0;
+	if(op>1&&op<=1.8)panel.level_buttons=Panel::Level_buttons::LEVEL1;
+	if(op>1.8&&op<=2.5)panel.level_buttons=Panel::Level_buttons::LEVEL2;
+	if(op>2.5&&op<=3)panel.level_buttons=Panel::Level_buttons::LEVEL3;
+	if(op>3&&op<=3.8)panel.level_buttons=Panel::Level_buttons::LEVEL4;
+	if(op>3.8&&op<4.5)panel.level_buttons=Panel::Level_buttons::LEVEL5;
+	if(op>4.5&&op<5)panel.level_buttons=Panel::Level_buttons::LEVEL6; 
+    else panel.level_buttons=panel.level_buttons;
+	}
 	return panel;
 }
 

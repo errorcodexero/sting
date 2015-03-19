@@ -48,9 +48,6 @@ ostream& operator<<(ostream& o,Panel::Level_buttons a){
 	return o;
 }
 
-enum class Operation_buttons{
-		COLLECT_CURRENT,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP
-	};
 ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 	o<<" Operation_buttons(";
 	if(a==Panel::Operation_buttons::COLLECT_CURRENT)o<<"collect_current";
@@ -97,20 +94,18 @@ Panel::Auto_mode automodeconvert(int potin){
 Panel interpret(Driver_station_input d){
 	Panel panel;
 	{
-	Volt volt=d.analog[0]/3.3*5;
-	int i=interpret_10_turn_pot(volt);
-	panel.auto_mode=automodeconvert(i);
+	Volt auto_mode=d.analog[0]/3.3*5;
+	panel.auto_mode=automodeconvert(interpret_10_turn_pot(auto_mode));
 	}
-	{
-	//Operation Buttons
-	float op=d.analog[1];
-	if(op<=1&&op>=.5)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
-	else if(op>1&&op<=1.8)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
-	else if(op>1.8&&op<=2.5)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
-	else if(op>2.5&&op<=3)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
-	else if(op>3&&op<=3.8)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
-	else if(op>3.8&&op<4.5)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
-	else if(op>4.5&&op<5)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
+	{//Operation Buttons
+	float op=d.analog[1];//default: -1
+	if(op<=1 && op>=.5)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
+	else if(op>1 && op<=1.8)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
+	else if(op>1.8 && op<=2.5)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
+	else if(op>2.5 && op<=3)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
+	else if(op>3 && op<=3.8)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
+	else if(op>3.8 && op<4.5)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
+	else if(op>4.5 && op<5)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
 	}
 	return panel;
 }

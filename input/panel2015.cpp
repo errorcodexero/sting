@@ -99,13 +99,14 @@ Panel interpret(Driver_station_input d){
 	}
 	{//Operation Buttons
 	float op=d.analog[1];//default: -1
-	if(op<=1 && op>=.5)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
-	else if(op>1 && op<=1.8)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
-	else if(op>1.8 && op<=2.5)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
-	else if(op>2.5 && op<=3)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
-	else if(op>3 && op<=3.8)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
-	else if(op>3.8 && op<4.5)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
-	else if(op>4.5 && op<5)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
+	static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
+	if(op>LEVEL0-(LEVEL0-DEFAULT)/2 && op<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
+	else if(op>LEVEL1-(LEVEL1-LEVEL0)/2 && op<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
+	else if(op>LEVEL2-(LEVEL2-LEVEL1)/2 && op<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
+	else if(op>LEVEL3-(LEVEL3-LEVEL2)/2 && op<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
+	else if(op>LEVEL4-(LEVEL4-LEVEL3)/2 && op<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
+	else if(op>LEVEL5-(LEVEL5-LEVEL4)/2 && op<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
+	else if(op>LEVEL6-(LEVEL6-LEVEL5)/2 && op<LEVEL6+.25)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
 	}
 	return panel;
 }

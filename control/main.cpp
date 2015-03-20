@@ -174,7 +174,7 @@ Toplevel::Goal Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
 		//if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6;
-		double offset=down2?-2:0;
+		double offset=down2?-5:0;
 		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
 			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 		}

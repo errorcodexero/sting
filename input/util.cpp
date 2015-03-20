@@ -50,7 +50,7 @@ unsigned interpret_10_turn_pot(Volt v){
 	5.01
 	limits are halfway between each value.
 	*/
-	Volt limits[]={
+	array<Volt,10>limits={
 		0.2825,
 		0.838,
 		1.388,

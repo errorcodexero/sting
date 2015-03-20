@@ -106,7 +106,6 @@ Panel interpret(Driver_station_input d){
 	else if(op>LEVEL3-(LEVEL3-LEVEL2)/2 && op<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
 	else if(op>LEVEL4-(LEVEL4-LEVEL3)/2 && op<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
 	else if(op>LEVEL5-(LEVEL5-LEVEL4)/2 && op<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
-	else if(op>LEVEL6-(LEVEL6-LEVEL5)/2 && op<LEVEL6+.25)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
 	}
 	{
 	float op=d.analog[0];//default: -1
@@ -117,6 +116,8 @@ Panel interpret(Driver_station_input d){
 	else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2 && op<COLLECT_CURRENT+.25) panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
 	}
 	panel.slide_pos=d.analog[2];
+	{
+	}
 	return panel;
 }
 

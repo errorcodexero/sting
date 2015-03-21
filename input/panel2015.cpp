@@ -98,27 +98,28 @@ Panel interpret(Driver_station_input d){
 	panel.auto_mode=automodeconvert(interpret_10_turn_pot(auto_mode));
 	}
 	{
-	float op=d.analog[1];//default: -1
+	float lev=d.analog[1];//default: -1
 	static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
-	if(op>LEVEL0-(LEVEL0-DEFAULT)/2 && op<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
-	else if(op>LEVEL1-(LEVEL1-LEVEL0)/2 && op<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
-	else if(op>LEVEL2-(LEVEL2-LEVEL1)/2 && op<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
-	else if(op>LEVEL3-(LEVEL3-LEVEL2)/2 && op<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
-	else if(op>LEVEL4-(LEVEL4-LEVEL3)/2 && op<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
-	else if(op>LEVEL5-(LEVEL5-LEVEL4)/2 && op<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
-	else if(op>LEVEL6-(LEVEL6-LEVEL5)/2 && op<LEVEL6+.25)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
+	if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
+	else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2&&lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
+	else if(lev>LEVEL2-(LEVEL2-LEVEL1)/2&&lev<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
+	else if(lev>LEVEL3-(LEVEL3-LEVEL2)/2&&lev<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
+	else if(lev>LEVEL4-(LEVEL4-LEVEL3)/2&&lev<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
+	else if(lev>LEVEL5-(LEVEL5-LEVEL4)/2&&lev<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
+	else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2&&lev<LEVEL6+.25)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
 	}
 	{
 	float op=d.analog[0];//default: -1
 	static const float DEFAULT=-1,COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0;
-	if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2 && op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2) panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
-	else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2 && op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2) panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
-	else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2 && op<MOVE_COLLECT+(COLLECT_CURRENT-MOVE_COLLECT)/2) panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
-	else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2 && op<COLLECT_CURRENT+.25) panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
+	if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2&&op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
+	else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2&&op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
+	else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2&&op<MOVE_COLLECT+(COLLECT_CURRENT-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
+	else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2&&op<COLLECT_CURRENT+.25)panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
 	}
 	panel.slide_pos=d.analog[2];
 	{
 	}
+	//if d.analog[4]=<-.75
 	return panel;
 }
 

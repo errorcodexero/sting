@@ -79,7 +79,7 @@ std::array<float,3> find_height(Lift_position const& a){
 	if(a.is_can){
 		int bins=a.stacked_bins;
 		if(bins==1) target+=6;
-		else if(bins==2) target+=6;
+		else if(bins==2) target+=4.5;
 		else if(bins==3) target+=3;
 		else if(bins==4) target+=2;
 		else if(bins==5) target-=2.5;

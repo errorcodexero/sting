@@ -232,11 +232,11 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 			return 0;
 		}
 	}
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		if(a.jaguar[i]!=b.jaguar[i]){
 			return 0;
 		}
-	}
+	}*/
 	return a.driver_station==b.driver_station && a.pump_auto==b.pump_auto;
 }
 
@@ -272,12 +272,12 @@ bool operator<(Robot_outputs a,Robot_outputs b){
 		if(b.talon_srx[i]<a.talon_srx[i])return 0;
 	}
 	
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		auto a1=a.jaguar[i];
 		auto b1=b.jaguar[i];
 		if(a1<b1) return 1;
 		if(b1<a1) return 0;
-	}
+	}*/
 
 	return a.pump_auto<b.pump_auto;
 }
@@ -306,10 +306,10 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	for(unsigned i=0;i<a.Robot_outputs::TALON_SRX_OUTPUTS;i++){
 		o<<a.talon_srx[i];
 	}
-	o<<" jaguar:";
+	/*o<<" jaguar:";
 	for(unsigned i=0;i<a.CAN_JAGUARS;i++){
 		o<<a.jaguar[i];
-	}
+	}*/
 	o<<a.driver_station;
 	o<<a.pump_auto;
 	return o<<")";
@@ -490,11 +490,11 @@ bool operator==(Robot_inputs a,Robot_inputs b){
 			return 0;
 		}
 	}
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		if(a.jaguar[i]!=b.jaguar[i]){
 			return 0;
 		}
-	}
+	}*/
 	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
 		if(a.talon_srx[i]!=b.talon_srx[i]){
 			return 0;
@@ -534,10 +534,10 @@ ostream& operator<<(ostream& o,Robot_inputs a){
 	for(unsigned i=0;i<Robot_inputs::TALON_SRX_INPUTS;i++){
 		o<<a.talon_srx[i];
 	}
-	o<<" jaguar:";
+	/*o<<" jaguar:";
 	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		o<<a.jaguar[i];
-	}
+	}*/
 	o<<" currents:";
 	o<<a.current;
 	

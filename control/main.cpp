@@ -87,7 +87,7 @@ Toplevel::Goal Main::teleop(
 
 	//auto nudge!
 	if(!normal_nudge_enable){
-		//todo: add the part where we actually read the sensors
+		/*todo: add the part where we actually read the sensors
 		if(	
 			(main_joystick.button[NUDGE_LEFT_BUTTON]&&in.digital_io.in[8]==Digital_in::_0)||
 			(main_joystick.button[NUDGE_CW_BUTTON]&&in.digital_io.in[9]==Digital_in::_0)
@@ -99,6 +99,16 @@ Toplevel::Goal Main::teleop(
 			(main_joystick.button[NUDGE_CCW_BUTTON]&&in.digital_io.in[9]==Digital_in::_0)
 		){
 			goal.x=-X_NUDGE_POWER;
+		}*/
+		if(main_joystick.button[NUDGE_LEFT_BUTTON]){
+			bool left=in.digital_io.in[7]==Digital_in::_1;
+			bool right=in.digital_io.in[8]==Digital_in::_1;
+			if(!left&&!right){
+				goal.y=-Y_NUDGE_POWER;
+			}else{
+				if(left) goal.theta=ROTATE_NUDGE_POWER;
+				if(right) goal.theta=-ROTATE_NUDGE_POWER;
+			}
 		}
 	}
 	

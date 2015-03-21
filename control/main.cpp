@@ -78,7 +78,8 @@ Toplevel::Goal Main::teleop(
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
 	static const auto NUDGE_CCW_BUTTON=Gamepad_button::RB,NUDGE_CW_BUTTON=Gamepad_button::LB;
-	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,Gamepad_button::Y,Gamepad_button::A,NUDGE_CCW_BUTTON,NUDGE_CW_BUTTON};
+	static const auto NUDGE_FWD_BUTTON=Gamepad_button::Y,NUDGE_BACK_BUTTON=Gamepad_button::A;
+	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,NUDGE_FWD_BUTTON,NUDGE_BACK_BUTTON,NUDGE_CCW_BUTTON,NUDGE_CW_BUTTON};
 	for(int i=0;i<6;i++){
 		bool start=nudges[i].trigger(normal_nudge_enable&&main_joystick.button[nudge_buttons[i]]);
 		if(start)nudges[i].timer.set(.1);
@@ -100,14 +101,20 @@ Toplevel::Goal Main::teleop(
 		){
 			goal.x=-X_NUDGE_POWER;
 		}*/
-		if(main_joystick.button[NUDGE_LEFT_BUTTON]){
+		if(main_joystick.button[NUDGE_FWD_BUTTON]){
 			bool left=in.digital_io.in[7]==Digital_in::_1;
 			bool right=in.digital_io.in[8]==Digital_in::_1;
 			if(!left&&!right){
 				goal.y=-Y_NUDGE_POWER;
 			}else{
-				if(left) goal.theta=ROTATE_NUDGE_POWER;
-				if(right) goal.theta=-ROTATE_NUDGE_POWER;
+				if(!left){
+					goal.theta=ROTATE_NUDGE_POWER/2;
+					goal.y=-Y_NUDGE_POWER/2;
+				}
+				if(!right){
+					goal.theta=-ROTATE_NUDGE_POWER/2;
+					goal.y=-Y_NUDGE_POWER/2;
+				}
 			}
 		}
 	}

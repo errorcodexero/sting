@@ -15,6 +15,7 @@ struct Panel{
 	enum class Operation_buttons{COLLECT_CURRENT,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP};
 	Operation_buttons operation_buttons;
 	float slide_pos;
+	float override_height;
     //Buttons:
 	bool move_arm_to_pos;
 	bool current_collect;

@@ -73,7 +73,7 @@ Toplevel::Goal Main::teleop(
 	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 	else if(!back_turns[0].timer.done())goal.theta=BACK_TURN_POWER;
 	else if(!back_turns[1].timer.done())goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],1);//theta is /2 so rotation is reduced to prevent bin tipping.
+	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],0);//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;

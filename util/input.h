@@ -10,10 +10,10 @@
 	X(ENCODER) \
 	X(ANALOG) \
 	X(TALON_SRX) \
-	X(CAN_JAGUAR) \
 	X(DRIVER_STATION) \
 	X(CURRENT)\
 	X(PUMP)
+//	X(CAN_JAGUAR) 
 
 class Input{
 	public:
@@ -39,7 +39,7 @@ class Input{
 	static Input encoder(unsigned);
 	static Input analog(unsigned);
 	static Input talon_srx(unsigned);
-	static Input can_jaguar(unsigned);
+	//static Input can_jaguar(unsigned);
 	static Input driver_station();
 	static Input current(unsigned);
 	static Input pump();

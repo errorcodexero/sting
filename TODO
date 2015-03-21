@@ -7,12 +7,12 @@ HIGH PRIORITY:
         -Move-tune this
         -Full Auto
         -Auto mode switcher integration
-        -Sensore integration
+        -Sensor integration
 -Drive-to-wall/Drive-to-tote
 
 
 6-HOUR WINDOW:
--Test all functions, drive, lifters, kickers etc.
+-Test all functions, drive, lifters, kicker, etc.
 -Test encoders
 -Test auto
 
@@ -43,19 +43,19 @@ NOT AS HIGH PRIORITY:
 -Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/) - Jacob
 -Automatic Operations
         -auto-align
-                -test w/ totes
+                -test with totes
                 -consider disabling when would be looking at the grabber
         -lift
 
 
 NICE THINGS TO HAVE:
 -Drive to Wall
--Cleanup stuff:
+-Clean-up stuff:
         -use enum class more places
         -use std::array in place of C arrays in several places
 -Meta IO information
         -Add a function that will discover which IOs different parts use (and make a nice list)
-        -Make a datatype to talk about different inputs
+        -Make a data type to talk about different inputs
 -Improve testing, make sims meaningful
 -Audit code to see what each part of the robot does when in disabled mode
 -Improve testing for toplevel.cpp

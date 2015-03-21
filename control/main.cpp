@@ -304,7 +304,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(autonomous_start){
 				//todo: make this depend on a switch or something.
 				switch(auto_mode){ 
-					case Panel::Auto_mode::FULL_RUN:
+					case Panel::Auto_mode::CAN_GRAB:
 						return Main::Mode::AUTO_GRAB;
 					case Panel::Auto_mode::MOVE:
 						return Main::Mode::AUTO_MOVE;

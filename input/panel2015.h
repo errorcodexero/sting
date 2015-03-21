@@ -8,7 +8,7 @@
 #include "../control/combo_lift.h"
 
 struct Panel{
-	enum class Auto_mode{DO_NOTHING,MOVE,FULL_RUN};
+	enum class Auto_mode{DO_NOTHING,MOVE,CAN_GRAB};
 	Auto_mode auto_mode;
 	enum class Level_buttons{LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};
 	Level_buttons level_buttons;

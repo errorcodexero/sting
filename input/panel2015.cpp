@@ -30,7 +30,7 @@ ostream& operator<<(ostream& o,Panel::Auto_mode a){
 	o<<" Auto_Mode(";
 	if(a==Panel::Auto_mode::DO_NOTHING)o<<"do_nothing";
 	if(a==Panel::Auto_mode::MOVE)o<<"move";
-	if(a==Panel::Auto_mode::FULL_RUN)o<<"full_run";
+	if(a==Panel::Auto_mode::CAN_GRAB)o<<"can_grab";
 	o<<")";
 	return o;
 }

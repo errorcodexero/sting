@@ -144,7 +144,7 @@ Toplevel::Status::Status():
 		Drivebase::Piston::FULL
 	),
 	pump(Pump::Status::NOT_FULL),
-	can_grabber(Can_grabber::Status::MID_UP)
+	can_grabber(Can_grabber::Status::INITIAL)
 {}
 
 bool operator==(Toplevel::Status a,Toplevel::Status b){
@@ -319,7 +319,7 @@ set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 		Kicker::Status_detail{},
 		*examples((Drivebase::Status_detail*)0).begin(),
 		Pump::Status_detail{},
-		Can_grabber::Status_detail{},
+		Can_grabber::Status_detail{Can_grabber::Status::INITIAL, Lift::Status_detail::error()},
 		Tote_sensors::Status_detail{}
 	}};
 }
@@ -346,7 +346,7 @@ set<Toplevel::Input> examples(Toplevel::Input*){
 
 set<Toplevel::Output> examples(Toplevel::Output*){
 	Toplevel::Output a;
-	a.can_grabber=Can_grabber::Output::OFF;
+	a.can_grabber=Can_grabber::Output::LOCK;
 	a.kicker=Kicker::Output::OUT;
 	/*return {Toplevel::Output{
 		Lift::Output{},
@@ -578,7 +578,11 @@ int main(){
 		switch(found.size()){
 			case 0: return "UNUSED";
 			case 1: return *found.begin();
-			default: assert(0);
+			default:{
+				stringstream ss;
+				for(auto elem:found) ss<<"x:"<<elem<<" ";
+				return ss.str();
+			}// assert(0);
 		}
 	};
 

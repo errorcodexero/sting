@@ -10,11 +10,11 @@ HIGH PRIORITY:
         -Sensore integration
 -Drive-to-wall/Drive-to-tote
 
+
 6-HOUR WINDOW:
 -Test all functions, drive, lifters, kickers etc.
 -Test encoders
 -Test auto
-
 
 
 NOT AS HIGH PRIORITY:
@@ -64,4 +64,3 @@ NICE THINGS TO HAVE:
         -ssh config:
                 -Fix the "rm ~/.ssh/known_hosts" problem
                 -add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
-                                                                                                                                                                                                                                                                30,2-9        All

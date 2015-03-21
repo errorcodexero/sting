@@ -82,7 +82,7 @@ std::array<float,3> find_height(Lift_position const& a){
 		else if(bins==2) target+=6;
 		else if(bins==3) target+=3;
 		else if(bins==4) target+=2;
-		else if(bins==5) target=2.5;
+		else if(bins==5) target-=2.5;
 		/*const float TO_CAN_RIB=21;//used ratio of picture pixels to get height
 		target+=TO_CAN_RIB;
 		if(a.pickup){

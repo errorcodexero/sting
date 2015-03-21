@@ -332,7 +332,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
-			if(status.can_grabber==Can_grabber::Status::BOTTOM) return Main::Mode::AUTO_BACK;
+			if(status.can_grabber.status==Can_grabber::Status::DOWN) return Main::Mode::AUTO_BACK;
 			return m;
 		case Main::Mode::AUTO_BACK:
 			if(!autonomous) return Main::Mode::TELEOP;
@@ -340,16 +340,11 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
-			if(status.can_grabber==Can_grabber::Status::TOP || !autonomous) return Main::Mode::TELEOP;
+			if(status.can_grabber.status==Can_grabber::Status::UP || !autonomous) return Main::Mode::TELEOP;
 			return m;
 		default: assert(0);
 	}
 }
-
-/*
-Can Pulleyf
-*/
-
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);

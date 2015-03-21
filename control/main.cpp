@@ -298,17 +298,26 @@ unsigned pdb_location1(Drivebase::Motor m){
 	//assert(m>=0 && m<Drivebase::MOTORS);
 }
 
-Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch){
+Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch, Panel::Auto_mode auto_mode){
 	switch(m){
 		case Main::Mode::TELEOP:
 			if(autonomous_start){
 				//todo: make this depend on a switch or something.
-				return Main::Mode::AUTO_MOVE;
+				switch(auto_mode){ 
+					case Panel::Auto_mode::FULL_RUN:
+						return Main::Mode::AUTO_GRAB;
+					case Panel::Auto_mode::MOVE:
+						return Main::Mode::AUTO_MOVE;
+					case Panel::Auto_mode::DO_NOTHING:
+						return Main::Mode::TELEOP;
+					default: assert(0);
+				}
 			}
 			return m;
 		case Main::Mode::AUTO_MOVE:
 			//encoders? going to use time for now
 			if(!autonomous || since_switch>1.7) return Main::Mode::TELEOP;
+			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
 			if(status.can_grabber==Can_grabber::Status::BOTTOM) return Main::Mode::AUTO_BACK;
@@ -380,7 +389,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		default: assert(0);
 	}
 
-	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed());
+	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel.auto_mode);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;

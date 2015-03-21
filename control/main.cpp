@@ -44,9 +44,10 @@ Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Panel const& oi_panel,
+	Panel const& /*oi_panel*/,
 	Toplevel::Status_detail& toplevel_status
 ){
+	cout<<toplevel_status<<"\n";
 	Toplevel::Goal goals;
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
@@ -143,7 +144,7 @@ Toplevel::Goal Main::teleop(
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	
-	//static const double TOTE_HEIGHT = 13.5;
+	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
@@ -184,8 +185,6 @@ Toplevel::Goal Main::teleop(
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
-		
-		cout<<toplevel_status<<"\n";
 
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();

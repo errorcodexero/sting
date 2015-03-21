@@ -87,7 +87,7 @@ ostream& operator<<(ostream& o,Panel p){
 Panel::Auto_mode automodeconvert(int potin){
 	if(potin==0)return Panel::Auto_mode::DO_NOTHING;
 	if(potin==1)return Panel::Auto_mode::MOVE;
-	if(potin==2)return Panel::Auto_mode::FULL_RUN;
+	if(potin==2)return Panel::Auto_mode::CAN_GRAB;
 	else return Panel::Auto_mode::DO_NOTHING;
 }
 

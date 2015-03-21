@@ -85,7 +85,7 @@ struct Robot_outputs{
 	static const unsigned TALON_SRX_OUTPUTS=2;
 	std::array<Talon_srx_output, TALON_SRX_OUTPUTS> talon_srx;
 	
-	static const unsigned CAN_JAGUARS=4;
+	static const unsigned CAN_JAGUARS=0;
 	std::array<Jaguar_output,CAN_JAGUARS> jaguar;
 	
 	//could add in some setup for the analog inputs

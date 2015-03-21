@@ -78,16 +78,17 @@ Toplevel::Goal Main::teleop(
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
 	static const auto NUDGE_CCW_BUTTON=Gamepad_button::RB,NUDGE_CW_BUTTON=Gamepad_button::LB;
-	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,Gamepad_button::Y,Gamepad_button::A,NUDGE_CCW_BUTTON,NUDGE_CW_BUTTON};
+	static const auto NUDGE_FWD_BUTTON=Gamepad_button::Y,NUDGE_BACK_BUTTON=Gamepad_button::A;
+	static const unsigned int nudge_buttons[6]={NUDGE_LEFT_BUTTON,NUDGE_RIGHT_BUTTON,NUDGE_FWD_BUTTON,NUDGE_BACK_BUTTON,NUDGE_CCW_BUTTON,NUDGE_CW_BUTTON};
 	for(int i=0;i<6;i++){
 		bool start=nudges[i].trigger(normal_nudge_enable&&main_joystick.button[nudge_buttons[i]]);
 		if(start)nudges[i].timer.set(.1);
 		nudges[i].timer.update(in.now,1);
 	}
-
+	bool kick_and_lift=1;
 	//auto nudge!
 	if(!normal_nudge_enable){
-		//todo: add the part where we actually read the sensors
+		/*todo: add the part where we actually read the sensors
 		if(	
 			(main_joystick.button[NUDGE_LEFT_BUTTON]&&in.digital_io.in[8]==Digital_in::_0)||
 			(main_joystick.button[NUDGE_CW_BUTTON]&&in.digital_io.in[9]==Digital_in::_0)
@@ -99,6 +100,29 @@ Toplevel::Goal Main::teleop(
 			(main_joystick.button[NUDGE_CCW_BUTTON]&&in.digital_io.in[9]==Digital_in::_0)
 		){
 			goal.x=-X_NUDGE_POWER;
+		}*/
+		if(main_joystick.button[NUDGE_FWD_BUTTON]){
+			kick_and_lift=0;
+			if(piston.get()){
+				piston.update(1);
+			}
+			bool left=in.digital_io.in[7]==Digital_in::_1;
+			bool right=in.digital_io.in[8]==Digital_in::_1;
+			if(!left&&!right){
+				goal.y=-Y_NUDGE_POWER;
+			}else{
+				if(!left){
+					goal.theta=ROTATE_NUDGE_POWER/2;
+					goal.y=-Y_NUDGE_POWER/2;
+				}
+				if(!right){
+					goal.theta=-ROTATE_NUDGE_POWER/2;
+					goal.y=-Y_NUDGE_POWER/2;
+				}
+			}
+			if(left && right){
+				sticky_tote_goal=Sticky_tote_goal::ENGAGE_KICKER;
+			}
 		}
 	}
 	
@@ -245,7 +269,7 @@ Toplevel::Goal Main::teleop(
 		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6;
 		cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
 
-		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston);
+		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift);
 		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 		#undef X
 		return Lift::Goal::stop();

@@ -181,7 +181,7 @@ int main(){
 	auto step=[&](){
 		auto out=control(a.estimator.get(),goal);
 		a.estimator.update(t,Kicker::Input{},out);
-		cout<<t<<"\t"<<goal<<"\t"<<a.estimator.get()<<"\n";
+		cout<<t<<"\t"<<goal<<"\t"<<a.estimator.get()<<"\t"<<a.estimator<<"\n";
 		t+=TIMESTEP;
 	};
 	static const Time TIME_LIMIT=10;

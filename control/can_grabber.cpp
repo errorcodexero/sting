@@ -251,7 +251,7 @@ struct Sim{
 
 	Can_grabber::Input get()const{
 		return Can_grabber::Input{
-			0,0,0
+			0,0,0,0
 		};
 		//just choosing some port of the travel where the sensor is on
 		nyi//return .4<angle && angle<1;

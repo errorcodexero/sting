@@ -338,7 +338,7 @@ set<Toplevel::Input> examples(Toplevel::Input*){
 		Kicker::Input(),
 		*examples((Drivebase::Input*)0).begin(),
 		Pump::Input{},
-		Can_grabber::Input{0},
+		Can_grabber::Input{0,0,0,0},
 		Tote_sensors::Input{0,0,0}
 	};
 	return {a};

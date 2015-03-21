@@ -109,7 +109,7 @@ Toplevel::Goal Main::teleop(
 			bool left=in.digital_io.in[7]==Digital_in::_1;
 			bool right=in.digital_io.in[8]==Digital_in::_1;
 			if(!left&&!right){
-				goal.y=-Y_NUDGE_POWER;
+				goal.y=-Y_NUDGE_POWER*1.5;
 			}else{
 				if(!left){
 					goal.theta=ROTATE_NUDGE_POWER/2;

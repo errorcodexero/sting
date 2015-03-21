@@ -73,21 +73,21 @@ void print_diff(ostream& o,Robot_outputs &a,Robot_outputs const& b){
 			a.digital_io[i]=b.digital_io[i];
 		}
 	}
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		if(a.jaguar[i]!=b.jaguar[i]){
 			o<<"jaguar"<<i<<" "<<a.jaguar[i]<<"->"<<b.jaguar[i]<<"\n";
 			a.jaguar[i]=b.jaguar[i];
 		}
-	}
+	}*/
 	print_diff(o,a.driver_station,b.driver_station);
 }
 
-void print_diff(ostream& o,string const& s,Jaguar_input &a,Jaguar_input const& b){
+/*void print_diff(ostream& o,string const& s,Jaguar_input &a,Jaguar_input const& b){
 	if(!approx_equal(a,b)){
 		o<<s<<a<<"->"<<b<<"\n";
 		a=b;
 	}
-}
+}*/
 
 void print_diff(ostream& o,Robot_inputs &a,Robot_inputs const& b){
 	#define X(name) print_diff(o,""#name ": ",a.name,b.name);
@@ -103,9 +103,9 @@ void print_diff(ostream& o,Robot_inputs &a,Robot_inputs const& b){
 	for(unsigned i=0;i<Robot_inputs::ANALOG_INPUTS;i++){
 		X(analog[i])
 	}
-	for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+	/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 		X(jaguar[i])
-	}
+	}*/
 	X(driver_station)
 	#undef X
 }

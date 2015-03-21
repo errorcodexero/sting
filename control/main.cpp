@@ -33,20 +33,22 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
 }
 
-float round_to_level(float level,float height){
-	for(unsigned int i=0;i<6;i++){
-		if(in_range(height,level*i,level/2))return i;
+float round_to_level(float tote_height,float height){
+	static const unsigned int NUMBER_OF_LEVELS=6;
+	for(unsigned int i=0;i<NUMBER_OF_LEVELS;i++){
+		if(in_range(height,tote_height*i,tote_height/2))return i;
 	}
-	return 0.0;
+	return 0;
 }
 
 Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Joystick_data const& /*8oi_joystick*/,
+	Panel const& /*oi_panel*/,
 	Toplevel::Status_detail& toplevel_status
 ){
+	cout<<toplevel_status<<"\n";
 	Toplevel::Goal goals;
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
@@ -56,7 +58,8 @@ Toplevel::Goal Main::teleop(
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;
-
+	static const bool SLOW_TURNING=0;
+	
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
 	else if(!nudges[1].timer.done())goal.x=X_NUDGE_POWER;
@@ -73,7 +76,7 @@ Toplevel::Goal Main::teleop(
 	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 	else if(!back_turns[0].timer.done())goal.theta=BACK_TURN_POWER;
 	else if(!back_turns[1].timer.done())goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],1);//theta is /2 so rotation is reduced to prevent bin tipping.
+	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],SLOW_TURNING);//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
@@ -143,7 +146,7 @@ Toplevel::Goal Main::teleop(
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	
-	//static const double TOTE_HEIGHT = 13.5;
+	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
@@ -184,8 +187,6 @@ Toplevel::Goal Main::teleop(
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
-		
-		cout<<toplevel_status<<"\n";
 
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
@@ -298,17 +299,26 @@ unsigned pdb_location1(Drivebase::Motor m){
 	//assert(m>=0 && m<Drivebase::MOTORS);
 }
 
-Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch){
+Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch, Panel::Auto_mode auto_mode){
 	switch(m){
 		case Main::Mode::TELEOP:
 			if(autonomous_start){
 				//todo: make this depend on a switch or something.
-				return Main::Mode::AUTO_MOVE;
+				switch(auto_mode){ 
+					case Panel::Auto_mode::CAN_GRAB:
+						return Main::Mode::AUTO_GRAB;
+					case Panel::Auto_mode::MOVE:
+						return Main::Mode::AUTO_MOVE;
+					case Panel::Auto_mode::DO_NOTHING:
+						return Main::Mode::TELEOP;
+					default: assert(0);
+				}
 			}
 			return m;
 		case Main::Mode::AUTO_MOVE:
 			//encoders? going to use time for now
 			if(!autonomous || since_switch>1.7) return Main::Mode::TELEOP;
+			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
 			if(status.can_grabber.status==Can_grabber::Status::DOWN) return Main::Mode::AUTO_BACK;
@@ -329,7 +339,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
 	Joystick_data gunner_joystick=in.joystick[1];
-	Joystick_data oi_joystick=in.joystick[2];
+	Panel oi_panel=interpret(in.driver_station);
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -355,7 +365,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	
 	switch(mode){
 		case Mode::TELEOP:
-			goals=teleop(in,main_joystick,gunner_joystick,oi_joystick,toplevel_status);
+			goals=teleop(in,main_joystick,gunner_joystick,oi_panel,toplevel_status);
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;
@@ -375,7 +385,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		default: assert(0);
 	}
 
-	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed());
+	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel.auto_mode);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;

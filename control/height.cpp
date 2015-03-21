@@ -61,8 +61,8 @@ std::array<float,3> find_height(Lift_position const& a){
 	//const float HEIGHT_OF_CAN = 28.2;
 	float target=0.0;
 	if(!a.engage_kicker){
-		const float HEIGHT_OF_BIN=12.1;
-		target=a.stacked_bins*HEIGHT_OF_BIN;
+		const float TOTE_HEIGHT=12.1;
+		target=a.stacked_bins*TOTE_HEIGHT;
 	}else{
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		target=ENGAGE_KICKER_HEIGHT;
@@ -79,13 +79,11 @@ std::array<float,3> find_height(Lift_position const& a){
 	if(a.is_can){
 		int bins=a.stacked_bins;
 		if(bins==1) target+=6;
-		else if(bins==2) target+=6;
+		else if(bins==2) target+=4.5;
 		else if(bins==3) target+=3;
 		else if(bins==4) target+=2;
-		else if(bins==5) target=2.5;
-		/*const float TO_CAN_RIB=21;//used ratio of picture pixels to get height
-		target+=TO_CAN_RIB;
-		if(a.pickup){
+		else if(bins==5) target-=2.5;
+		/*if(a.pickup){
 			static const float CAN_PICKUP_MARGIN=1.5;
 			target-=CAN_PICKUP_MARGIN;
 			positive_tolerance=CAN_PICKUP_MARGIN;
@@ -93,17 +91,14 @@ std::array<float,3> find_height(Lift_position const& a){
 			static const float CAN_HOLD_MARGIN=3;
 			target+=CAN_HOLD_MARGIN;
 		}*/
-	}
-	{
-		/*static const float TO_BIN_HANDLE=10;//measured
-		target+=TO_BIN_HANDLE;*/
+	}/*else*/{
 		if(a.pickup){
-			static const float BIN_PICKUP_MARGIN=1;
-			target-=BIN_PICKUP_MARGIN;
-			positive_tolerance=BIN_PICKUP_MARGIN;
+			static const float TOTE_PICKUP_MARGIN=1;
+			target-=TOTE_PICKUP_MARGIN;
+			positive_tolerance=TOTE_PICKUP_MARGIN;
 		}else{
-			static const float BIN_HOLD_MARGIN=1.4;
-			target+=BIN_HOLD_MARGIN;
+			static const float TOTE_HOLD_MARGIN=1.4;
+			target+=TOTE_HOLD_MARGIN;
 		}
 	}
 	return std::array<float,3>{{target-negative_tolerance,target,target+positive_tolerance}};

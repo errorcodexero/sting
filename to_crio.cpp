@@ -265,10 +265,10 @@ public:
 			if(!analog_in[i]) error_code|=8;
 		}
 
-		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+		//for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 			//it just so happens that our four jags are numbered 1-4.  This is contrary to the IO map document that we have and also contrary to the recommendations in the Jaguar documentation (which recomends not to use the number 1 because it's the factory default).  We should change this at some point.  
 			//jaguar[i].init(i+1);
-		}
+		//}
 		//CANJaguar::UpdateSyncGroup(Jag_control::SYNC_GROUP);
 		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
@@ -428,13 +428,13 @@ public:
 			}*/
 		}
 
-		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+		//for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 			//jaguar[i].set(out.jaguar[i],enabled);
 			//cerr<<jaguar[i]<<"\n";
 			//cerr<<"Are we enabled?"<<enabled<<"\n";
 			//cerr<<out.jaguar[i]<<"\n";
 			//cerr<<jaguar[i].jaguar->GetSpeed()<<"\n";
-		}
+		//}
 /*			cerr<<"\n"<<jaguar[0].jaguar->GetSpeed()<<"\n";
 			cerr<<jaguar[1].jaguar->GetSpeed()<<"\n";
 			cerr<<jaguar[2].jaguar->GetSpeed()<<"\n";
@@ -520,9 +520,9 @@ public:
 		pair<Robot_inputs,int> in1=read(mode);
 		Robot_inputs in=in1.first;
 		error_code|=in1.second;
-		for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
+		/*for(unsigned i=0;i<Robot_outputs::CAN_JAGUARS;i++){
 			//in.jaguar[i]=.3;//jaguar[i].get();
-		}
+		}*/
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
 			//in.digital_io[i]=digital_io[i].get();
 		}

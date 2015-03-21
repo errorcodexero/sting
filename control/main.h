@@ -7,6 +7,7 @@
 #include "../util/countdown_timer.h"
 #include "../util/countup_timer.h"
 #include "toplevel.h"
+#include "../input/panel2015.h"
 
 struct Main{
 	enum class Mode{TELEOP,AUTO_MOVE,AUTO_GRAB,AUTO_BACK,AUTO_RELEASE};
@@ -39,7 +40,7 @@ struct Main{
 	Nudge nudges[6];//Left, Right, Forward, Backward, Clockwise, Counter-clockwise
 	Nudge back_turns[2];//Backwards and left, Backwards and right
 	
-	Toplevel::Goal teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Joystick_data const&,Toplevel::Status_detail&);
+	Toplevel::Goal teleop(Robot_inputs const&,Joystick_data const&,Joystick_data const&,Panel const&,Toplevel::Status_detail&);
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };

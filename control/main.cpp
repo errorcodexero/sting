@@ -44,9 +44,10 @@ Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Joystick_data const& /*8oi_joystick*/,
+	Panel const& /*oi_panel*/,
 	Toplevel::Status_detail& toplevel_status
 ){
+	cout<<toplevel_status<<"\n";
 	Toplevel::Goal goals;
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
@@ -56,7 +57,7 @@ Toplevel::Goal Main::teleop(
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;
-
+	
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
 	else if(!nudges[1].timer.done())goal.x=X_NUDGE_POWER;
@@ -143,7 +144,7 @@ Toplevel::Goal Main::teleop(
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	
-	//static const double TOTE_HEIGHT = 13.5;
+	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
 	goals.combo_lift.can=[&](){
 		if(gunner_joystick.button[Gamepad_button::B]){
@@ -184,8 +185,6 @@ Toplevel::Goal Main::teleop(
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
-		
-		cout<<toplevel_status<<"\n";
 
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
@@ -334,7 +333,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
 	Joystick_data gunner_joystick=in.joystick[1];
-	Joystick_data oi_joystick=in.joystick[2];
+	Panel oi_panel=interpret(in.driver_station);
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -360,7 +359,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	
 	switch(mode){
 		case Mode::TELEOP:
-			goals=teleop(in,main_joystick,gunner_joystick,oi_joystick,toplevel_status);
+			goals=teleop(in,main_joystick,gunner_joystick,oi_panel,toplevel_status);
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;

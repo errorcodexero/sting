@@ -317,6 +317,12 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 		default: assert(0);
 	}
 }
+
+/*
+Can Pulleyf
+*/
+
+
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
@@ -362,7 +368,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goals.drive.y=.6;
 			break;
 		case Mode::AUTO_RELEASE:
-			//by default the can grabber wants to be up, so let that happen here
+			goals.can_grabber=Can_grabber::Goal::TOP;
 			break;
 		default: assert(0);
 	}

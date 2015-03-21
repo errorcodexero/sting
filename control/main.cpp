@@ -44,7 +44,7 @@ Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Joystick_data const& /*8oi_joystick*/,
+	Panel const& oi_panel,
 	Toplevel::Status_detail& toplevel_status
 ){
 	Toplevel::Goal goals;
@@ -56,7 +56,7 @@ Toplevel::Goal Main::teleop(
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;
-
+	
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
 	else if(!nudges[1].timer.done())goal.x=X_NUDGE_POWER;
@@ -334,7 +334,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
 	Joystick_data gunner_joystick=in.joystick[1];
-	Joystick_data oi_joystick=in.joystick[2];
+	Panel oi_panel=interpret(in.driver_station);
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -360,7 +360,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	
 	switch(mode){
 		case Mode::TELEOP:
-			goals=teleop(in,main_joystick,gunner_joystick,oi_joystick,toplevel_status);
+			goals=teleop(in,main_joystick,gunner_joystick,oi_panel,toplevel_status);
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;

@@ -123,6 +123,7 @@ Panel interpret(Driver_station_input d){
 	return panel;
 }
 
+#ifdef PANEL2015_TEST
 Driver_station_input driver_station_input_rand(){//Copied over from hammer. Adrian update this if needed.
 	Driver_station_input r;
 	for(unsigned i=0;i<r.ANALOG_INPUTS;i++){
@@ -134,7 +135,6 @@ Driver_station_input driver_station_input_rand(){//Copied over from hammer. Adri
 	return r;
 }
 
-#ifdef PANEL2015_TEST
 int main(){
 	Panel p;
 	for(unsigned i=0;i<50;i++){

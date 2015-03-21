@@ -115,7 +115,7 @@ Panel interpret(Driver_station_input d){
 	}
 	{
 		float op=d.analog[0];//default: -1
-		static const float DEFAULT=-1,COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0;
+		static const float COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
 		if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2&&op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
 		else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2&&op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
 		else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2&&op<MOVE_COLLECT+(COLLECT_CURRENT-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
@@ -125,8 +125,18 @@ Panel interpret(Driver_station_input d){
 	if(d.digital[3])panel.lifter_off=1;
 	if(!d.digital[3])panel.lifter_off=0;
 	{	
-		//float updowncontrol=d.analog[4];
-		
+		static const float DOWN=1, UP=.48, DEFAULT=-1;
+		float updowncontrol=d.analog[4];
+		if(updowncontrol>UP-(UP-DEFAULT)/2 && updowncontrol<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
+		else if(updowncontrol>DOWN-(DOWN-UP)/2 && updowncontrol<DOWN+.25 ) panel.move_arm_cont=-1;
+		else panel.move_arm_cont=0;		
+	}
+	{
+		static const float DOWN=0,UP=-.5,DEFAULT=-1;;
+		float level_up_down_control=d.analog[4];
+		if(level_up_down_control>UP-(UP-DEFAULT)/2 && level_up_down_control<UP+(DOWN-UP)/2)panel.move_arm_one=1;
+		if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
+		else panel.move_arm_one=0;
 	}
 	return panel;
 }

@@ -68,7 +68,6 @@ Toplevel::Goal Main::teleop(
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
 	Panel const&  oi_panel,
-	Joystick_data const& test_joystick,
 	Toplevel::Status_detail& toplevel_status
 ){
 	cout<<toplevel_status<<"\n";
@@ -296,10 +295,10 @@ Toplevel::Goal Main::teleop(
 					{
 					bool input=[&](){
 						for(int i=0;i<JOY_AXES;i++) {
-							if(test_joystick.axis[i]!=0)return 1;
+							if(oi_panel.values.axis[i]!=0)return 1;
 						}
 						for(int i=0;i<JOY_BUTTONS;i++) {
-							if(test_joystick.button[i]!=0)return 1;
+							if(oi_panel.values.button[i]!=0)return 1;
 						}
 						return 0;
 					}();
@@ -413,7 +412,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);
 	Joystick_data main_joystick=in.joystick[0];
 	Joystick_data gunner_joystick=in.joystick[1];
-	Joystick_data test_joystick=in.joystick[2];
 	Panel oi_panel=interpret(in.joystick[2]);
 	force.update(
 		main_joystick.button[Gamepad_button::A],
@@ -440,7 +438,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	
 	switch(mode){
 		case Mode::TELEOP:
-			goals=teleop(in,main_joystick,gunner_joystick,oi_panel,test_joystick,toplevel_status);
+			goals=teleop(in,main_joystick,gunner_joystick,oi_panel,toplevel_status);
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;

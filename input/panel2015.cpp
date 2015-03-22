@@ -8,7 +8,7 @@ using namespace std;
 
 Panel::Panel():
 	auto_mode(Auto_mode::DO_NOTHING),
-	level_button(Level_button::LEVEL0),
+	level_button(Level_button::DEFAULT),
 	operation_buttons(Operation_buttons::DROP_CURRENT),
 	slide_pos(0.0),
 	move_arm_to_pos(0),
@@ -99,6 +99,7 @@ Panel interpret(Driver_station_input d){
 	}
 	{
 		float lev=d.analog[1];//default: -1
+		//cout<<"\n\n\n lev:"<<lev<<"  2:"<<d.digital[2]<<"\n\n\n";
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
 		cout<<endl<<lev<<endl;
 		if(!d.digital[2]){//tests if override is being pushed

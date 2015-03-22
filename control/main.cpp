@@ -67,7 +67,7 @@ Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Panel const& oi_panel,
+	Panel const& /* oi_panel*/,
 	Toplevel::Status_detail& toplevel_status
 ){
 	cout<<toplevel_status<<"\n";
@@ -279,14 +279,14 @@ Toplevel::Goal Main::teleop(
 					break;
 				case Joystick_section::CENTER:
 					{
-					Main::Sticky_tote_goal temp_level=convert_level(oi_panel.level_button);
-					if (temp_level!=Main::Sticky_tote_goal::STOP) {
-						sticky_tote_goal=temp_level;
-						can_priority=0;
-					}
+					//Main::Sticky_tote_goal temp_level=convert_level(oi_panel.level_button);
+					//if(temp_level!=Main::Sticky_tote_goal::STOP) {
+					//	sticky_tote_goal=temp_level;
+					//	can_priority=0;
+					//}
 					break;
 					}
-					default: assert(0);
+				default: assert(0);
 			}
 			if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 				sticky_tote_goal=Sticky_tote_goal::LEVEL5;
@@ -297,14 +297,14 @@ Toplevel::Goal Main::teleop(
 			if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
 			//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) tote_lift_pos.stacked_bins=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())+1;
 			//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) tote_lift_pos.stacked_bins=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())-1;
-			if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;//=ENGAGE_KICKER_HEIGHT; 	263 	if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;//=ENGAGE_KICKER_HEIGHT;
+			if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;
 			if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1;
 			if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2;
 			if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3;
 			if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4;
 			if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
 			//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6;
-			//cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
+			cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
 			#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift);
 			X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
 			#undef X

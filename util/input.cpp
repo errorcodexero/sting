@@ -14,8 +14,8 @@ Input::Input(Type t,unsigned i):type_(t),index_(i){}
 	X(encoder,ENCODER,Digital_inputs::ENCODERS)\
 	X(analog,ANALOG,Robot_inputs::ANALOG_INPUTS)\
 	X(talon_srx,TALON_SRX,Robot_inputs::TALON_SRX_INPUTS)\
-	X(can_jaguar,CAN_JAGUAR,Robot_outputs::CAN_JAGUARS)\
 	X(current,CURRENT,Robot_inputs::CURRENT)
+//	X(can_jaguar,CAN_JAGUAR,Robot_outputs::CAN_JAGUARS)
 
 bool numbered_type(Input::Type t){
 	#define X(A,B,C) if(t==Input::Type::B) return 1;

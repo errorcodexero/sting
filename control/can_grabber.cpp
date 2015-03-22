@@ -7,81 +7,92 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
-Can_grabber::Input::Input(bool a,bool):sensor(a){}
-CMP_OPS(Can_grabber::Input,CAN_GRABBER_INPUT)
-
-/*ostream& operator<<(ostream& o,Can_grabber::Input a){
-	return o<<"Can_grabber::Input("<<a.sensor<<")";
-}*/
-
-Can_grabber::Input_reader::Input_reader(unsigned i):sensor_dio(i){
-	assert(i<Robot_outputs::DIGITAL_IOS);
-}
-
-Can_grabber::Input Can_grabber::Input_reader::operator()(Robot_inputs all)const{
-	return all.digital_io.in[sensor_dio]==Digital_in::_1;
-}
-
-Robot_inputs Can_grabber::Input_reader::operator()(Robot_inputs all,Input in)const{
-	all.digital_io.in[sensor_dio]=in.sensor?Digital_in::_1:Digital_in::_0;
-	return all;
-}
-
 ostream& operator<<(ostream& o,Can_grabber::Output a){
 	#define X(NAME) if(a==Can_grabber::Output::NAME) return o<<""#NAME;
-	X(ON) X(OFF)
+	X(RELEASE) X(LOCK)
 	#undef X
 	assert(0);
 }
 
-Can_grabber::Output control(Can_grabber::Status_detail status,Can_grabber::Goal goal){
-	return ready(status,goal)?Can_grabber::Output::OFF:Can_grabber::Output::ON;
+Can_grabber::Output control(Can_grabber::Status_detail const& status,Can_grabber::Goal goal){
+	switch(status.status){
+		case Can_grabber::Status::INITIAL:
+			return (goal==Can_grabber::Goal::TOP)?Can_grabber::Output::LOCK:Can_grabber::Output::RELEASE;
+		case Can_grabber::Status::GETTING_STUCK:
+			return Can_grabber::Output::LOCK;
+		case Can_grabber::Status::GOING_UP:
+		case Can_grabber::Status::STUCK_UP:
+		case Can_grabber::Status::GOING_DOWN:
+		case Can_grabber::Status::DOWN:
+			return Can_grabber::Output::RELEASE;
+		default: assert(0);
+	}
 }
 
-/*bool operator<(Can_grabber::Input a,Can_grabber::Input b){
-	return a.sensor<b.sensor;
-}*/
-
-Can_grabber::Estimator::Estimator():last(Can_grabber::Status_detail::MID_UP){}
+Can_grabber::Estimator::Estimator():last(Status::INITIAL){}
 
 void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber::Output out){
-	static const double SECONDS=.5;
+	lift.update(time,in,Lift::Output{}); //we're lucky that the lift's estimator doesn't depend on its output at the moment
+	auto height=lift.get().inches_off_ground();
+
+	static const double LIFT_THRESHOLD=3; //level at which the mechanism would fail to get to the bottom
+	static const double LIFT_FULL=40; //level where the mechanism is fully folded in
+
+	const bool part_up=height>LIFT_THRESHOLD;
+	const bool full_up=height>LIFT_FULL;
 
 	switch(last){
-		case Can_grabber::Status::TOP:
-			if(out==Output::ON){
-				last=Status::MID_DOWN;
-				timer.set(SECONDS);
+		case Can_grabber::Status::INITIAL:
+			if(out==Output::RELEASE){
+				static const double DROP_TIME=1;
+				timer.set(DROP_TIME);
 				timer.update(time,0);
+				last=Status::GOING_DOWN;
+				return;
+			}
+			if(part_up){
+				last=Status::GETTING_STUCK;
 			}
 			break;
-		case Can_grabber::Status::MID_DOWN:
-			timer.update(time,out==Output::ON);
+		case Can_grabber::Status::GOING_DOWN:
+			timer.update(time,out==Output::RELEASE);
 			if(timer.done()){
-				last=Status::BOTTOM;
+				last=Status::DOWN;
+				return;
+			}
+			if(part_up){
+				last=Status::GETTING_STUCK;
 			}
 			break;
-		case Can_grabber::Status::BOTTOM:
-			if(out==Output::ON){
-				last=Status::MID_UP;
-			}
+		case Can_grabber::Status::DOWN:
+			if(part_up) last=Status::GOING_UP;
 			break;
-		case Can_grabber::Status::MID_UP:
-			if(in.sensor){
-				last=Can_grabber::Status::TOP;
+		case Can_grabber::Status::GOING_UP:
+			if(full_up) last=Status::STUCK_UP;
+			break;
+		case Can_grabber::Status::STUCK_UP:
+			break;
+		case Can_grabber::Status::GETTING_STUCK:
+			if(full_up){
+				last=Status::STUCK_UP;
+				return;
+			}
+			if(out==Output::RELEASE){
+				last=Status::GOING_UP;
 			}
 			break;
 		default: assert(0);
 	}
 }
 
-Can_grabber::Status_detail Can_grabber::Estimator::get()const{ return last; }
+Can_grabber::Status_detail Can_grabber::Estimator::get()const{
+	return Can_grabber::Status_detail{last,lift.get()};
+}
 
-ostream& operator<<(ostream& o,Can_grabber::Status_detail a){
-	#define X(name) if(a==Can_grabber::Status_detail::name) return o<<""#name;
-	X(TOP) X(MID_DOWN) X(BOTTOM) X(MID_UP)
-	#undef X
-	nyi
+ostream& operator<<(ostream& o,Can_grabber::Status_detail  a){
+	o<<"Can_grabber::Status_detail(";
+	o<<a.status<<","<<a.lift;
+	return o<<")";
 }
 
 ostream& operator<<(ostream& o, Can_grabber::Estimator estimator) {
@@ -98,16 +109,40 @@ ostream& operator<<(ostream& o, Can_grabber::Output_applicator output_applicator
 
 Can_grabber::Output_applicator::Output_applicator(int a):pwm(a){}
 
-Can_grabber::Status status(Can_grabber::Status_detail const& a){
-	return a;
+Can_grabber::Status status(Can_grabber::Status_detail const& status){
+	return status.status;
 }
 
 Can_grabber::Can_grabber(int sensor_dio,int pwm):input_reader(sensor_dio),output_applicator(pwm){}
 
 bool ready(Can_grabber::Status status,Can_grabber::Goal goal){
-	if(goal==Can_grabber::Goal::TOP) return (status==Can_grabber::Status_detail::TOP);
+	if(goal==Can_grabber::Goal::TOP){
+		switch(status){
+			case Can_grabber::Status::INITIAL:
+			case Can_grabber::Status::GETTING_STUCK:
+			case Can_grabber::Status::STUCK_UP:
+				return 1;
+			case Can_grabber::Status::GOING_UP:
+			case Can_grabber::Status::GOING_DOWN:
+			case Can_grabber::Status::DOWN:
+				return 0;
+			default: assert(0);
+		}
+	}else if(goal==Can_grabber::Goal::BOTTOM){
+		switch(status){
+			case Can_grabber::Status::INITIAL: return 0;
+			case Can_grabber::Status::GOING_UP: return 0;
+			case Can_grabber::Status::GOING_DOWN: return 0;
+			case Can_grabber::Status::DOWN: return 1;
+			case Can_grabber::Status::STUCK_UP:
+			case Can_grabber::Status::GETTING_STUCK:
+				return 0;
+			default: assert(0);
+		}
+	}
+	/*if(goal==Can_grabber::Goal::TOP) return (status==Can_grabber::Status_detail::TOP);
 	if(goal==Can_grabber::Goal::BOTTOM) return (status==Can_grabber::Status_detail::BOTTOM);
-	assert(0);
+	assert(0);*/nyi;
 }
 
 std::ostream& operator<<(std::ostream& o,Can_grabber const& can_grabber){
@@ -116,25 +151,33 @@ std::ostream& operator<<(std::ostream& o,Can_grabber const& can_grabber){
 }
 
 std::set<Can_grabber::Status_detail> examples(Can_grabber::Status_detail*) {
-	return {
+	set<Can_grabber::Status_detail> r;
+	for(auto status:examples((Can_grabber::Status*)0)){
+		for(auto l:examples((Lift::Status*)0)){
+			r|=Can_grabber::Status_detail{status,l};
+		}
+	}
+	return  r;
+
+	/*return {
 		Can_grabber::Status_detail::TOP,
 		Can_grabber::Status_detail::MID_DOWN,
 		Can_grabber::Status_detail::BOTTOM,
 		Can_grabber::Status_detail::MID_UP
-	};
+	};*/
 }
 
-std::set<Can_grabber::Input> examples(Can_grabber::Input*) {
-	return {
-		Can_grabber::Input{0},
+//std::set<Can_grabber::Input> examples(Can_grabber::Input*) {
+//nyi/*	return {
+/*		Can_grabber::Input{0},
 		Can_grabber::Input{1}
-	};
-}
+	};*/
+//}*/
 
 std::set<Can_grabber::Output> examples(Can_grabber::Output*) {
 	return {
-		Can_grabber::Output::ON,
-		Can_grabber::Output::OFF
+		Can_grabber::Output::RELEASE,
+		Can_grabber::Output::LOCK
 	};
 }
 
@@ -150,12 +193,12 @@ ostream& operator<<(ostream& o,Can_grabber::Goal a){
 }
 
 Robot_outputs Can_grabber::Output_applicator::operator()(Robot_outputs r,Output out)const{
-	r.pwm[pwm]=(out==Can_grabber::Output::ON)?.5:0;
+	r.solenoid[2]=(out==Output::RELEASE);
 	return r;
 }
 
 Can_grabber::Output Can_grabber::Output_applicator::operator()(Robot_outputs r)const{
-	return (r.pwm[pwm]>.25)?Can_grabber::Output::ON:Can_grabber::Output::OFF;
+	return r.solenoid[2]?Output::RELEASE:Output::LOCK;
 }
 
 bool operator==(Can_grabber::Estimator const& a,Can_grabber::Estimator const& b){
@@ -184,8 +227,8 @@ struct Sim{
 	public:
 	Sim():angle(0){}
 
-	void update(Time now,Can_grabber::Output out){
-		if(last==-1){
+	void update(Time /*now*/,Can_grabber::Output /*out*/){
+		/*if(last==-1){
 			last=now;
 			return;
 		}
@@ -199,14 +242,46 @@ struct Sim{
 				return;
 			case Can_grabber::Output::OFF:return;
 			default: assert(0);
-		}
+		}*/
 	}
 
 	Can_grabber::Input get()const{
+		return Can_grabber::Input{
+			0,0,0,0
+		};
 		//just choosing some port of the travel where the sensor is on
-		return .4<angle && angle<1;
+		nyi//return .4<angle && angle<1;
 	}
 };
+
+set<Can_grabber::Status> examples(Can_grabber::Status*){
+	return {
+		#define X(NAME) Can_grabber::Status::NAME,
+		CAN_GRABBER_STATUS
+		#undef X
+	};
+}
+
+ostream& operator<<(ostream& o,Can_grabber::Status a){
+	#define X(NAME) if(a==Can_grabber::Status::NAME) return o<<""#NAME;
+	CAN_GRABBER_STATUS
+	#undef X
+	assert(0);
+}
+
+bool operator<(Can_grabber::Status_detail const& a,Can_grabber::Status_detail const& b){
+	if(a.status<b.status) return 1;
+	if(b.status<a.status) return 0;
+	return a.lift<b.lift;
+}
+
+bool operator==(Can_grabber::Status_detail const& a,Can_grabber::Status_detail const& b){
+	return a.status==b.status && a.lift==b.lift;
+}
+
+bool operator!=(Can_grabber::Status_detail const& a,Can_grabber::Status_detail const& b){
+	return !(a==b);
+}
 
 #ifdef CAN_GRABBER_TEST
 #include "formal.h"
@@ -224,10 +299,10 @@ int main(){
 	Sim s;
 	static const Time STEPSIZE=.01;
 	Monitor<Can_grabber::Input> sensor;
-	Monitor<Can_grabber::Status> status;
+	Monitor<Can_grabber::Status_detail> status;
 	Can_grabber::Goal goal=Can_grabber::Goal::TOP;
 	cout<<"time\tangle\tinput\t\t\toutput\n";
-	Can_grabber::Output out=Can_grabber::Output::OFF;
+	Can_grabber::Output out=Can_grabber::Output::LOCK;
 	Time f=0;
 	auto step=[&](){
 		c.estimator.update(f,s.get(),out);
@@ -238,18 +313,22 @@ int main(){
 		cout<<f<<"\t"<<clip1(s.angle)<<"\t"<<s.get()<<"\t"<<out<<"\t"<<c.estimator<<"\n";
 		f+=STEPSIZE;
 	};
-	for(;c.estimator.get()!=Can_grabber::Status::TOP && f<10;){
+	for(;c.estimator.get().status!=Can_grabber::Status::INITIAL && f<10;){
 		step();
 	}
-	if(c.estimator.get()!=Can_grabber::Status::TOP){
+	if(c.estimator.get().status!=Can_grabber::Status::INITIAL){
 		nyi
 	}
 	goal=Can_grabber::Goal::BOTTOM;
-	while(c.estimator.get()!=Can_grabber::Status::BOTTOM && f<10){
+	while(c.estimator.get().status!=Can_grabber::Status::DOWN && f<10){
 		step();
 	}
-	if(c.estimator.get()!=Can_grabber::Status::BOTTOM){
+	if(c.estimator.get().status!=Can_grabber::Status::DOWN){
 		nyi
+	}
+	goal=Can_grabber::Goal::TOP;
+	for(unsigned i=0;i<10;i++){
+		step();
 	}
 	return 0;
 }

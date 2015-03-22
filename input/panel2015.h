@@ -8,13 +8,14 @@
 #include "../control/combo_lift.h"
 
 struct Panel{
-	enum class Auto_mode{DO_NOTHING,MOVE,FULL_RUN};
-	Auto_mode auto_mode;
-	enum class Level_buttons{LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};
-	Level_buttons level_buttons;
+	enum class Auto_mode{DO_NOTHING,MOVE,CAN_GRAB};//Added
+	Auto_mode auto_mode;//Added
+	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};//Added
+	Level_button level_button;
 	enum class Operation_buttons{COLLECT_CURRENT,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP};
 	Operation_buttons operation_buttons;
 	float slide_pos;
+	float override_height;
     //Buttons:
 	bool move_arm_to_pos;
 	bool current_collect;
@@ -35,7 +36,7 @@ struct Panel{
 	Panel();
 };
 std::ostream& operator<<(std::ostream&,Panel::Auto_mode);
-std::ostream& operator<<(std::ostream&,Panel::Level_buttons);
+std::ostream& operator<<(std::ostream&,Panel::Level_button);
 std::ostream& operator<<(std::ostream&,Panel);
 
 Panel interpret(Driver_station_input);

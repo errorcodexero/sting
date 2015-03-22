@@ -5,29 +5,41 @@
 #include "../util/interface.h"
 #include "../util/countdown_timer.h"
 #include "../util/quick.h"
+#include "lift.h"
 
 struct Can_grabber{
-	#define CAN_GRABBER_INPUT(X) X(bool,sensor)
-	DECLARE_STRUCT(Input,CAN_GRABBER_INPUT)
+	//#define CAN_GRABBER_INPUT(X) X(double,tote_height)
+	//DECLARE_STRUCT(Input,CAN_GRABBER_INPUT)
+	typedef Lift::Input Input;
+	typedef Lift::Input_reader Input_reader;
 
-	struct Input_reader{
+	/*struct Input_reader{
 		unsigned sensor_dio;
 
 		explicit Input_reader(unsigned);
 		Input operator()(Robot_inputs)const;
 		Robot_inputs operator()(Robot_inputs,Input)const;
-	};
+	};*/
 	Input_reader input_reader;
 
-	enum class Output{ON,OFF};
+	enum class Output{RELEASE,LOCK};
 	
-	enum class Status_detail{TOP,MID_DOWN,BOTTOM,MID_UP};
-	
-	typedef Status_detail Status;
+	#define CAN_GRABBER_STATUS X(INITIAL) X(GOING_DOWN) X(DOWN) X(GOING_UP) X(STUCK_UP) X(GETTING_STUCK)
+	enum class Status{
+		#define X(NAME) NAME,
+		CAN_GRABBER_STATUS
+		#undef X
+	};
+
+	struct Status_detail {
+		Status status;
+		Lift::Status lift;
+	};
 	
 	struct Estimator {
-		Status_detail last;
-		
+		Status last;
+		Lift::Estimator lift;
+
 		Estimator();
 
 		void update(Time,Input,Output);
@@ -60,14 +72,20 @@ bool operator!=(Can_grabber::Estimator const&,Can_grabber::Estimator const&);
 std::ostream& operator<<(std::ostream&,Can_grabber::Output);
 std::ostream& operator<<(std::ostream&,Can_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Can_grabber::Status_detail);
+std::ostream& operator<<(std::ostream&,Can_grabber::Status);
 std::ostream& operator<<(std::ostream&,Can_grabber::Estimator);
 std::ostream& operator<<(std::ostream&,Can_grabber::Output_applicator);
-Can_grabber::Status status(Can_grabber::Status_detail const&);
-bool ready(Can_grabber::Status,Can_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Can_grabber const&);
+std::ostream& operator<<(std::ostream&,Can_grabber const&);
+bool ready(Can_grabber::Status,Can_grabber::Goal);
 std::set<Can_grabber::Status_detail> examples(Can_grabber::Status_detail*);
+bool operator<(Can_grabber::Status_detail const&,Can_grabber::Status_detail const&);
+bool operator!=(Can_grabber::Status_detail const&,Can_grabber::Status_detail const&);
+
+std::set<Can_grabber::Status> examples(Can_grabber::Status*);
 std::set<Can_grabber::Input> examples(Can_grabber::Input*);
 std::set<Can_grabber::Output> examples(Can_grabber::Output*);
-Can_grabber::Output control(Can_grabber::Status,Can_grabber::Goal);
+Can_grabber::Output control(Can_grabber::Status_detail const&,Can_grabber::Goal);
+Can_grabber::Status status(Can_grabber::Status_detail const&);
 
 #endif

@@ -8,7 +8,7 @@ using namespace std;
 
 Panel::Panel():
 	auto_mode(Auto_mode::DO_NOTHING),
-	level_buttons(Level_buttons::LEVEL0),
+	level_button(Level_button::LEVEL0),
 	operation_buttons(Operation_buttons::DROP_CURRENT),
 	slide_pos(0.0),
 	move_arm_to_pos(0),
@@ -30,20 +30,20 @@ ostream& operator<<(ostream& o,Panel::Auto_mode a){
 	o<<" Auto_Mode(";
 	if(a==Panel::Auto_mode::DO_NOTHING)o<<"do_nothing";
 	if(a==Panel::Auto_mode::MOVE)o<<"move";
-	if(a==Panel::Auto_mode::FULL_RUN)o<<"full_run";
+	if(a==Panel::Auto_mode::CAN_GRAB)o<<"can_grab";
 	o<<")";
 	return o;
 }
 
-ostream& operator<<(ostream& o,Panel::Level_buttons a){
+ostream& operator<<(ostream& o,Panel::Level_button a){
 	o<<" Level(";
-	if(a==Panel::Level_buttons::LEVEL0)o<<"0";
-	if(a==Panel::Level_buttons::LEVEL1)o<<"1";
-	if(a==Panel::Level_buttons::LEVEL2)o<<"2";
-	if(a==Panel::Level_buttons::LEVEL3)o<<"3";
-	if(a==Panel::Level_buttons::LEVEL4)o<<"4";
-	if(a==Panel::Level_buttons::LEVEL5)o<<"5";	
-	if(a==Panel::Level_buttons::LEVEL6)o<<"6";
+	if(a==Panel::Level_button::LEVEL0)o<<"0";
+	if(a==Panel::Level_button::LEVEL1)o<<"1";
+	if(a==Panel::Level_button::LEVEL2)o<<"2";
+	if(a==Panel::Level_button::LEVEL3)o<<"3";
+	if(a==Panel::Level_button::LEVEL4)o<<"4";
+	if(a==Panel::Level_button::LEVEL5)o<<"5";	
+	if(a==Panel::Level_button::LEVEL6)o<<"6";
 	o<<")";
 	return o;
 }
@@ -61,7 +61,7 @@ ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 ostream& operator<<(ostream& o,Panel p){
 	o<<"Panel(";
 	o<<" "<<p.auto_mode;
-	o<<", "<<p.level_buttons;
+	o<<", "<<p.level_button;
 	o<<", "<<p.operation_buttons;
 	o<<", slide_pos:"<<p.slide_pos;
 	o<<", Buttons(";
@@ -84,45 +84,65 @@ ostream& operator<<(ostream& o,Panel p){
     return o;
 }
 
-Panel::Auto_mode automodeconvert(int potin){
+Panel::Auto_mode auto_mode_convert(int potin){
 	if(potin==0)return Panel::Auto_mode::DO_NOTHING;
 	if(potin==1)return Panel::Auto_mode::MOVE;
-	if(potin==2)return Panel::Auto_mode::FULL_RUN;
-	return Panel::Auto_mode::DO_NOTHING;
+	if(potin==2)return Panel::Auto_mode::CAN_GRAB;
+	else return Panel::Auto_mode::DO_NOTHING;
 }
 
 Panel interpret(Driver_station_input d){
 	Panel panel;
 	{
 	Volt auto_mode=d.analog[0]/3.3*5;
-	panel.auto_mode=automodeconvert(interpret_10_turn_pot(auto_mode));
+	panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{
-	float lev=d.analog[1];//default: -1
-	static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
-	if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
-	else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2&&lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
-	else if(lev>LEVEL2-(LEVEL2-LEVEL1)/2&&lev<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
-	else if(lev>LEVEL3-(LEVEL3-LEVEL2)/2&&lev<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
-	else if(lev>LEVEL4-(LEVEL4-LEVEL3)/2&&lev<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
-	else if(lev>LEVEL5-(LEVEL5-LEVEL4)/2&&lev<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
-	else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2&&lev<LEVEL6+.25)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
+		float lev=d.analog[1];//default: -1
+		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
+		if(!d.digital[2]){//tests if override is being pushed
+			if(lev==DEFAULT)panel.level_button=Panel::Level_button::DEFAULT;
+			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75
+			else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2&&lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_button=Panel::Level_button::LEVEL1;//-.5
+			else if(lev>LEVEL2-(LEVEL2-LEVEL1)/2&&lev<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_button=Panel::Level_button::LEVEL2;//-.25
+			else if(lev>LEVEL3-(LEVEL3-LEVEL2)/2&&lev<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_button=Panel::Level_button::LEVEL3;//0
+			else if(lev>LEVEL4-(LEVEL4-LEVEL3)/2&&lev<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_button=Panel::Level_button::LEVEL4;//.32
+			else if(lev>LEVEL5-(LEVEL5-LEVEL4)/2&&lev<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_button=Panel::Level_button::LEVEL5;//.65
+			else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2&&lev<LEVEL6+.25)panel.level_button=Panel::Level_button::LEVEL6;//1
+		}
+		else{//This sets it to the SlipnSlide
+			panel.override_height=(d.analog[2]+1)*((65-5)/2);
+		}
 	}
 	{
-	float op=d.analog[0];//default: -1
-	static const float DEFAULT=-1,COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0;
-	if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2&&op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
-	else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2&&op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
-	else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2&&op<MOVE_COLLECT+(COLLECT_CURRENT-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
-	else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2&&op<COLLECT_CURRENT+.25)panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
+		float op=d.analog[0];//default: -1
+		static const float COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
+		if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2&&op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
+		else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2&&op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
+		else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2&&op<MOVE_COLLECT+(COLLECT_CURRENT-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
+		else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2&&op<COLLECT_CURRENT+.25)panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
 	}
-	panel.slide_pos=d.analog[2];
+	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
+	if(d.digital[3])panel.lifter_off=1;
+	if(!d.digital[3])panel.lifter_off=0;
+	{	
+		static const float DOWN=1, UP=.48, DEFAULT=-1;
+		float updowncontrol=d.analog[4];
+		if(updowncontrol>UP-(UP-DEFAULT)/2 && updowncontrol<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
+		else if(updowncontrol>DOWN-(DOWN-UP)/2 && updowncontrol<DOWN+.25 ) panel.move_arm_cont=-1;
+		else panel.move_arm_cont=0;		
+	}
 	{
+		static const float DOWN=0,UP=-.5,DEFAULT=-1;;
+		float level_up_down_control=d.analog[4];
+		if(level_up_down_control>UP-(UP-DEFAULT)/2 && level_up_down_control<UP+(DOWN-UP)/2)panel.move_arm_one=1;
+		if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
+		else panel.move_arm_one=0;
 	}
-	//if d.analog[4]=<-.75
 	return panel;
 }
 
+#ifdef PANEL2015_TEST
 Driver_station_input driver_station_input_rand(){//Copied over from hammer. Adrian update this if needed.
 	Driver_station_input r;
 	for(unsigned i=0;i<r.ANALOG_INPUTS;i++){
@@ -134,7 +154,6 @@ Driver_station_input driver_station_input_rand(){//Copied over from hammer. Adri
 	return r;
 }
 
-#ifdef PANEL2015_TEST
 int main(){
 	Panel p;
 	for(unsigned i=0;i<50;i++){

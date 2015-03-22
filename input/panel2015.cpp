@@ -100,6 +100,7 @@ Panel interpret(Driver_station_input d){
 	{
 		float lev=d.analog[1];//default: -1
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
+		cout<<endl<<lev<<endl;
 		if(!d.digital[2]){//tests if override is being pushed
 			if(lev==DEFAULT)panel.level_button=Panel::Level_button::DEFAULT;
 			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75

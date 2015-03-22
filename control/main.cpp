@@ -80,6 +80,7 @@ Toplevel::Goal Main::teleop(
 
 	static const float BACK_TURN_POWER=.2;
 	static const float BACK_MOVE_POWER=.5;
+	static const bool SLOW_TURNING=0;
 	
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
@@ -97,7 +98,7 @@ Toplevel::Goal Main::teleop(
 	else if(!nudges[5].timer.done()) goal.theta=ROTATE_NUDGE_POWER;
 	else if(!back_turns[0].timer.done())goal.theta=BACK_TURN_POWER;
 	else if(!back_turns[1].timer.done())goal.theta=-BACK_TURN_POWER;
-	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],0);//theta is /2 so rotation is reduced to prevent bin tipping.
+	else goal.theta=-set_drive_speed(main_joystick,4,turbo_button,main_joystick.axis[Gamepad_axis::RTRIGGER],SLOW_TURNING);//theta is /2 so rotation is reduced to prevent bin tipping.
 
 	const bool normal_nudge_enable=turbo_button<.25;			
 	static const auto NUDGE_LEFT_BUTTON=Gamepad_button::X,NUDGE_RIGHT_BUTTON=Gamepad_button::B;
@@ -109,7 +110,7 @@ Toplevel::Goal Main::teleop(
 		if(start)nudges[i].timer.set(.1);
 		nudges[i].timer.update(in.now,1);
 	}
-	bool kick_and_lift=1;
+	//bool kick_and_lift=1;
 	//auto nudge!
 	if(!normal_nudge_enable){
 		/*todo: add the part where we actually read the sensors
@@ -126,7 +127,7 @@ Toplevel::Goal Main::teleop(
 			goal.x=-X_NUDGE_POWER;
 		}*/
 		if(main_joystick.button[NUDGE_FWD_BUTTON]){
-			kick_and_lift=0;
+			//kick_and_lift=0;
 			if(piston.get()){
 				piston.update(1);
 			}
@@ -208,7 +209,6 @@ Toplevel::Goal Main::teleop(
 			sticky_can_goal=Sticky_can_goal::LEVEL5;
 			can_priority=1;
 		}
-
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
@@ -229,9 +229,6 @@ Toplevel::Goal Main::teleop(
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.tote=[&](){
-		//if(gunner_joystick.button[Gamepad_button::LB]){
-		//}
-		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		if(gunner_joystick.button[Gamepad_button::B]){
 			sticky_tote_goal=Sticky_tote_goal::STOP;
 			can_priority=0;
@@ -289,25 +286,7 @@ Toplevel::Goal Main::teleop(
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;
 			can_priority=0;
 		}
-		tote_lift_pos.engage_kicker=0;
 		
-		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
-		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
-		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
-		//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) tote_lift_pos.stacked_bins=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())+1;
-		//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) tote_lift_pos.stacked_bins=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())-1;
-		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;//=ENGAGE_KICKER_HEIGHT;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4;
-		if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
-		//if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6;
-		cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
-
-		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift);
-		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6) X(DOWN_LEVEL) X(UP_LEVEL)*/
-		#undef X
 		return Lift::Goal::stop();
 	}();
 	goals.combo_lift.can_priority=can_priority;
@@ -356,7 +335,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
-			if(status.can_grabber==Can_grabber::Status::BOTTOM) return Main::Mode::AUTO_BACK;
+			if(status.can_grabber.status==Can_grabber::Status::DOWN) return Main::Mode::AUTO_BACK;
 			return m;
 		case Main::Mode::AUTO_BACK:
 			if(!autonomous) return Main::Mode::TELEOP;
@@ -364,16 +343,11 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
-			if(status.can_grabber==Can_grabber::Status::TOP || !autonomous) return Main::Mode::TELEOP;
+			if(status.can_grabber.status==Can_grabber::Status::UP || !autonomous) return Main::Mode::TELEOP;
 			return m;
 		default: assert(0);
 	}
 }
-
-/*
-Can Pulleyf
-*/
-
 
 Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	perf.update(in.now);

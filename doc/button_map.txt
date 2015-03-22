@@ -27,6 +27,7 @@ Tote:
       Left Trigger - Tote Level 5 
       Start - Tote Top 
    Right Button - Go To Engage Kicker Height
+   Function button A:
 Can:
    B - Stop 
    Right Joystick:
@@ -37,5 +38,6 @@ Can:
       Up - Level 4
    Back - Can Level 5  
    Right Trigger - Can  Top 
+   Function button A:
 Kicker:
    Y - Toggle Kicker

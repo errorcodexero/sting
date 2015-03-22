@@ -24,7 +24,7 @@ struct Can_grabber{
 
 	enum class Output{RELEASE,LOCK};
 	
-	#define CAN_GRABBER_STATUS X(INITIAL) X(GOING_UP) X(UP) X(GOING_DOWN) X(DOWN) X(STRAP_LOCKED)
+	#define CAN_GRABBER_STATUS X(INITIAL) X(GOING_DOWN) X(DOWN) X(GOING_UP) X(STUCK_UP) X(GETTING_STUCK)
 	enum class Status{
 		#define X(NAME) NAME,
 		CAN_GRABBER_STATUS
@@ -33,12 +33,12 @@ struct Can_grabber{
 
 	struct Status_detail {
 		Status status;
-		Lift::Status lift_status;
+		Lift::Status lift;
 	};
 	
 	struct Estimator {
 		Status last;
-		Lift::Estimator lift_estimator;
+		Lift::Estimator lift;
 
 		Estimator();
 

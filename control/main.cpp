@@ -41,11 +41,33 @@ float round_to_level(float tote_height,float height){
 	return 0;
 }
 
+Main::Sticky_tote_goal convert_level(Panel::Level_button level_button) {
+	switch (level_button) {
+		case Panel::Level_button::DEFAULT:
+			return Main::Sticky_tote_goal::STOP;
+		case Panel::Level_button::LEVEL0:
+			return Main::Sticky_tote_goal::BOTTOM;
+		case Panel::Level_button::LEVEL1:
+			return Main::Sticky_tote_goal::LEVEL1;
+		case Panel::Level_button::LEVEL2:
+			return Main::Sticky_tote_goal::LEVEL2;
+		case Panel::Level_button::LEVEL3:
+			return Main::Sticky_tote_goal::LEVEL3;
+		case Panel::Level_button::LEVEL4:
+			return Main::Sticky_tote_goal::LEVEL4;
+		case Panel::Level_button::LEVEL5:
+			return Main::Sticky_tote_goal::LEVEL5;
+		case Panel::Level_button::LEVEL6:
+			return Main::Sticky_tote_goal::TOP;
+		default: assert(0);
+	}
+}
+
 Toplevel::Goal Main::teleop(
 	Robot_inputs const& in,
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
-	Panel const& /*oi_panel*/,
+	Panel const& oi_panel,
 	Toplevel::Status_detail& toplevel_status
 ){
 	cout<<toplevel_status<<"\n";
@@ -229,25 +251,39 @@ Toplevel::Goal Main::teleop(
 		Joystick_section section=joystick_section(gunner_joystick.axis[Gamepad_axis::LEFTX],gunner_joystick.axis[Gamepad_axis::LEFTY]);
 		switch (section){
 			case Joystick_section::DOWN:
+				{
 				sticky_tote_goal=Sticky_tote_goal::LEVEL1;
 				can_priority=0;
 				break;
+				}
 			case Joystick_section::LEFT:
+				{
 				sticky_tote_goal=Sticky_tote_goal::LEVEL2;
 				can_priority=0;
 				break;
+				}
 			case Joystick_section::RIGHT:
+				{
 				sticky_tote_goal=Sticky_tote_goal::LEVEL3;
 				can_priority=0;
 				break;
+				}
 			case Joystick_section::UP:
+				{
 				sticky_tote_goal=Sticky_tote_goal::LEVEL4;
 				can_priority=0;
+				}
 				break;
 			case Joystick_section::CENTER:
+				{
+				Main::Sticky_tote_goal temp_level=convert_level(oi_panel.level_button);
+				if (temp_level!=Main::Sticky_tote_goal::STOP) {
+					sticky_tote_goal=temp_level;
+					can_priority=0;
+				}
 				break;
-			default:
-				assert(0);
+				}
+				default: assert(0);
 		}
 		if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
 			sticky_tote_goal=Sticky_tote_goal::LEVEL5;

@@ -8,7 +8,7 @@ using namespace std;
 
 Panel::Panel():
 	auto_mode(Auto_mode::DO_NOTHING),
-	level_buttons(Level_buttons::LEVEL0),
+	level_button(Level_button::LEVEL0),
 	operation_buttons(Operation_buttons::DROP_CURRENT),
 	slide_pos(0.0),
 	move_arm_to_pos(0),
@@ -35,15 +35,15 @@ ostream& operator<<(ostream& o,Panel::Auto_mode a){
 	return o;
 }
 
-ostream& operator<<(ostream& o,Panel::Level_buttons a){
+ostream& operator<<(ostream& o,Panel::Level_button a){
 	o<<" Level(";
-	if(a==Panel::Level_buttons::LEVEL0)o<<"0";
-	if(a==Panel::Level_buttons::LEVEL1)o<<"1";
-	if(a==Panel::Level_buttons::LEVEL2)o<<"2";
-	if(a==Panel::Level_buttons::LEVEL3)o<<"3";
-	if(a==Panel::Level_buttons::LEVEL4)o<<"4";
-	if(a==Panel::Level_buttons::LEVEL5)o<<"5";	
-	if(a==Panel::Level_buttons::LEVEL6)o<<"6";
+	if(a==Panel::Level_button::LEVEL0)o<<"0";
+	if(a==Panel::Level_button::LEVEL1)o<<"1";
+	if(a==Panel::Level_button::LEVEL2)o<<"2";
+	if(a==Panel::Level_button::LEVEL3)o<<"3";
+	if(a==Panel::Level_button::LEVEL4)o<<"4";
+	if(a==Panel::Level_button::LEVEL5)o<<"5";	
+	if(a==Panel::Level_button::LEVEL6)o<<"6";
 	o<<")";
 	return o;
 }
@@ -61,7 +61,7 @@ ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 ostream& operator<<(ostream& o,Panel p){
 	o<<"Panel(";
 	o<<" "<<p.auto_mode;
-	o<<", "<<p.level_buttons;
+	o<<", "<<p.level_button;
 	o<<", "<<p.operation_buttons;
 	o<<", slide_pos:"<<p.slide_pos;
 	o<<", Buttons(";
@@ -84,7 +84,7 @@ ostream& operator<<(ostream& o,Panel p){
     return o;
 }
 
-Panel::Auto_mode automodeconvert(int potin){
+Panel::Auto_mode auto_mode_convert(int potin){
 	if(potin==0)return Panel::Auto_mode::DO_NOTHING;
 	if(potin==1)return Panel::Auto_mode::MOVE;
 	if(potin==2)return Panel::Auto_mode::CAN_GRAB;
@@ -95,19 +95,20 @@ Panel interpret(Driver_station_input d){
 	Panel panel;
 	{
 	Volt auto_mode=d.analog[0]/3.3*5;
-	panel.auto_mode=automodeconvert(interpret_10_turn_pot(auto_mode));
+	panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{
 		float lev=d.analog[1];//default: -1
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
 		if(!d.digital[2]){//tests if override is being pushed
-			if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_buttons=Panel::Level_buttons::LEVEL0;//-.75
-			else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2&&lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_buttons=Panel::Level_buttons::LEVEL1;//-.5
-			else if(lev>LEVEL2-(LEVEL2-LEVEL1)/2&&lev<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_buttons=Panel::Level_buttons::LEVEL2;//-.25
-			else if(lev>LEVEL3-(LEVEL3-LEVEL2)/2&&lev<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_buttons=Panel::Level_buttons::LEVEL3;//0
-			else if(lev>LEVEL4-(LEVEL4-LEVEL3)/2&&lev<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_buttons=Panel::Level_buttons::LEVEL4;//.32
-			else if(lev>LEVEL5-(LEVEL5-LEVEL4)/2&&lev<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_buttons=Panel::Level_buttons::LEVEL5;//.65
-			else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2&&lev<LEVEL6+.25)panel.level_buttons=Panel::Level_buttons::LEVEL6;//1
+			if(lev==DEFAULT)panel.level_button=Panel::Level_button::DEFAULT;
+			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75
+			else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2&&lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_button=Panel::Level_button::LEVEL1;//-.5
+			else if(lev>LEVEL2-(LEVEL2-LEVEL1)/2&&lev<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_button=Panel::Level_button::LEVEL2;//-.25
+			else if(lev>LEVEL3-(LEVEL3-LEVEL2)/2&&lev<LEVEL3+(LEVEL4-LEVEL3)/2)panel.level_button=Panel::Level_button::LEVEL3;//0
+			else if(lev>LEVEL4-(LEVEL4-LEVEL3)/2&&lev<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_button=Panel::Level_button::LEVEL4;//.32
+			else if(lev>LEVEL5-(LEVEL5-LEVEL4)/2&&lev<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_button=Panel::Level_button::LEVEL5;//.65
+			else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2&&lev<LEVEL6+.25)panel.level_button=Panel::Level_button::LEVEL6;//1
 		}
 		else{//This sets it to the SlipnSlide
 			panel.override_height=(d.analog[2]+1)*((65-5)/2);

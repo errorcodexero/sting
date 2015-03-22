@@ -39,6 +39,6 @@ std::ostream& operator<<(std::ostream&,Panel::Auto_mode);
 std::ostream& operator<<(std::ostream&,Panel::Level_button);
 std::ostream& operator<<(std::ostream&,Panel);
 
-Panel interpret(Driver_station_input);
+Panel interpret(Joystick_data);
 
 #endif

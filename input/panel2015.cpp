@@ -91,18 +91,18 @@ Panel::Auto_mode auto_mode_convert(int potin){
 	else return Panel::Auto_mode::DO_NOTHING;
 }
 
-Panel interpret(Driver_station_input d){
+Panel interpret(Joystick_data d){
 	Panel panel;
 	{
-	Volt auto_mode=d.analog[0]/3.3*5;
+	Volt auto_mode=d.axis[0]/3.3*5;
 	panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{
-		float lev=d.analog[1];//default: -1
+		float lev=d.axis[1];//default: -1
 		//cout<<"\n\n\n lev:"<<lev<<"  2:"<<d.digital[2]<<"\n\n\n";
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
 		cout<<endl<<lev<<endl;
-		if(!d.digital[2]){//tests if override is being pushed
+		if(!d.button[2]){//tests if override is being pushed
 			if(lev==DEFAULT)panel.level_button=Panel::Level_button::DEFAULT;
 			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2&&lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75
 			else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2&&lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_button=Panel::Level_button::LEVEL1;//-.5
@@ -113,11 +113,11 @@ Panel interpret(Driver_station_input d){
 			else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2&&lev<LEVEL6+.25)panel.level_button=Panel::Level_button::LEVEL6;//1
 		}
 		else{//This sets it to the SlipnSlide
-			panel.override_height=(d.analog[2]+1)*((65-5)/2);
+			panel.override_height=(d.axis[2]+1)*((65-5)/2);
 		}
 	}
 	{
-		float op=d.analog[0];//default: -1
+		float op=d.axis[0];//default: -1
 		static const float COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
 		if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2&&op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
 		else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2&&op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
@@ -125,18 +125,18 @@ Panel interpret(Driver_station_input d){
 		else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2&&op<COLLECT_CURRENT+.25)panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
 	}
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
-	if(d.digital[3])panel.lifter_off=1;
-	if(!d.digital[3])panel.lifter_off=0;
+	if(d.button[3])panel.lifter_off=1;
+	if(!d.button[3])panel.lifter_off=0;
 	{	
 		static const float DOWN=1, UP=.48, DEFAULT=-1;
-		float updowncontrol=d.analog[4];
+		float updowncontrol=d.axis[4];
 		if(updowncontrol>UP-(UP-DEFAULT)/2 && updowncontrol<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
 		else if(updowncontrol>DOWN-(DOWN-UP)/2 && updowncontrol<DOWN+.25 ) panel.move_arm_cont=-1;
 		else panel.move_arm_cont=0;		
 	}
 	{
 		static const float DOWN=0,UP=-.5,DEFAULT=-1;;
-		float level_up_down_control=d.analog[4];
+		float level_up_down_control=d.axis[4];
 		if(level_up_down_control>UP-(UP-DEFAULT)/2 && level_up_down_control<UP+(DOWN-UP)/2)panel.move_arm_one=1;
 		if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
 		else panel.move_arm_one=0;
@@ -145,13 +145,13 @@ Panel interpret(Driver_station_input d){
 }
 
 #ifdef PANEL2015_TEST
-Driver_station_input driver_station_input_rand(){//Copied over from hammer. Adrian update this if needed.
-	Driver_station_input r;
-	for(unsigned i=0;i<r.ANALOG_INPUTS;i++){
-		r.analog[i]=(0.0+rand()%101)/100;
+Joystick_data driver_station_input_rand(){//Copied over from hammer. Adrian update this if needed.
+	Joystick_data r;
+	for(unsigned i=0;i<JOY_AXES;i++){
+		r.axis[i]=(0.0+rand()%101)/100;
 	}
-	for(unsigned i=0;i<r.DIGITAL_INPUTS;i++){
-		r.digital[i]=rand()%2;
+	for(unsigned i=0;i<JOY_BUTTONS;i++){
+		r.button[i]=rand()%2;
 	}
 	return r;
 }

@@ -10,7 +10,7 @@
 #include "../input/util.h"
 #include "height.h"
 
-using namespace std; 
+using namespace std;
 
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}

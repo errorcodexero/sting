@@ -7,7 +7,9 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
-Kicker::Estimator::Estimator():last(Kicker::Status_detail::HALF_OUT){}
+Kicker::Estimator::Estimator():last_output(Kicker::Output::IN),
+	output_start(0),
+	last(Kicker::Status_detail::HALF_OUT){}
 
 bool operator==(Kicker::Output a,Kicker::Status_detail b){
 	if(a==Kicker::Output::IN && b==Kicker::Status_detail::IN) return 1;

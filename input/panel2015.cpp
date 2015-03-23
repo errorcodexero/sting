@@ -94,7 +94,15 @@ Panel::Auto_mode auto_mode_convert(int potin){
 Panel interpret(Joystick_data d){
 	Panel panel;
 	{
-	panel.values=d;
+	in_use=[&](){
+		for(int i=0;i<JOY_AXES;i++) {
+			if(d.axis[i]!=0)return 1;
+		}
+		for(int i=0;i<JOY_BUTTONS;i++) {
+			if(d.button[i]!=0)return 1;
+		}
+		return 0;
+	}();
 	}
 	{
 	Volt auto_mode=d.axis[0]/3.3*5;

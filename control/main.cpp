@@ -280,16 +280,7 @@ Toplevel::Goal Main::teleop(
 					break;
 				case Joystick_section::CENTER:
 					{
-					bool input=[&](){
-						for(int i=0;i<JOY_AXES;i++) {
-							if(oi_panel.values.axis[i]!=0)return 1;
-						}
-						for(int i=0;i<JOY_BUTTONS;i++) {
-							if(oi_panel.values.button[i]!=0)return 1;
-						}
-						return 0;
-					}();
-					if(input) {
+					if(oi_panel.in_use) {
 						Main::Sticky_tote_goal temp_level=convert_level(oi_panel.level_button);
 						if(temp_level!=Main::Sticky_tote_goal::STOP) {
 							sticky_tote_goal=temp_level;

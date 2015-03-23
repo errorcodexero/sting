@@ -32,7 +32,7 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT) piston.update(1);
 	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
 }
-
+//height=26in tote_h/2=6.05, 
 float round_to_level(float tote_height,float height){
 	static const unsigned int NUMBER_OF_LEVELS=5;//6;
 	for(unsigned int i=0;i<NUMBER_OF_LEVELS;i++){
@@ -216,28 +216,32 @@ Toplevel::Goal Main::teleop(
 			if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]){
 				sticky_can_goal=Sticky_can_goal::DOWN_LEVEL;
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())-1;
+				if(DOWN_LEVEL<0) DOWN_LEVEL=0;
 				can_priority=1;
 			}
 			if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]){
 				sticky_can_goal=Sticky_can_goal::UP_LEVEL;
 				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())+1;
+				if(UP_LEVEL>5) UP_LEVEL=5;
 				can_priority=1;
 			}
 		}
-		if (oi_panel.move_arm_one==1) {
+		/*if (oi_panel.move_arm_one==1) {
 			sticky_can_goal=Sticky_can_goal::UP_LEVEL;
 			UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())+1;
+			if(UP_LEVEL>5) UP_LEVEL=5;
 			can_priority=1;
 		} else if (oi_panel.move_arm_one==-1) {
 			sticky_can_goal=Sticky_can_goal::DOWN_LEVEL;
 			DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())-1;
+			if(DOWN_LEVEL<0) DOWN_LEVEL=0;
 			can_priority=1;
-		}
+		}*/
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
-		if(sticky_can_goal==Sticky_can_goal::UP_LEVEL) can_lift_pos.stacked_bins=UP_LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL) can_lift_pos.stacked_bins=DOWN_LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::UP_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::RTRIGGER])) can_lift_pos.stacked_bins=UP_LEVEL;
+		if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::LTRIGGER])) can_lift_pos.stacked_bins=DOWN_LEVEL;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
@@ -321,19 +325,21 @@ Toplevel::Goal Main::teleop(
 			if(gunner_joystick.button[Gamepad_button::LB]){
 				sticky_tote_goal=Sticky_tote_goal::DOWN_LEVEL;
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())-1;
+				if(DOWN_LEVEL<0) DOWN_LEVEL=0;
 				can_priority=0;
 			}
 			if(gunner_joystick.button[Gamepad_button::RB]){
 				sticky_tote_goal=Sticky_tote_goal::UP_LEVEL;
 				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())+1;	
+				if(UP_LEVEL>5) UP_LEVEL=5;
 				can_priority=0;
 			}
 		}
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
-		if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL) tote_lift_pos.stacked_bins=UP_LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL) tote_lift_pos.stacked_bins=DOWN_LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL&&!(gunner_joystick.button[Gamepad_button::RB])) tote_lift_pos.stacked_bins=UP_LEVEL;
+		if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL&&!(gunner_joystick.button[Gamepad_button::LB])) tote_lift_pos.stacked_bins=DOWN_LEVEL;
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2;

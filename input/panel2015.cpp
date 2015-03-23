@@ -94,7 +94,7 @@ Panel::Auto_mode auto_mode_convert(int potin){
 Panel interpret(Joystick_data d){
 	Panel panel;
 	{
-	in_use=[&](){
+	panel.in_use=[&](){
 		for(int i=0;i<JOY_AXES;i++) {
 			if(d.axis[i]!=0)return 1;
 		}

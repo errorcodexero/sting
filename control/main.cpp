@@ -34,7 +34,7 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 }
 
 float round_to_level(float tote_height,float height){
-	static const unsigned int NUMBER_OF_LEVELS=6;
+	static const unsigned int NUMBER_OF_LEVELS=5;//6;
 	for(unsigned int i=0;i<NUMBER_OF_LEVELS;i++){
 		if(in_range(height,tote_height*i,tote_height/2))return i;
 	}
@@ -223,6 +223,15 @@ Toplevel::Goal Main::teleop(
 				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())+1;
 				can_priority=1;
 			}
+		}
+		if (oi_panel.move_arm_one==1) {
+			sticky_can_goal=Sticky_can_goal::UP_LEVEL;
+			UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())+1;
+			can_priority=1;
+		} else if (oi_panel.move_arm_one==-1) {
+			sticky_can_goal=Sticky_can_goal::DOWN_LEVEL;
+			DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())-1;
+			can_priority=1;
 		}
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();

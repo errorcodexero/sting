@@ -151,6 +151,7 @@ Panel interpret(Joystick_data d){
 	if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
 	else panel.move_arm_one=0;
 	}
+	panel.target_type=d.axis[3];
 	return panel;
 }
 

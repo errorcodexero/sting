@@ -211,22 +211,31 @@ Toplevel::Goal Main::teleop(
 			Joystick_section section=joystick_section(gunner_joystick.axis[Gamepad_axis::RIGHTX],gunner_joystick.axis[Gamepad_axis::RIGHTY]);
 			switch(section){
 				case Joystick_section::DOWN:
+					{
 					sticky_can_goal=Sticky_can_goal::LEVEL1;
 					can_priority=1;
 					break;
+					}
 				case Joystick_section::LEFT:
+					{
 					sticky_can_goal=Sticky_can_goal::LEVEL2;
 					can_priority=1;
 					break;
+					}
 				case Joystick_section::RIGHT:
+					{
 					sticky_can_goal=Sticky_can_goal::LEVEL3;
 					can_priority=1;
 					break;
+					}
 				case Joystick_section::UP:
+					{
 					sticky_can_goal=Sticky_can_goal::LEVEL4;
 					can_priority=1;
 					break;
+					}
 				case Joystick_section::CENTER:
+					{
 					if(oi_panel.in_use&&oi_panel.target_type==-1) {
 						Main::Sticky_can_goal temp_level=convert_level_can(oi_panel.level_button);
 						if(temp_level!=Main::Sticky_can_goal::STOP) {
@@ -235,6 +244,7 @@ Toplevel::Goal Main::teleop(
 						}
 					}	
 					break;
+					}
 				default: assert(0);
 			}
 			if(gunner_joystick.button[Gamepad_button::START]){
@@ -407,7 +417,7 @@ unsigned pdb_location1(Drivebase::Motor m){
 	//assert(m>=0 && m<Drivebase::MOTORS);
 }
 
-Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch, Panel oi_panel){
+Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Time since_switch, Panel oi_panel, Main::Sticky_can_goal& sticky_can_goal){
 	switch(m){
 		case Main::Mode::TELEOP:
 			if(autonomous_start){
@@ -423,7 +433,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 						default: assert(0);
 					}
 				} else {
-					return Main::Mode::AUTO_GRAB;
+					return Main::Mode::TELEOP;
 				}
 			}
 			return m;
@@ -433,7 +443,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
-			if(status.can_grabber.status==Can_grabber::Status::DOWN) return Main::Mode::AUTO_BACK;
+			if(sticky_can_goal==Main::Sticky_can_goal::BOTTOM) return Main::Mode::AUTO_BACK;
 			return m;
 		case Main::Mode::AUTO_BACK:
 			if(!autonomous) return Main::Mode::TELEOP;
@@ -441,7 +451,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>1.2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
-			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::TELEOP;
+			if(sticky_can_goal==Main::Sticky_can_goal::TOP|| !autonomous) return Main::Mode::TELEOP;
 			return m;
 		default: assert(0);
 	}
@@ -485,21 +495,21 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_GRAB:
-			goals.can_grabber=Can_grabber::Goal::BOTTOM;
+			sticky_can_goal=Sticky_can_goal::BOTTOM;
 			break;
 		case Mode::AUTO_BACK:
-			goals.can_grabber=Can_grabber::Goal::BOTTOM;
+			sticky_can_goal=Sticky_can_goal::BOTTOM;
 			goals.drive.x=0;
 			goals.drive.y=-.8;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
-			goals.can_grabber=Can_grabber::Goal::TOP;
+			sticky_can_goal=Sticky_can_goal::TOP;
 			break;
 		default: assert(0);
 	}
 
-	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
+	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,since_switch.elapsed(),oi_panel,sticky_can_goal);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;

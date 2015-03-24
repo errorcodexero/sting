@@ -41,7 +41,7 @@ int round_to_level(float tote_height,float height){
 	return 0;
 }
 
-Main::Sticky_tote_goal convert_level(Panel::Level_button level_button) {
+Main::Sticky_tote_goal convert_level_tote(Panel::Level_button level_button) {
 	switch (level_button) {
 		case Panel::Level_button::DEFAULT:
 			return Main::Sticky_tote_goal::STOP;
@@ -59,6 +59,28 @@ Main::Sticky_tote_goal convert_level(Panel::Level_button level_button) {
 			return Main::Sticky_tote_goal::LEVEL5;
 		case Panel::Level_button::LEVEL6:
 			return Main::Sticky_tote_goal::TOP;
+		default: assert(0);
+	}
+}
+
+Main::Sticky_can_goal convert_level_can(Panel::Level_button level_button) {
+	switch (level_button) {
+		case Panel::Level_button::DEFAULT:
+			return Main::Sticky_can_goal::STOP;
+		case Panel::Level_button::LEVEL0:
+			return Main::Sticky_can_goal::BOTTOM;
+		case Panel::Level_button::LEVEL1:
+			return Main::Sticky_can_goal::LEVEL1;
+		case Panel::Level_button::LEVEL2:
+			return Main::Sticky_can_goal::LEVEL2;
+		case Panel::Level_button::LEVEL3:
+			return Main::Sticky_can_goal::LEVEL3;
+		case Panel::Level_button::LEVEL4:
+			return Main::Sticky_can_goal::LEVEL4;
+		case Panel::Level_button::LEVEL5:
+			return Main::Sticky_can_goal::LEVEL5;
+		case Panel::Level_button::LEVEL6:
+			return Main::Sticky_can_goal::TOP;
 		default: assert(0);
 	}
 }
@@ -205,6 +227,13 @@ Toplevel::Goal Main::teleop(
 					can_priority=1;
 					break;
 				case Joystick_section::CENTER:
+					if(oi_panel.in_use&&oi_panel.target_type==-1) {
+						Main::Sticky_can_goal temp_level=convert_level_can(oi_panel.level_button);
+						if(temp_level!=Main::Sticky_can_goal::STOP) {
+							sticky_can_goal=temp_level;
+							can_priority=0;
+						}
+					}	
 					break;
 				default: assert(0);
 			}
@@ -306,8 +335,8 @@ Toplevel::Goal Main::teleop(
 					break;
 				case Joystick_section::CENTER:
 					{
-					if(oi_panel.in_use) {
-						Main::Sticky_tote_goal temp_level=convert_level(oi_panel.level_button);
+					if(oi_panel.in_use&&oi_panel.target_type!=-1) {
+						Main::Sticky_tote_goal temp_level=convert_level_tote(oi_panel.level_button);
 						if(temp_level!=Main::Sticky_tote_goal::STOP) {
 							sticky_tote_goal=temp_level;
 							can_priority=0;
@@ -378,19 +407,23 @@ unsigned pdb_location1(Drivebase::Motor m){
 	//assert(m>=0 && m<Drivebase::MOTORS);
 }
 
-Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch, Panel::Auto_mode auto_mode){
+Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch, Panel oi_panel){
 	switch(m){
 		case Main::Mode::TELEOP:
 			if(autonomous_start){
 				//todo: make this depend on a switch or something.
-				switch(auto_mode){ 
-					case Panel::Auto_mode::CAN_GRAB:
-						return Main::Mode::AUTO_GRAB;
-					case Panel::Auto_mode::MOVE:
-						return Main::Mode::AUTO_MOVE;
-					case Panel::Auto_mode::DO_NOTHING:
-						return Main::Mode::TELEOP;
-					default: assert(0);
+				if (oi_panel.in_use) {
+					switch(oi_panel.auto_mode){ 
+						case Panel::Auto_mode::CAN_GRAB:
+							return Main::Mode::AUTO_GRAB;
+						case Panel::Auto_mode::MOVE:
+							return Main::Mode::AUTO_MOVE;
+						case Panel::Auto_mode::DO_NOTHING:
+							return Main::Mode::TELEOP;
+						default: assert(0);
+					}
+				} else {
+					return Main::Mode::AUTO_GRAB;
 				}
 			}
 			return m;
@@ -466,7 +499,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		default: assert(0);
 	}
 
-	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel.auto_mode);
+	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;

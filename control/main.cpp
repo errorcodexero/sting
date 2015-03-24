@@ -168,11 +168,11 @@ Toplevel::Goal Main::teleop(
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	
-	static const double TOTE_HEIGHT=12.1;
+	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
 	goals.combo_lift.can=[&](){
-		int UP_LEVEL=0;
-		int DOWN_LEVEL=0;
+		/*int UP_LEVEL=0;
+		int DOWN_LEVEL=0;*/
 		if(!gunner_joystick.button[Gamepad_button::BACK]){
 			if(gunner_joystick.button[Gamepad_button::B]){
 				sticky_can_goal=Sticky_can_goal::STOP;
@@ -213,7 +213,7 @@ Toplevel::Goal Main::teleop(
 				can_priority=1;
 			}
 		}else{
-			if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]){
+			/*if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]){
 				sticky_can_goal=Sticky_can_goal::DOWN_LEVEL;
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())-1;
 				if(DOWN_LEVEL<0) DOWN_LEVEL=0;
@@ -224,7 +224,7 @@ Toplevel::Goal Main::teleop(
 				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())+1;
 				if(UP_LEVEL>5) UP_LEVEL=5;
 				can_priority=1;
-			}
+			}*/
 		}
 		/*if (oi_panel.move_arm_one==1) {
 			sticky_can_goal=Sticky_can_goal::UP_LEVEL;
@@ -240,8 +240,8 @@ Toplevel::Goal Main::teleop(
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
-		if(sticky_can_goal==Sticky_can_goal::UP_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::RTRIGGER])) can_lift_pos.stacked_bins=UP_LEVEL;
-		if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::LTRIGGER])) can_lift_pos.stacked_bins=DOWN_LEVEL;
+		//if(sticky_can_goal==Sticky_can_goal::UP_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::RTRIGGER])) can_lift_pos.stacked_bins=UP_LEVEL;
+		//if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::LTRIGGER])) can_lift_pos.stacked_bins=DOWN_LEVEL;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL1) can_lift_pos.stacked_bins=1;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
 		if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
@@ -259,8 +259,8 @@ Toplevel::Goal Main::teleop(
 	}();
 	goals.combo_lift.tote=[&](){
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
-		int UP_LEVEL=0;
-		int DOWN_LEVEL=0;
+		/*int UP_LEVEL=0;
+		int DOWN_LEVEL=0;*/
 		if(!gunner_joystick.button[Gamepad_button::BACK]){
 			if(gunner_joystick.button[Gamepad_button::B]){
 				sticky_tote_goal=Sticky_tote_goal::STOP;
@@ -322,7 +322,7 @@ Toplevel::Goal Main::teleop(
 				can_priority=0;
 			}
 		}else{
-			if(gunner_joystick.button[Gamepad_button::LB]){
+			/*if(gunner_joystick.button[Gamepad_button::LB]){
 				sticky_tote_goal=Sticky_tote_goal::DOWN_LEVEL;
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())-1;
 				if(DOWN_LEVEL<0) DOWN_LEVEL=0;
@@ -333,13 +333,13 @@ Toplevel::Goal Main::teleop(
 				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())+1;	
 				if(UP_LEVEL>5) UP_LEVEL=5;
 				can_priority=0;
-			}
+			}*/
 		}
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
-		if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL&&!(gunner_joystick.button[Gamepad_button::RB])) tote_lift_pos.stacked_bins=UP_LEVEL;
-		if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL&&!(gunner_joystick.button[Gamepad_button::LB])) tote_lift_pos.stacked_bins=DOWN_LEVEL;
+		//if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL&&!(gunner_joystick.button[Gamepad_button::RB])) tote_lift_pos.stacked_bins=UP_LEVEL;
+		//if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL&&!(gunner_joystick.button[Gamepad_button::LB])) tote_lift_pos.stacked_bins=DOWN_LEVEL;
 		if(sticky_tote_goal==Sticky_tote_goal::ENGAGE_KICKER) tote_lift_pos.engage_kicker=1;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL1) tote_lift_pos.stacked_bins=1;
 		if(sticky_tote_goal==Sticky_tote_goal::LEVEL2) tote_lift_pos.stacked_bins=2;

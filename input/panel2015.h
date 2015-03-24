@@ -35,6 +35,7 @@ struct Panel{
 	int drop_mode;
 	Panel();
 };
+
 std::ostream& operator<<(std::ostream&,Panel::Auto_mode);
 std::ostream& operator<<(std::ostream&,Panel::Level_button);
 std::ostream& operator<<(std::ostream&,Panel);

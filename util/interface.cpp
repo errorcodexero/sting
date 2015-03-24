@@ -476,6 +476,7 @@ Robot_inputs::Robot_inputs():
 		//could make this be NAN instead
 		analog[i]=0;
 	}
+	for(auto& a:current) a=0;
 }
 
 bool operator==(Robot_inputs a,Robot_inputs b){

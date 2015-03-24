@@ -7,12 +7,15 @@
 using namespace std;
 
 Panel::Panel():
+	in_use(0),
 	auto_mode(Auto_mode::DO_NOTHING),
 	level_button(Level_button::DEFAULT),
 	operation_buttons(Operation_buttons::DROP_CURRENT),
 	slide_pos(0.0),
+	override_height(0),
 	move_arm_to_pos(0),
 	current_collect(0),
+	current_drop(0),
 	move_drop(0),
 	move_collect(0),
 	chute_collect(0),
@@ -60,10 +63,12 @@ ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 
 ostream& operator<<(ostream& o,Panel p){
 	o<<"Panel(";
+	o<<p.in_use;
 	o<<" "<<p.auto_mode;
 	o<<", "<<p.level_button;
 	o<<", "<<p.operation_buttons;
 	o<<", slide_pos:"<<p.slide_pos;
+	o<<", override_height:"<<p.override_height;
 	o<<", Buttons(";
 	o<<" move_arm_to_pos:"<<p.move_arm_to_pos;
 	o<<", collect_current:"<<p.current_collect;
@@ -81,7 +86,7 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", collect_mode"<<p.collect_mode;
 	o<<", drop_mode"<<p.drop_mode<<")";
 	o<<")";
-    return o;
+	return o;
 }
 
 Panel::Auto_mode auto_mode_convert(int potin){

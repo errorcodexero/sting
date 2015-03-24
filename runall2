@@ -21,7 +21,7 @@ def makefile(out):
 	test_scripts=filter(lambda x: 'joystick_linux' not in x,glob('*/*_test'))
 
 	print>>out,'H_FILES=*.h */*.h'
-	print>>out,'CXX_FLAGS=-Wall -Wextra -Werror -std=c++11'
+	print>>out,'CXX_FLAGS=-Wall -Wextra -Werror -std=c++11 -g'
 	print>>out,'.PHONY: clean'
 	print>>out,''
 
@@ -60,6 +60,7 @@ def makefile(out):
 		print>>out, '%s: ${H_FILES} util/util.o %s'%(get_target_name(test_script),cppfile),objects
 		exe_name='test_'+base
 		print>>out, '\t$(CXX) $(CXX_FLAGS) -D%s'%define,objects,cppfile,'-o',exe_name
+		#print>>out, '\tvalgrind --error-exitcode=1 ./%s'%exe_name
 		print>>out, '\t./%s'%exe_name
 		print>>out,''
 

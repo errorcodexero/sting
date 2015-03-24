@@ -32,7 +32,7 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT) piston.update(1);
 	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
 }
-//height=26in tote_h/2=6.05, 
+
 float round_to_level(float tote_height,float height){
 	static const unsigned int NUMBER_OF_LEVELS=5;//6;
 	for(unsigned int i=0;i<NUMBER_OF_LEVELS;i++){
@@ -75,12 +75,12 @@ Toplevel::Goal Main::teleop(
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
 	static const float Y_NUDGE_POWER=.2;
-
 	static const float ROTATE_NUDGE_POWER=.5;
 
-	static const float BACK_TURN_POWER=.2;
+	static const float BACK_TURN_POWER=.2;//Special auto move-backwards-and-turn -- not used anymore
 	static const float BACK_MOVE_POWER=.5;
-	static const bool SLOW_TURNING=0;
+	
+	static const bool SLOW_TURNING=0;//Slows drive turning
 	
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
@@ -318,7 +318,7 @@ Toplevel::Goal Main::teleop(
 				default: assert(0);
 			}
 			if(gunner_joystick.axis[Gamepad_axis::LTRIGGER]>0){
-				sticky_tote_goal=Sticky_tote_goal::LEVEL5;
+				sticky_tote_goal=Sticky_tote_goal::TOP;
 				can_priority=0;
 			}
 		}else{

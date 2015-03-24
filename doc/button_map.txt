@@ -24,7 +24,7 @@ Tote:
       Left - Level 2
       Right - Level 3
       Up - Level 4
-      Left Trigger - Tote Level 5 
+      Left Trigger - Tote TOP 
    Start - Tote Top 
    RB - Go To Engage Kicker Height
    Function button BACK:

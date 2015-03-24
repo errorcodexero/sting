@@ -12,7 +12,7 @@ struct Panel{
 	enum class Auto_mode{DO_NOTHING,MOVE,CAN_GRAB};//Added
 	Auto_mode auto_mode;//Added
 	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};//Added
-	Level_button level_button;
+	Level_button level_button;//Added
 	enum class Operation_buttons{COLLECT_CURRENT,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP};
 	Operation_buttons operation_buttons;
 	float slide_pos;

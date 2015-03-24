@@ -33,7 +33,7 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
 }
 
-float round_to_level(float tote_height,float height){
+int round_to_level(float tote_height,float height){
 	static const unsigned int NUMBER_OF_LEVELS=5;//6;
 	for(unsigned int i=0;i<NUMBER_OF_LEVELS;i++){
 		if(in_range(height,tote_height*i,tote_height/2))return i;
@@ -396,7 +396,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			return m;
 		case Main::Mode::AUTO_MOVE:
 			//encoders? going to use time for now
-			if(!autonomous || since_switch>1.7) return Main::Mode::TELEOP;
+			if(!autonomous || since_switch>1) return Main::Mode::TELEOP;
 			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
@@ -405,7 +405,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 		case Main::Mode::AUTO_BACK:
 			if(!autonomous) return Main::Mode::TELEOP;
 			//timer is up - could use encoders once those work
-			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
+			if(since_switch>1.2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
 			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::TELEOP;
@@ -456,7 +456,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			break;
 		case Mode::AUTO_BACK:
 			goals.can_grabber=Can_grabber::Goal::BOTTOM;
-			goals.drive.y=.6;
+			goals.drive.x=0;
+			goals.drive.y=-.8;
+			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
 			goals.can_grabber=Can_grabber::Goal::TOP;

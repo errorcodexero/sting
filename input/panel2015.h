@@ -1,4 +1,4 @@
-#ifndef PANEL2015_H//bool piston_switch_b; PANEL2015_H
+#ifndef PANEL2015_H
 #define PANEL2015_H 
 
 #include "../util/maybe.h"

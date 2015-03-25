@@ -141,7 +141,7 @@ int read_analog(Robot_inputs& r){
 	return ds->GetEnhancedIO();
 }*/
 
-int read_driver_station(Driver_station_input& r){
+/*int read_driver_station(Driver_station_input& r){
 	DriverStation *ds=DriverStation::GetInstance();
 	if(!ds) return 2048;
 	//Cyprus board isn't supported and a replacement is not yet available.
@@ -154,7 +154,7 @@ int read_driver_station(Driver_station_input& r){
 		r.digital[i]=0;//en.GetDigital(i+1);//Same as above ^^
 	}
 	return 0;
-}
+}*/
 
 //it might make sense to put this in the Robot_inputs structure.  
 Volt battery_voltage(){
@@ -317,7 +317,7 @@ public:
 		r.now=Timer::GetFPGATimestamp();
 		error_code|=read_joysticks(r);
 		error_code|=read_analog(r);
-		error_code|=read_driver_station(r.driver_station);
+		//error_code|=read_driver_station(r.driver_station);
 		r.current = read_currents();
 		return make_pair(r,error_code);
 	}

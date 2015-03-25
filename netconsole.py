@@ -80,7 +80,7 @@ try:
 		sp=sp[:-1]
 
 		for elem in sp:
-			if 'Robot_input' in elem:
+			if 'in:Robot_input' in elem:
 				os.system('clear')
 				for ele in group:
 					print ele

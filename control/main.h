@@ -10,7 +10,12 @@
 #include "../input/panel2015.h"
 
 struct Main{
-	enum class Mode{TELEOP,AUTO_MOVE,AUTO_GRAB,AUTO_BACK,AUTO_RELEASE,AUTO_RAISE};
+	#define MODES X(TELEOP) X(AUTO_MOVE) X(AUTO_GRAB) X(AUTO_BACK) X(AUTO_RELEASE) X(AUTO_RAISE)
+	enum class Mode{
+		#define X(NAME) NAME,
+		MODES
+		#undef X
+	};
 	Mode mode;
 	
 	Force_interface force;
@@ -44,6 +49,8 @@ struct Main{
 	Main();
 	Robot_outputs operator()(Robot_inputs,std::ostream& = std::cerr);
 };
+
+std::ostream& operator<<(std::ostream&,Main::Mode);
 
 bool operator==(Main,Main);
 bool operator!=(Main,Main);

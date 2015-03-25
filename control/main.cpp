@@ -66,6 +66,8 @@ Main::Sticky_tote_goal convert_level_tote(Panel::Level_button level_button) {
 			return Main::Sticky_tote_goal::LEVEL5;
 		case Panel::Level_button::LEVEL6:
 			return Main::Sticky_tote_goal::TOP;
+		case Panel::Level_button::ENGAGE_KICKER_HEIGHT:
+			return Main::Sticky_tote_goal::ENGAGE_KICKER;
 		default: assert(0);
 	}
 }

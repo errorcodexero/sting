@@ -10,7 +10,7 @@
 #include "../input/panel2015.h"
 
 struct Main{
-	enum class Mode{TELEOP,AUTO_MOVE,AUTO_GRAB,AUTO_BACK,AUTO_RELEASE};
+	enum class Mode{TELEOP,AUTO_MOVE,AUTO_GRAB,AUTO_BACK,AUTO_RELEASE,AUTO_RAISE};
 	Mode mode;
 	
 	Force_interface force;

@@ -463,7 +463,10 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
-			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::TELEOP;
+			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::AUTO_RAISE;
+			return m;
+		case Main::Mode::AUTO_RAISE:
+			if(status.combo_lift.tote==Lift::Status::top() || !autonomous) return Main::Mode::TELEOP;
 			return m;
 		default: assert(0);
 	}
@@ -517,6 +520,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			break;
 		case Mode::AUTO_RELEASE:
 			goals.can_grabber=Can_grabber::Goal::TOP;
+			break;
+		case Mode::AUTO_RAISE:
+			goals.combo_lift.tote=Lift::Goal::up();
 			break;
 		default: assert(0);
 	}switch(mode){

@@ -66,6 +66,8 @@ Main::Sticky_tote_goal convert_level_tote(Panel::Level_button level_button) {
 			return Main::Sticky_tote_goal::LEVEL5;
 		case Panel::Level_button::LEVEL6:
 			return Main::Sticky_tote_goal::TOP;
+		case Panel::Level_button::ENGAGE_KICKER_HEIGHT:
+			return Main::Sticky_tote_goal::ENGAGE_KICKER;
 		default: assert(0);
 	}
 }
@@ -243,7 +245,7 @@ Toplevel::Goal Main::teleop(
 					}
 				case Joystick_section::CENTER:
 					{
-					if(oi_panel.in_use&&oi_panel.target_type!=1) {
+					if(oi_panel.in_use&&oi_panel.target_type==1) {
 						Main::Sticky_can_goal temp_level=convert_level_can(oi_panel.level_button);
 						if(temp_level!=Main::Sticky_can_goal::STOP) {
 							sticky_can_goal=temp_level;
@@ -352,7 +354,7 @@ Toplevel::Goal Main::teleop(
 					break;
 				case Joystick_section::CENTER:
 					{
-					if(oi_panel.in_use&&oi_panel.target_type==1) {
+					if(oi_panel.in_use&&oi_panel.target_type!=1) {
 						Main::Sticky_tote_goal temp_level=convert_level_tote(oi_panel.level_button);
 						if(temp_level!=Main::Sticky_tote_goal::STOP) {
 							sticky_tote_goal=temp_level;

@@ -91,9 +91,9 @@ ostream& operator<<(ostream& o,Panel p){
 }
 
 Panel::Auto_mode auto_mode_convert(int potin){
-	if(potin==5)return Panel::Auto_mode::DO_NOTHING;
-	if(potin==6)return Panel::Auto_mode::MOVE;
-	if(potin==7)return Panel::Auto_mode::CAN_GRAB;
+	if(potin==0)return Panel::Auto_mode::DO_NOTHING;
+	if(potin==1)return Panel::Auto_mode::MOVE;
+	if(potin==2)return Panel::Auto_mode::CAN_GRAB;
 	return Panel::Auto_mode::DO_NOTHING;
 }
 
@@ -111,7 +111,7 @@ Panel interpret(Joystick_data d){
 	}();
 	}
 	{
-	Volt auto_mode=d.axis[0]/3.3*5;
+	Volt auto_mode=d.axis[5]/3.3*5;
 	panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{

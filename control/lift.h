@@ -80,7 +80,7 @@ struct Lift{
 
 	class Goal{
 		public:
-		enum class Mode{GO_TO_HEIGHT,UP,DOWN,STOP};
+		enum class Mode{GO_TO_HEIGHT,UP,DOWN,STOP,KILL};
 		
 		private:
 		Goal();
@@ -98,6 +98,7 @@ struct Lift{
 		static Goal up();
 		static Goal down();
 		static Goal stop();
+		static Goal kill();
 	};
 	
 	explicit Lift(int);

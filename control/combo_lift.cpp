@@ -167,6 +167,7 @@ double goal_height(Lift::Status_detail status,Lift::Goal goal){
 		case Lift::Goal::Mode::UP: return MAX_LIFT_HEIGHT;
 		case Lift::Goal::Mode::DOWN: return 0;
 		case Lift::Goal::Mode::STOP: return status_height(status);
+		case Lift::Goal::Mode::KILL: return status_height(status);
 		default: assert(0);
 	}
 }

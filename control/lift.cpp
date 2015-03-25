@@ -199,6 +199,12 @@ Lift::Goal Lift::Goal::stop(){
 	return r;
 }
 
+Lift::Goal Lift::Goal::kill(){
+	Lift::Goal r;
+	r.mode_=Lift::Goal::Mode::KILL;
+	return r;
+}
+
 Lift::Goal Lift::Goal::go_to_height(std::array<double, 3> heights){
 	Lift::Goal r;
 	r.mode_=Lift::Goal::Mode::GO_TO_HEIGHT;
@@ -273,7 +279,7 @@ std::set<Lift::Status_detail> examples(Lift::Status_detail*){//Does not include 
 
 std::ostream& operator<<(std::ostream& o,Lift::Goal::Mode a){
 	#define X(name) if(a==Lift::Goal::Mode::name) return o<<""#name;
-	X(GO_TO_HEIGHT) X(DOWN) X(UP) X(STOP)
+	X(GO_TO_HEIGHT) X(DOWN) X(UP) X(STOP) X(KILL)
 	#undef X
 	nyi
 }
@@ -320,36 +326,40 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 	const double P=(PRESET_POWER/5);
 	//const double I=0.01;
 	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
-	if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
-		switch (status.type()) {
-			case Lift::Status_detail::Type::MID:
-				{
-					std::array<double,3> heights=goal.height();
-					double error = heights[1]-status.inches_off_ground();
-					//cout<<endl<<"Error: "<<error<<endl<<endl;
-					double desired_output_power =error*P;
-					//cout<<"Desired Output Power: "<<desired_output_power<<endl<<endl;
-					if (desired_output_power>PRESET_POWER) return PRESET_POWER;
-					if (desired_output_power<-PRESET_POWER) return -PRESET_POWER;
-					return desired_output_power;
-					/*if (status.inches_off_ground()<goal.height()) return POWER;
-					else if (status.inches_off_ground()>goal.height()) return -POWER;
-					return 0.0;*/
-				}
-			case Lift::Status_detail::Type::TOP:
-				return -MANUAL_POWER;
-			case Lift::Status_detail::Type::BOTTOM:
-				return MANUAL_POWER;
-			case Lift::Status_detail::Type::ERRORS:
-				return 0.0;
-			default:
-				assert(0);
+	if(goal.mode()!=Lift::Goal::Mode::KILL) {
+		if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
+			switch (status.type()) {
+				case Lift::Status_detail::Type::MID:
+					{
+						std::array<double,3> heights=goal.height();
+						double error = heights[1]-status.inches_off_ground();
+						//cout<<endl<<"Error: "<<error<<endl<<endl;
+						double desired_output_power =error*P;
+						//cout<<"Desired Output Power: "<<desired_output_power<<endl<<endl;
+						if (desired_output_power>PRESET_POWER) return PRESET_POWER;
+						if (desired_output_power<-PRESET_POWER) return -PRESET_POWER;
+						return desired_output_power;
+						/*if (status.inches_off_ground()<goal.height()) return POWER;
+						else if (status.inches_off_ground()>goal.height()) return -POWER;
+						return 0.0;*/
+					}
+				case Lift::Status_detail::Type::TOP:
+					return -MANUAL_POWER;
+				case Lift::Status_detail::Type::BOTTOM:
+					return MANUAL_POWER;
+				case Lift::Status_detail::Type::ERRORS:
+					return 0.0;
+				default:
+					assert(0);
+			}
 		}
+		if(goal.mode()==Lift::Goal::Mode::UP) return  MANUAL_POWER; 
+		if(goal.mode()==Lift::Goal::Mode::DOWN) return -MANUAL_POWER;
+		if(goal.mode()==Lift::Goal::Mode::STOP) return 0.0;
+		assert(0);
+	} else {
+		return 0.0;
 	}
-	if(goal.mode()==Lift::Goal::Mode::UP) return  MANUAL_POWER; 
-	if(goal.mode()==Lift::Goal::Mode::DOWN) return -MANUAL_POWER;
-	if(goal.mode()==Lift::Goal::Mode::STOP) return 0.0;
-	assert(0);
 	/*switch(goal){
 		case Lift::Goal::Mode::DOWN:
 			switch(status.type()){
@@ -387,6 +397,8 @@ set<Lift::Goal> examples(Lift::Goal*){
 	goals.insert(goal);
 	goal=goal.stop();
 	goals.insert(goal);
+	goal=goal.kill();
+	goals.insert(goal);
 	return goals;//{Lift::Goal::Mode::GO_TO_HEIGHT,Lift::Goal::Mode::DOWN,Lift::Goal::Mode::UP,Lift::Goal::Mode::STOP}; 
 }
 
@@ -398,6 +410,7 @@ bool ready(Lift::Status status,Lift::Goal goal){
 		case Lift::Goal::Mode::DOWN: return status.type()==Lift::Status::Type::BOTTOM;
 		case Lift::Goal::Mode::UP: return status.type()==Lift::Status::Type::TOP;
 		case Lift::Goal::Mode::STOP: return 1;
+		case Lift::Goal::Mode::KILL: return 1;
 		default:
 			nyi
 	}

@@ -73,6 +73,8 @@ Main::Sticky_tote_goal convert_level_tote(Panel::Level_button level_button) {
 			return Main::Sticky_tote_goal::LEVEL5;
 		case Panel::Level_button::LEVEL6:
 			return Main::Sticky_tote_goal::TOP;
+		case Panel::Level_button::ENGAGE_KICKER_HEIGHT:
+			return Main::Sticky_tote_goal::ENGAGE_KICKER;
 		default: assert(0);
 	}
 }
@@ -209,11 +211,11 @@ Toplevel::Goal Main::teleop(
 	goals.combo_lift.can=[&](){
 		/*int UP_LEVEL=0;
 		int DOWN_LEVEL=0;*/
+		if(gunner_joystick.button[Gamepad_button::B] || oi_panel.stop){
+			sticky_can_goal=Sticky_can_goal::STOP;
+			can_priority=1;
+		}
 		if(!gunner_joystick.button[Gamepad_button::BACK]){
-			if(gunner_joystick.button[Gamepad_button::B]){
-				sticky_can_goal=Sticky_can_goal::STOP;
-				can_priority=1;
-			}
 			if(gunner_joystick.button[Gamepad_button::R_JOY]){
 				sticky_can_goal=Sticky_can_goal::BOTTOM;
 				can_priority=1;
@@ -314,11 +316,11 @@ Toplevel::Goal Main::teleop(
 		static const float ENGAGE_KICKER_HEIGHT=2.9;
 		/*int UP_LEVEL=0;
 		int DOWN_LEVEL=0;*/
+		if(gunner_joystick.button[Gamepad_button::B]){
+			sticky_tote_goal=Sticky_tote_goal::STOP;
+			can_priority=0;
+		}
 		if(!gunner_joystick.button[Gamepad_button::BACK]){
-			if(gunner_joystick.button[Gamepad_button::B]){
-				sticky_tote_goal=Sticky_tote_goal::STOP;
-				can_priority=0;
-			}
 			if(gunner_joystick.button[Gamepad_button::L_JOY]){
 				can_priority=0;
 				sticky_tote_goal=Sticky_tote_goal::BOTTOM;

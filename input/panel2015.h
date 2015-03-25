@@ -1,4 +1,4 @@
-#ifndef PANEL2015_H//bool piston_switch_b; PANEL2015_H
+#ifndef PANEL2015_H
 #define PANEL2015_H 
 
 #include "../util/maybe.h"
@@ -19,12 +19,12 @@ struct Panel{
 	float override_height;
     //Buttons:
 	bool move_arm_to_pos;
-	bool current_collect;
+	bool kill;
 	bool current_drop;
 	bool move_drop;
 	bool move_collect;
 	bool chute_collect;
-	bool stop;
+	bool stop;//Added
 	bool piston_aligner;
 	bool kicker_activate;
     //3 position Switches:

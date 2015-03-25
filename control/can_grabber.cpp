@@ -44,7 +44,7 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 	switch(last){
 		case Can_grabber::Status::INITIAL:
 			if(out==Output::RELEASE){
-				static const double DROP_TIME=1;
+				static const double DROP_TIME=2;
 				timer.set(DROP_TIME);
 				timer.update(time,0);
 				last=Status::GOING_DOWN;

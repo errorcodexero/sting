@@ -445,7 +445,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 						default: assert(0);
 					}
 				} else {
-					return Main::Mode::TELEOP;
+					return Main::Mode::AUTO_GRAB;
 				}
 			}
 			return m;

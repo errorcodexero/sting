@@ -204,7 +204,7 @@ Toplevel::Goal Main::teleop(
 	goals.combo_lift.can=[&](){
 		/*int UP_LEVEL=0;
 		int DOWN_LEVEL=0;*/
-		if(gunner_joystick.button[Gamepad_button::B]){
+		if(gunner_joystick.button[Gamepad_button::B] || oi_panel.stop){
 			sticky_can_goal=Sticky_can_goal::STOP;
 			can_priority=1;
 		}

@@ -92,8 +92,7 @@ Kicker::Output Kicker::Output_applicator::operator()(Robot_outputs in)const{
 }
 
 std::ostream& operator<<(std::ostream& o,Kicker::Input const& /*a*/){
-	return o<<"";
-	nyi
+	return o<<"Kicker::Input()";
 }
 
 std::ostream& operator<<(std::ostream& o,Kicker const& kicker){

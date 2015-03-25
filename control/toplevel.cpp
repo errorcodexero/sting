@@ -118,15 +118,10 @@ ostream& operator<<(ostream& o,Toplevel::Input const& a){
 }
 
 Toplevel::Goal::Goal():
-	//shooter_wheels(Shooter_wheels:)
 	#define X(A,B,C) B(C),
 	TOPLEVEL_ITEMS
 	#undef X
 	dummy()
-	/*lift_can(Lift::Goal::stop()),
-	lift_tote(Lift::Goal::stop()),
-	kicker(Kicker::Goal::IN),
-	pump(Pump::Goal::AUTO)*/
 {}
 
 ostream& operator<<(ostream& o,Toplevel::Goal g){

@@ -27,10 +27,19 @@ bool in_range(T a,T b,T c){
 	return a<b+c&&a>b-c;
 }
 
+template<size_t LEN>
+array<double,LEN> floats_to_doubles(array<float,LEN> a){
+	array<double,LEN> r;
+	for(size_t i=0;i<LEN;i++) r[i]=a[i];
+	return r;
+}
+
 Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code 
 	static const float ABOVE_ENGAGE_KICKER_HEIGHT=ENGAGE_KICKER_HEIGHT+3;
-	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT) piston.update(1);
-	return Lift::Goal::go_to_height(std::array<double,3>{find_height(tote_lift_pos)[0],find_height(tote_lift_pos)[1],find_height(tote_lift_pos)[2]});
+	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT){
+		piston.update(1);
+	}
+	return Lift::Goal::go_to_height(floats_to_doubles(find_height(tote_lift_pos)));
 }
 
 int round_to_level(float tote_height,float height){

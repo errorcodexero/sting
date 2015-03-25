@@ -8,8 +8,6 @@
 struct Kicker{
 	#define KICKER_INPUT(X)
 	DECLARE_STRUCT(Input,KICKER_INPUT)
-	/*struct Input{
-	};*/
 
 	struct Input_reader{
 		Input operator()(Robot_inputs)const;

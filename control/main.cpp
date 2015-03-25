@@ -200,6 +200,7 @@ Toplevel::Goal Main::teleop(
 	Lift_position tote_lift_pos;
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
+	if(!down2) down2=oi_panel.move_drop;
 	
 	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;

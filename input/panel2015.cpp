@@ -20,7 +20,7 @@ Panel::Panel():
 	move_drop(0),
 	move_collect(0),
 	chute_collect(0),
-	lifter_off(0),
+	stop(0),
 	piston_aligner(0),
 	kicker_activate(0),
 	target_type(0),
@@ -55,7 +55,7 @@ ostream& operator<<(ostream& o,Panel::Level_button a){
 
 ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 	o<<" Operation_buttons(";
-	if(a==Panel::Operation_buttons::COLLECT_CURRENT)o<<"collect_current";
+	if(a==Panel::Operation_buttons::KILL)o<<"collect_current";
 	else if(a==Panel::Operation_buttons::DROP_CURRENT)o<<"drop_current";
 	else if(a==Panel::Operation_buttons::MOVE_COLLECT)o<<"move_collect";
 	else if(a==Panel::Operation_buttons::MOVE_DROP)o<<"move_drop";
@@ -78,7 +78,7 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", move_drop:"<<p.move_drop;
 	o<<", move_collect:"<<p.move_collect;
 	o<<", chute_collect:"<<p.chute_collect;
-	o<<", lifter_off:"<<p.lifter_off;
+	o<<", stop:"<<p.stop;
 	o<<", piston_aligner:"<<p.piston_aligner;
 	o<<", kicker_activate:"<<p.kicker_activate<<")";
 	o<<", 3_pos_switches(";
@@ -140,14 +140,14 @@ Panel interpret(Joystick_data d){
 	}
 	{
 	float op=d.axis[0];//default: -1
-	static const float COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
+	static const float KILL=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
 	if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2 && op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
 	else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2 && op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
-	else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2 && op<MOVE_COLLECT+(COLLECT_CURRENT-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
-	else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2 && op<COLLECT_CURRENT+.25)panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
+	else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2 && op<MOVE_COLLECT+(KILL-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
+	else if(op>KILL-(KILL-MOVE_COLLECT)/2 && op<KILL+.25)panel.operation_buttons=Panel::Operation_buttons::KILL;//1
 	}
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
-	panel.lifter_off=d.button[3];
+	panel.stop=d.button[3];
 	{	
 	static const float DOWN=1, UP=.48, DEFAULT=-1;
 	float updowncontrol=d.axis[4];

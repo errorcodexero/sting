@@ -206,13 +206,13 @@ Toplevel::Goal Main::teleop(
 	can_lift_pos.is_can=1;
 	Lift_position tote_lift_pos;
 	
-	if(oi_panel.bottom_mode==0){
+	if(oi_panel.bottom_mode==1){
 		can_lift_pos.on_step=0;
 		tote_lift_pos.on_step=0;
 		can_lift_pos.placed_on_scoring=1;
 		tote_lift_pos.placed_on_scoring=1;
 	}else if(oi_panel.bottom_mode==1){
-		can_lift_pos.on_step=1;
+		can_lift_pos.on_step=0;
 		tote_lift_pos.on_step=1;
 		can_lift_pos.placed_on_scoring=0;
 		tote_lift_pos.placed_on_scoring=0;

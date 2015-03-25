@@ -503,7 +503,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;
-			goals.drive.y=.6;
+			goals.drive.y=-.6;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_GRAB:
@@ -512,7 +512,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		case Mode::AUTO_BACK:
 			sticky_can_goal=Sticky_can_goal::BOTTOM;
 			goals.drive.x=0;
-			goals.drive.y=.8;
+			goals.drive.y=-.8;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
@@ -533,7 +533,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 				break;
 		case Mode::AUTO_BACK:
 				goals.can_grabber=Can_grabber::Goal::BOTTOM;
-				goals.drive.y=.6;
+				goals.drive.y=-.6;
 				break;
 		case Mode::AUTO_RELEASE:
 				goals.can_grabber=Can_grabber::Goal::TOP;

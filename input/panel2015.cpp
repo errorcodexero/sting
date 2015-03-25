@@ -26,8 +26,7 @@ Panel::Panel():
 	target_type(0),
 	move_arm_one(0),
 	move_arm_cont(0),
-	collect_mode(0),
-	drop_mode(0)
+	bottom_mode(1)
 {}
 
 ostream& operator<<(ostream& o,Panel::Auto_mode a){
@@ -89,8 +88,7 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<" target_type:"<<p.target_type;
 	o<<", move_arm_one"<<p.move_arm_one;
 	o<<", move_arm_cont"<<p.move_arm_cont;
-	o<<", collect_mode"<<p.collect_mode;
-	o<<", drop_mode"<<p.drop_mode<<")";
+	o<<", bottom_mode"<<p.bottom_mode<<")";
 	o<<")";
 	return o;
 }
@@ -169,6 +167,9 @@ Panel interpret(Joystick_data d){
 		float move_drop=d.axis[0];
 		static const float DEFAULT=-1, DROP=0;
 		panel.move_drop=(move_drop>DROP-(DROP-DEFAULT)/2 && move_drop<DROP+(DROP+.25)/2);
+	}
+	{
+		panel.bottom_mode=round(d.axis[6]);
 	}
 	panel.target_type=round(d.axis[3]);
 	return panel;

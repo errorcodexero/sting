@@ -205,6 +205,23 @@ Toplevel::Goal Main::teleop(
 	Lift_position can_lift_pos;
 	can_lift_pos.is_can=1;
 	Lift_position tote_lift_pos;
+	
+	if(oi_panel.bottom_mode==0){
+		can_lift_pos.on_step=0;
+		tote_lift_pos.on_step=0;
+		can_lift_pos.placed_on_scoring=1;
+		tote_lift_pos.placed_on_scoring=1;
+	}else if(oi_panel.bottom_mode==1){
+		can_lift_pos.on_step=1;
+		tote_lift_pos.on_step=1;
+		can_lift_pos.placed_on_scoring=0;
+		tote_lift_pos.placed_on_scoring=0;
+	}else{
+		can_lift_pos.on_step=0;
+		tote_lift_pos.on_step=0;
+		can_lift_pos.placed_on_scoring=0;
+		tote_lift_pos.placed_on_scoring=0;
+	}
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
 	if(!down2) down2=oi_panel.move_drop;
@@ -311,7 +328,8 @@ Toplevel::Goal Main::teleop(
 			//else if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6;
 			//else if(sticky_can_goal==Sticky_can_goal::UP_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::RTRIGGER])) can_lift_pos.stacked_bins=UP_LEVEL;
 			//else if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::LTRIGGER])) can_lift_pos.stacked_bins=DOWN_LEVEL;
-			double offset=down2?-5:0;
+			static const float LIFT_NUDGE=5;
+			double offset=down2?-LIFT_NUDGE:0;
 			#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
 				return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 			}

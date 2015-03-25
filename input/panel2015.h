@@ -31,8 +31,7 @@ struct Panel{
 	int target_type;//Added
 	int move_arm_one;
 	int move_arm_cont;
-	int collect_mode;
-	int drop_mode;
+	int bottom_mode;
 	Panel();
 };
 

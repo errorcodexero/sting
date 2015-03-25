@@ -56,24 +56,28 @@ vector<Lift_position> examples(){
 	return r;
 }
 
-//in inches
+//In inches
 std::array<float,3> find_height(Lift_position const& a){
 	//const float HEIGHT_OF_CAN = 28.2;
 	const float TOTE_HEIGHT=12.1;
 	float target=a.stacked_bins*TOTE_HEIGHT;
 	
-	static const float TOTE_HOLD_MARGIN=1.4;
-	target+=TOTE_HOLD_MARGIN;
+	if(a.stacked_bins!=0){
+		static const float TOTE_HOLD_MARGIN=1.4;
+		target+=TOTE_HOLD_MARGIN;
+	}
 
 	if(a.placed_on_scoring){
-		const float HEIGHT_OF_SCORING_PLATFORM=1.96;
+		const float HEIGHT_OF_SCORING_PLATFORM=6.25;
 		target+=HEIGHT_OF_SCORING_PLATFORM;
 	}else if(a.on_step){
-		const float HEIGHT_OF_STEP=6.25;
+		const float HEIGHT_OF_STEP=1.96;
 		target+=HEIGHT_OF_STEP;
 	}
+	
 	float positive_tolerance=2;
 	float negative_tolerance=2;
+	
 	if(a.is_can){
 		int bins=a.stacked_bins;
 		if(bins==1) target+=6;
@@ -81,23 +85,23 @@ std::array<float,3> find_height(Lift_position const& a){
 		else if(bins==3) target+=3;
 		else if(bins==4) target+=2;
 		else if(bins==5) target-=2.5;
-		/*if(a.pickup){
+		if(a.pickup){
 			static const float CAN_PICKUP_MARGIN=1.5;
 			target-=CAN_PICKUP_MARGIN;
 			positive_tolerance=CAN_PICKUP_MARGIN;
 		}else{
-			static const float CAN_HOLD_MARGIN=3;
-			target+=CAN_HOLD_MARGIN;
-		}*/
+			//static const float CAN_HOLD_MARGIN=3;
+			//target+=CAN_HOLD_MARGIN;
+		}
 	}else{
-		/*if(a.pickup){
+		if(a.pickup){
 			static const float TOTE_PICKUP_MARGIN=1.4;
 			target-=TOTE_PICKUP_MARGIN;
 			positive_tolerance=TOTE_PICKUP_MARGIN;
-		}*/
+		}
 		if(a.engage_kicker){
 			static const float ENGAGE_KICKER_HEIGHT=2.9;
-			target=ENGAGE_KICKER_HEIGHT;
+			target+=ENGAGE_KICKER_HEIGHT;
 		}
 	}
 	return std::array<float,3>{{target-negative_tolerance,target,target+positive_tolerance}};

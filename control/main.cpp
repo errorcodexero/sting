@@ -12,6 +12,13 @@
 
 using namespace std;
 
+ostream& operator<<(ostream& o,Main::Mode a){
+	#define X(NAME) if(a==Main::Mode::NAME) return o<<""#NAME;
+	MODES
+	#undef X
+	assert(0);
+}
+
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
@@ -466,6 +473,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
+			if(!autonomous) return Main::Mode::TELEOP;
 			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP) return Main::Mode::AUTO_RAISE;
 			return m;
 		case Main::Mode::AUTO_RAISE:
@@ -518,7 +526,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		case Mode::AUTO_BACK:
 			goals.can_grabber=Can_grabber::Goal::BOTTOM;
 			goals.drive.x=0;
-			goals.drive.y=-.8;
+			goals.drive.y=-.4;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
@@ -592,6 +600,7 @@ bool operator!=(Main a,Main b){
 
 ostream& operator<<(ostream& o,Main m){
 	o<<"Main(";
+	o<<m.mode;
 	o<<m.force;
 	o<<m.perf;
 	o<<m.toplevel;

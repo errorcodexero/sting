@@ -15,7 +15,7 @@ Panel::Panel():
 	slide_pos(0.0),
 	override_height(0),
 	move_arm_to_pos(0),
-	current_collect(0),
+	kill(0),
 	current_drop(0),
 	move_drop(0),
 	move_collect(0),
@@ -77,7 +77,7 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", override_height:"<<p.override_height;
 	o<<", Buttons(";
 	o<<" move_arm_to_pos:"<<p.move_arm_to_pos;
-	o<<", collect_current:"<<p.current_collect;
+	o<<", kill:"<<p.kill;
 	o<<", current_drop:"<<p.current_drop;
 	o<<", move_drop:"<<p.move_drop;
 	o<<", move_collect:"<<p.move_collect;

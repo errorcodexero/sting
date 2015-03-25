@@ -461,7 +461,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
-			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::AUTO_RAISE;
+			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP) return Main::Mode::AUTO_RAISE;
 			return m;
 		case Main::Mode::AUTO_RAISE:
 			if(status.combo_lift.tote==Lift::Status::top() || !autonomous) return Main::Mode::TELEOP;
@@ -523,28 +523,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goals.combo_lift.tote=Lift::Goal::up();
 			break;
 		default: assert(0);
-	}switch(mode){
-		case Mode::TELEOP:
-				goals=teleop(in,main_joystick,gunner_joystick,oi_panel,toplevel_status);
-				break;
-		case Mode::AUTO_MOVE:
-				goals.drive.x=0;
-				goals.drive.y=-.6;
-				goals.drive.theta=0;
-				break;
-		case Mode::AUTO_GRAB:
-				goals.can_grabber=Can_grabber::Goal::BOTTOM;
-				break;
-		case Mode::AUTO_BACK:
-				goals.can_grabber=Can_grabber::Goal::BOTTOM;
-				goals.drive.y=-.6;
-				break;
-		case Mode::AUTO_RELEASE:
-				goals.can_grabber=Can_grabber::Goal::TOP;
-				break;
-		default: assert(0);
-    }
-
+	}
 	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
 	since_switch.update(in.now,mode!=next);
 	mode=next;

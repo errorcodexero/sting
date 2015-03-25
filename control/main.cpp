@@ -426,7 +426,7 @@ unsigned pdb_location1(Drivebase::Motor m){
 	//assert(m>=0 && m<Drivebase::MOTORS);
 }
 
-Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Time since_switch, Panel oi_panel, Main::Sticky_can_goal& sticky_can_goal){
+Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel::Status_detail status,Time since_switch, Panel oi_panel){
 	switch(m){
 		case Main::Mode::TELEOP:
 			if(autonomous_start){
@@ -452,15 +452,15 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Time sin
 			return m;
 		case Main::Mode::AUTO_GRAB:
 			if(!autonomous) return Main::Mode::TELEOP;
-			if(sticky_can_goal==Main::Sticky_can_goal::BOTTOM) return Main::Mode::AUTO_BACK;
+			if(status.can_grabber.status==Can_grabber::Status::DOWN) return Main::Mode::AUTO_BACK;
 			return m;
 		case Main::Mode::AUTO_BACK:
 			if(!autonomous) return Main::Mode::TELEOP;
 			//timer is up - could use encoders once those work
-			if(since_switch>1.2) return Main::Mode::AUTO_RELEASE;
+			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
-			if(sticky_can_goal==Main::Sticky_can_goal::TOP|| !autonomous) return Main::Mode::TELEOP;
+			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::TELEOP;
 			return m;
 		default: assert(0);
 	}
@@ -516,9 +516,29 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			sticky_can_goal=Sticky_can_goal::TOP;
 			break;
 		default: assert(0);
-	}
+	}switch(mode){
+		case Mode::TELEOP:
+				goals=teleop(in,main_joystick,gunner_joystick,oi_panel,toplevel_status);
+				break;
+		case Mode::AUTO_MOVE:
+				goals.drive.x=0;
+				goals.drive.y=-.6;
+				goals.drive.theta=0;
+				break;
+		case Mode::AUTO_GRAB:
+				goals.can_grabber=Can_grabber::Goal::BOTTOM;
+				break;
+		case Mode::AUTO_BACK:
+				goals.can_grabber=Can_grabber::Goal::BOTTOM;
+				goals.drive.y=.6;
+				break;
+		case Mode::AUTO_RELEASE:
+				goals.can_grabber=Can_grabber::Goal::TOP;
+				break;
+		default: assert(0);
+    }
 
-	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,since_switch.elapsed(),oi_panel,sticky_can_goal);
+	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;

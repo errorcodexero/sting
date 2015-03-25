@@ -28,7 +28,7 @@ struct Panel{
 	bool piston_aligner;
 	bool kicker_activate;
     //3 position Switches:
-	int target_type;
+	int target_type;//Added
 	int move_arm_one;
 	int move_arm_cont;
 	int collect_mode;

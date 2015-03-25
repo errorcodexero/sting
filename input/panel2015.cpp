@@ -57,7 +57,7 @@ ostream& operator<<(ostream& o,Panel::Level_button a){
 
 ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 	o<<" Operation_buttons(";
-	if(a==Panel::Operation_buttons::KILL)o<<"collect_current";
+	if(a==Panel::Operation_buttons::KILL)o<<"kill";
 	else if(a==Panel::Operation_buttons::DROP_CURRENT)o<<"drop_current";
 	else if(a==Panel::Operation_buttons::MOVE_COLLECT)o<<"move_collect";
 	else if(a==Panel::Operation_buttons::MOVE_DROP)o<<"move_drop";

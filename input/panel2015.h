@@ -11,9 +11,9 @@ struct Panel{
 	bool in_use;
 	enum class Auto_mode{DO_NOTHING,MOVE,CAN_GRAB};//Added
 	Auto_mode auto_mode;//Added
-	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};//Added
+	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6,ENGAGE_KICKER_HEIGHT};//Added
 	Level_button level_button;//Added
-	enum class Operation_buttons{COLLECT_CURRENT,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP};
+	enum class Operation_buttons{KILL,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP};
 	Operation_buttons operation_buttons;
 	float slide_pos;
 	float override_height;
@@ -24,7 +24,7 @@ struct Panel{
 	bool move_drop;
 	bool move_collect;
 	bool chute_collect;
-	bool lifter_off;
+	bool stop;
 	bool piston_aligner;
 	bool kicker_activate;
     //3 position Switches:

@@ -42,12 +42,13 @@ ostream& operator<<(ostream& o,Panel::Auto_mode a){
 ostream& operator<<(ostream& o,Panel::Level_button a){
 	o<<" Level(";
 	if(a==Panel::Level_button::LEVEL0)o<<"0";
-	if(a==Panel::Level_button::LEVEL1)o<<"1";
-	if(a==Panel::Level_button::LEVEL2)o<<"2";
-	if(a==Panel::Level_button::LEVEL3)o<<"3";
-	if(a==Panel::Level_button::LEVEL4)o<<"4";
-	if(a==Panel::Level_button::LEVEL5)o<<"5";	
-	if(a==Panel::Level_button::LEVEL6)o<<"6";
+	else if(a==Panel::Level_button::LEVEL1)o<<"1";
+	else if(a==Panel::Level_button::LEVEL2)o<<"2";
+	else if(a==Panel::Level_button::LEVEL3)o<<"3";
+	else if(a==Panel::Level_button::LEVEL4)o<<"4";
+	else if(a==Panel::Level_button::LEVEL5)o<<"5";	
+	else if(a==Panel::Level_button::LEVEL6)o<<"6";
+	else if(a==Panel::Level_button::ENGAGE_KICKER_HEIGHT)o<<"engage_kicker_height";
 	o<<")";
 	return o;
 }
@@ -55,9 +56,9 @@ ostream& operator<<(ostream& o,Panel::Level_button a){
 ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 	o<<" Operation_buttons(";
 	if(a==Panel::Operation_buttons::COLLECT_CURRENT)o<<"collect_current";
-	if(a==Panel::Operation_buttons::DROP_CURRENT)o<<"drop_current";
-	if(a==Panel::Operation_buttons::MOVE_COLLECT)o<<"move_collect";
-	if(a==Panel::Operation_buttons::MOVE_DROP)o<<"move_drop";
+	else if(a==Panel::Operation_buttons::DROP_CURRENT)o<<"drop_current";
+	else if(a==Panel::Operation_buttons::MOVE_COLLECT)o<<"move_collect";
+	else if(a==Panel::Operation_buttons::MOVE_DROP)o<<"move_drop";
 	o<<")";
 	return o;
 }
@@ -133,6 +134,11 @@ Panel interpret(Joystick_data d){
 	}
 	}
 	{
+	float lev=d.axis[0];
+	static const float DEFAULT=-1, ENGAGE_KICKER_HEIGHT=.32;
+	if(lev>ENGAGE_KICKER_HEIGHT-(ENGAGE_KICKER_HEIGHT-DEFAULT)/2 && lev<ENGAGE_KICKER_HEIGHT+(ENGAGE_KICKER_HEIGHT+.25)/2) panel.level_button=Panel::Level_button::ENGAGE_KICKER_HEIGHT;
+	}
+	{
 	float op=d.axis[0];//default: -1
 	static const float COLLECT_CURRENT=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
 	if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2 && op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
@@ -155,6 +161,11 @@ Panel interpret(Joystick_data d){
 	if(level_up_down_control>UP-(UP-DEFAULT)/2 && level_up_down_control<UP+(DOWN-UP)/2)panel.move_arm_one=1;
 	if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
 	else panel.move_arm_one=0;
+	}
+	{
+	float move_drop=d.axis[0];
+	static const float DEFAULT=-1, DROP=0;
+	panel.move_drop=(move_drop>DROP-(DROP-DEFAULT)/2 && move_drop<DROP+(DROP+.25)/2);
 	}
 	panel.target_type=round(d.axis[3]);
 	return panel;

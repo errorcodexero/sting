@@ -90,6 +90,8 @@ Main::Sticky_can_goal convert_level_can(Panel::Level_button level_button) {
 			return Main::Sticky_can_goal::LEVEL5;
 		case Panel::Level_button::LEVEL6:
 			return Main::Sticky_can_goal::TOP;
+		case Panel::Level_button::ENGAGE_KICKER_HEIGHT:
+			return Main::Sticky_can_goal::STOP;
 		default: assert(0);
 	}
 }

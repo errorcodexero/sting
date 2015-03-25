@@ -507,16 +507,16 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_GRAB:
-			sticky_can_goal=Sticky_can_goal::BOTTOM;
+			goals.can_grabber=Can_grabber::Goal::BOTTOM;
 			break;
 		case Mode::AUTO_BACK:
-			sticky_can_goal=Sticky_can_goal::BOTTOM;
+			goals.can_grabber=Can_grabber::Goal::BOTTOM;
 			goals.drive.x=0;
 			goals.drive.y=-.8;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
-			sticky_can_goal=Sticky_can_goal::TOP;
+			goals.can_grabber=Can_grabber::Goal::TOP;
 			break;
 		default: assert(0);
 	}switch(mode){

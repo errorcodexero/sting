@@ -19,12 +19,12 @@ struct Panel{
 	float override_height;
     //Buttons:
 	bool move_arm_to_pos;
-	bool current_collect;
+	bool kill;
 	bool current_drop;
 	bool move_drop;
 	bool move_collect;
 	bool chute_collect;
-	bool stop;
+	bool stop;//Added
 	bool piston_aligner;
 	bool kicker_activate;
     //3 position Switches:

@@ -12,6 +12,13 @@
 
 using namespace std;
 
+ostream& operator<<(ostream& o,Main::Mode a){
+	#define X(NAME) if(a==Main::Mode::NAME) return o<<""#NAME;
+	MODES
+	#undef X
+	assert(0);
+}
+
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
@@ -90,6 +97,8 @@ Main::Sticky_can_goal convert_level_can(Panel::Level_button level_button) {
 			return Main::Sticky_can_goal::LEVEL5;
 		case Panel::Level_button::LEVEL6:
 			return Main::Sticky_can_goal::TOP;
+		case Panel::Level_button::ENGAGE_KICKER_HEIGHT:
+			return Main::Sticky_can_goal::STOP;
 		default: assert(0);
 	}
 }
@@ -198,6 +207,7 @@ Toplevel::Goal Main::teleop(
 	Lift_position tote_lift_pos;
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
+	if(!down2) down2=oi_panel.move_drop;
 	
 	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
@@ -479,6 +489,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
+			if(!autonomous) return Main::Mode::TELEOP;
 			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP) return Main::Mode::AUTO_RAISE;
 			return m;
 		case Main::Mode::AUTO_RAISE:
@@ -493,6 +504,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Joystick_data main_joystick=in.joystick[0];
 	Joystick_data gunner_joystick=in.joystick[1];
 	Panel oi_panel=interpret(in.joystick[2]);
+	cout<<"panel: "<<oi_panel<<"\n";
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -531,7 +543,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		case Mode::AUTO_BACK:
 			goals.can_grabber=Can_grabber::Goal::BOTTOM;
 			goals.drive.x=0;
-			goals.drive.y=-.8;
+			goals.drive.y=-.4;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
@@ -605,6 +617,7 @@ bool operator!=(Main a,Main b){
 
 ostream& operator<<(ostream& o,Main m){
 	o<<"Main(";
+	o<<m.mode;
 	o<<m.force;
 	o<<m.perf;
 	o<<m.toplevel;

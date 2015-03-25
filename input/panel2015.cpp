@@ -3,6 +3,7 @@
 #include <stdlib.h> 
 #include "util.h"
 #include "../util/util.h"
+#include <cmath>
 
 using namespace std;
 
@@ -140,8 +141,7 @@ Panel interpret(Joystick_data d){
 	else if(op>COLLECT_CURRENT-(COLLECT_CURRENT-MOVE_COLLECT)/2 && op<COLLECT_CURRENT+.25)panel.operation_buttons=Panel::Operation_buttons::COLLECT_CURRENT;//1
 	}
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
-	if(d.button[3])panel.lifter_off=1;
-	if(!d.button[3])panel.lifter_off=0;
+	panel.lifter_off=d.button[3];
 	{	
 	static const float DOWN=1, UP=.48, DEFAULT=-1;
 	float updowncontrol=d.axis[4];
@@ -156,7 +156,7 @@ Panel interpret(Joystick_data d){
 	if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
 	else panel.move_arm_one=0;
 	}
-	panel.target_type=d.axis[3];
+	panel.target_type=round(d.axis[3]);
 	return panel;
 }
 

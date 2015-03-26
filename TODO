@@ -1,4 +1,6 @@
 HIGH PRIORITY:
+-Fix timing for the auto kicking
+-Fix tote arm being unable to move when at the bottom (can move to the top, but none of the specific preset heights)
 -Bug fixes
 -Fix and learn camera stuff NEED THOMAS FOR THESE
 -Sensor and Auto-Alignment

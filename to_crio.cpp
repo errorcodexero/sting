@@ -479,10 +479,13 @@ public:
 	}
 	
 	void run(Robot_inputs in){
-		cout<<"in:"<<in<<"\n";
+		static int print_out_speed=0;
 		Robot_outputs out=main(in);
-		cout<<"main: "<<main<<"\n";
-		cout<<"out:"<<out<<"\n";
+		if(print_out_speed%100==0){
+			cout<<"in:"<<in<<"\n";
+			cout<<"main: "<<main<<"\n";
+			cout<<"out:"<<out<<"\n";
+		}
 		int x=set_outputs(out,in.robot_mode.enabled);
 		if(x) cout<<"x was:"<<x<<"\n";
 		static int i=0;

@@ -201,6 +201,7 @@ Toplevel::Goal Main::teleop(
 	
 	goals.drive=goal;
 	piston.update(gunner_joystick.button[Gamepad_button::Y]);
+	if(!gunner_joystick.button[Gamepad_button::Y]) piston.update(oi_panel.kicker_activate);
 	
 	Lift_position can_lift_pos;
 	can_lift_pos.is_can=1;

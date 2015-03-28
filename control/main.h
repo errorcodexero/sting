@@ -10,7 +10,7 @@
 #include "../input/panel2015.h"
 
 struct Main{
-	#define MODES X(TELEOP) X(AUTO_MOVE) X(AUTO_GRAB) X(AUTO_BACK) X(AUTO_RELEASE) X(AUTO_RAISE)
+	#define MODES X(TELEOP) X(AUTO_MOVE) X(AUTO_GRAB) X(AUTO_BACK) X(AUTO_RELEASE)
 	enum class Mode{
 		#define X(NAME) NAME,
 		MODES
@@ -30,7 +30,7 @@ struct Main{
 
 	Posedge_toggle piston;
 	
-	enum class Sticky_can_goal{STOP,BOTTOM,TOP,UP_LEVEL,DOWN_LEVEL,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6,KILL};
+	enum class Sticky_can_goal{STOP,BOTTOM,TOP,UP_LEVEL,DOWN_LEVEL,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6,LEVEL_FOUR,KILL};
 	Sticky_can_goal sticky_can_goal;
 	
 	enum class Sticky_tote_goal{STOP,BOTTOM,TOP,ENGAGE_KICKER,UP_LEVEL,DOWN_LEVEL,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5/*,LEVEL6*/,KILL};

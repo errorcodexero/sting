@@ -11,14 +11,13 @@ Panel::Panel():
 	in_use(0),
 	auto_mode(Auto_mode::DO_NOTHING),
 	level_button(Level_button::DEFAULT),
-	operation_buttons(Operation_buttons::DROP_CURRENT),
+	operation_buttons(Operation_buttons::DEFAULT),
 	slide_pos(0.0),
 	override_height(0),
 	move_arm_to_pos(0),
 	kill(0),
-	current_drop(0),
-	move_drop(0),
-	move_collect(0),
+	engage_kicker_height(0),
+	can_nudge(0),
 	chute_collect(0),
 	stop(0),
 	piston_aligner(0),
@@ -40,7 +39,7 @@ ostream& operator<<(ostream& o,Panel::Auto_mode a){
 }
 
 ostream& operator<<(ostream& o,Panel::Level_button a){
-	o<<" Level(";
+	o<<" Level_button(";
 	if(a==Panel::Level_button::DEFAULT)o<<"default";
 	else if(a==Panel::Level_button::LEVEL0)o<<"0";
 	else if(a==Panel::Level_button::LEVEL1)o<<"1";
@@ -49,7 +48,6 @@ ostream& operator<<(ostream& o,Panel::Level_button a){
 	else if(a==Panel::Level_button::LEVEL4)o<<"4";
 	else if(a==Panel::Level_button::LEVEL5)o<<"5";	
 	else if(a==Panel::Level_button::LEVEL6)o<<"6";
-	else if(a==Panel::Level_button::ENGAGE_KICKER_HEIGHT)o<<"engage_kicker_height";
 	else assert(0);
 	o<<")";
 	return o;
@@ -58,9 +56,10 @@ ostream& operator<<(ostream& o,Panel::Level_button a){
 ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 	o<<" Operation_buttons(";
 	if(a==Panel::Operation_buttons::KILL)o<<"kill";
-	else if(a==Panel::Operation_buttons::DROP_CURRENT)o<<"drop_current";
-	else if(a==Panel::Operation_buttons::MOVE_COLLECT)o<<"move_collect";
-	else if(a==Panel::Operation_buttons::MOVE_DROP)o<<"move_drop";
+	else if(a==Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT)o<<"engage_kicker_height";
+	else if(a==Panel::Operation_buttons::KICKER_ACTIVATE)o<<"kicker_activate";
+	else if(a==Panel::Operation_buttons::CAN_NUDGE)o<<"can_nudge";
+	else if(a==Panel::Operation_buttons::DEFAULT)o<<"default";
 	else assert(0);
 	o<<")";
 	return o;
@@ -77,9 +76,8 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", Buttons(";
 	o<<" move_arm_to_pos:"<<p.move_arm_to_pos;
 	o<<", kill:"<<p.kill;
-	o<<", current_drop:"<<p.current_drop;
-	o<<", move_drop:"<<p.move_drop;
-	o<<", move_collect:"<<p.move_collect;
+	o<<", engage_kicker_height:"<<p.engage_kicker_height;
+	o<<", can_nudge:"<<p.can_nudge;
 	o<<", chute_collect:"<<p.chute_collect;
 	o<<", stop:"<<p.stop;
 	o<<", piston_aligner:"<<p.piston_aligner;
@@ -115,14 +113,15 @@ Panel interpret(Joystick_data d){
 	{
 		Volt auto_mode=d.axis[5]/3.3*5;
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
+		cout<<endl<<endl<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
 	}
 	{
 		float lev=d.axis[1];//default: -1
 		//cout<<"\n\n\n lev:"<<lev<<"  2:"<<d.digital[2]<<"\n\n\n";
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
 		//cout<<endl<<lev<<endl;
-		if(!d.button[2]){//tests if override is being pushed
-			if(lev==DEFAULT)panel.level_button=Panel::Level_button::DEFAULT;
+		if(!d.button[1]){//tests if override is being pushed
+			if(lev<DEFAULT+.1)panel.level_button=Panel::Level_button::DEFAULT;
 			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2 && lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75
 			else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2 && lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_button=Panel::Level_button::LEVEL1;//-.5
 			else if(lev>LEVEL2-(LEVEL2-LEVEL1)/2 && lev<LEVEL2+(LEVEL3-LEVEL2)/2)panel.level_button=Panel::Level_button::LEVEL2;//-.25
@@ -135,18 +134,16 @@ Panel interpret(Joystick_data d){
 		}
 	}
 	{
-		float lev=d.axis[0];
-		static const float DEFAULT=-1, ENGAGE_KICKER_HEIGHT=.32;
-		if(lev>ENGAGE_KICKER_HEIGHT-(ENGAGE_KICKER_HEIGHT-DEFAULT)/2 && lev<ENGAGE_KICKER_HEIGHT+(ENGAGE_KICKER_HEIGHT+.25)/2) panel.level_button=Panel::Level_button::ENGAGE_KICKER_HEIGHT;
-	}
-	{
 		float op=d.axis[0];//default: -1
-		static const float KILL=1,MOVE_COLLECT=.65,MOVE_DROP=.32,DROP_CURRENT=0, DEFAULT=-1;
-		if(op>DROP_CURRENT-(DROP_CURRENT-DEFAULT)/2 && op<DROP_CURRENT+(MOVE_DROP-DROP_CURRENT)/2)panel.operation_buttons=Panel::Operation_buttons::DROP_CURRENT;//0
-		else if(op>MOVE_DROP-(MOVE_DROP-DROP_CURRENT)/2 && op<MOVE_DROP+(MOVE_COLLECT-MOVE_DROP)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_DROP;//.32
-		else if(op>MOVE_COLLECT-(MOVE_COLLECT-MOVE_DROP)/2 && op<MOVE_COLLECT+(KILL-MOVE_COLLECT)/2)panel.operation_buttons=Panel::Operation_buttons::MOVE_COLLECT;//.65
-		else if(op>KILL-(KILL-MOVE_COLLECT)/2 && op<KILL+.25)panel.operation_buttons=Panel::Operation_buttons::KILL;//1
+		static const float KILL=1,KICKER_ACTIVATE=.65,CAN_NUDGE=.32,ENGAGE_KICKER_HEIGHT=0, DEFAULT=-1;
+		if(op>ENGAGE_KICKER_HEIGHT-(ENGAGE_KICKER_HEIGHT-DEFAULT)/2 && op<ENGAGE_KICKER_HEIGHT+(CAN_NUDGE-ENGAGE_KICKER_HEIGHT)/2)panel.operation_buttons=Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT;//0
+		else if(op>CAN_NUDGE-(CAN_NUDGE-ENGAGE_KICKER_HEIGHT)/2 && op<CAN_NUDGE+(KICKER_ACTIVATE-CAN_NUDGE)/2)panel.operation_buttons=Panel::Operation_buttons::CAN_NUDGE;//.32
+		else if(op>KICKER_ACTIVATE-(KICKER_ACTIVATE-CAN_NUDGE)/2 && op<KICKER_ACTIVATE+(KILL-KICKER_ACTIVATE)/2)panel.operation_buttons=Panel::Operation_buttons::KICKER_ACTIVATE;//.65
+		else if(op>KILL-(KILL-KICKER_ACTIVATE)/2 && op<KILL+.25)panel.operation_buttons=Panel::Operation_buttons::KILL;//1
+		else if(op>DEFAULT-.25 && op<DEFAULT+(ENGAGE_KICKER_HEIGHT-DEFAULT)/2)panel.operation_buttons=Panel::Operation_buttons::DEFAULT;
 	}
+	panel.kicker_activate=(panel.operation_buttons==Panel::Operation_buttons::KICKER_ACTIVATE);
+	panel.kill=0;//(panel.operation_buttons==Panel::Operation_buttons::KILL);
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
 	panel.stop=d.button[3];
 	{	
@@ -164,9 +161,9 @@ Panel interpret(Joystick_data d){
 		else panel.move_arm_one=0;
 	}
 	{
-		float move_drop=d.axis[0];
-		static const float DEFAULT=-1, DROP=0;
-		panel.move_drop=(move_drop>DROP-(DROP-DEFAULT)/2 && move_drop<DROP+(DROP+.25)/2);
+		float can_nudge=d.axis[0];
+		static const float DEFAULT=-1, NUDGE=0;
+		panel.can_nudge=(can_nudge>NUDGE-(NUDGE-DEFAULT)/2 && can_nudge<NUDGE+(NUDGE+.25)/2);
 	}
 	{
 		panel.bottom_mode=round(d.axis[6]);

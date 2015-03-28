@@ -62,12 +62,15 @@ unsigned interpret_10_turn_pot(Volt v){
 		.85,
 		1.5
 	};
-	for(unsigned i=5;i<10;i++){
+	for(unsigned i=0;i<10;i++){
+		if(v<limits[i]) return i;
+	}
+	/*for(unsigned i=5;i<10;i++){
 		if(v<limits[i]) return i-5;
 	}
 	for(unsigned i=0;i<5;i++){
 		if(v<limits[i]) return i+5;
-	}
+	}*/
 	return 9;
 }
 

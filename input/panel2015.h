@@ -11,18 +11,17 @@ struct Panel{
 	bool in_use; 
 	enum class Auto_mode{DO_NOTHING,MOVE,CAN_GRAB};//Added
 	Auto_mode auto_mode;//Added
-	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6,ENGAGE_KICKER_HEIGHT};//Added
+	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};
 	Level_button level_button;//Added
-	enum class Operation_buttons{KILL,DROP_CURRENT,MOVE_COLLECT,MOVE_DROP};
+	enum class Operation_buttons{DEFAULT,KILL,ENGAGE_KICKER_HEIGHT,KICKER_ACTIVATE,MOVE_COLLECT,CAN_NUDGE};
 	Operation_buttons operation_buttons;
 	float slide_pos;
 	float override_height;
     //Buttons:
 	bool move_arm_to_pos;
-	bool kill;
-	bool current_drop;
-	bool move_drop;
-	bool move_collect;
+	bool kill;//added
+	bool engage_kicker_height;
+	bool can_nudge;//added
 	bool chute_collect;
 	bool stop;//Added
 	bool piston_aligner;
@@ -31,7 +30,7 @@ struct Panel{
 	int target_type;//Added
 	int move_arm_one;
 	int move_arm_cont;
-	int bottom_mode;
+	int bottom_mode;//added
 	Panel();
 };
 

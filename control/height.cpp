@@ -80,24 +80,25 @@ std::array<float,3> find_height(Lift_position const& a){
 	
 	if(a.is_can){
 		int bins=a.stacked_bins;
-		if(bins==1) target+=6;
-		else if(bins==2) target+=4.5;
-		else if(bins==3) target+=3;
+		if(bins==1) target+=2;
+		else if(bins==2) target+=1.25;
+		else if(bins==3) target+=.75;
 		else if(bins==4) target+=2;
 		else if(bins==5) target-=2.5;
+		else if(bins==8) target=((4*TOTE_HEIGHT)+1.4);
 		if(a.pickup){
-			static const float CAN_PICKUP_MARGIN=1.5;
-			target-=CAN_PICKUP_MARGIN;
-			positive_tolerance=CAN_PICKUP_MARGIN;
+			//static const float CAN_PICKUP_MARGIN=1.5;
+			//target-=CAN_PICKUP_MARGIN;
+			//positive_tolerance=CAN_PICKUP_MARGIN;
 		}else{
 			//static const float CAN_HOLD_MARGIN=3;
 			//target+=CAN_HOLD_MARGIN;
 		}
 	}else{
 		if(a.pickup){
-			static const float TOTE_PICKUP_MARGIN=1.4;
-			target-=TOTE_PICKUP_MARGIN;
-			positive_tolerance=TOTE_PICKUP_MARGIN;
+			//static const float TOTE_PICKUP_MARGIN=1.4;
+			//target-=TOTE_PICKUP_MARGIN;
+			//positive_tolerance=TOTE_PICKUP_MARGIN;
 		}
 		if(a.engage_kicker){
 			static const float ENGAGE_KICKER_HEIGHT=2.9;

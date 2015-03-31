@@ -286,11 +286,11 @@ Toplevel::Goal Main::teleop(
 					default: assert(0);
 				}
 				if(gunner_joystick.button[Gamepad_button::START]){
-					sticky_can_goal=Sticky_can_goal::LEVEL5;
+					sticky_can_goal=Sticky_can_goal::LEVEL6_NUDGE;
 					can_priority=1;
 				}
 				if(gunner_joystick.button[Gamepad_button::X]){
-					sticky_can_goal=Sticky_can_goal::LEVEL_FOUR;
+					sticky_can_goal=Sticky_can_goal::LEVEL4;
 					can_priority=1;
 				}
 			}else{
@@ -325,9 +325,8 @@ Toplevel::Goal Main::teleop(
 			else if(sticky_can_goal==Sticky_can_goal::LEVEL2) can_lift_pos.stacked_bins=2;
 			else if(sticky_can_goal==Sticky_can_goal::LEVEL3) can_lift_pos.stacked_bins=3;
 			else if(sticky_can_goal==Sticky_can_goal::LEVEL4) can_lift_pos.stacked_bins=4;
-			else if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5;
-			else if(sticky_can_goal==Sticky_can_goal::LEVEL_FOUR) can_lift_pos.stacked_bins=8;
-			//else if(sticky_can_goal==Sticky_can_goal::LEVEL6) can_lift_pos.stacked_bins=6;
+			else if(sticky_can_goal==Sticky_can_goal::LEVEL5) can_lift_pos.stacked_bins=5; 
+			else if(sticky_can_goal==Sticky_can_goal::LEVEL6_NUDGE) can_lift_pos.stacked_bins=6;
 			//else if(sticky_can_goal==Sticky_can_goal::UP_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::RTRIGGER])) can_lift_pos.stacked_bins=UP_LEVEL;
 			//else if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::LTRIGGER])) can_lift_pos.stacked_bins=DOWN_LEVEL;
 			static const float LIFT_NUDGE=3;
@@ -335,7 +334,7 @@ Toplevel::Goal Main::teleop(
 			#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
 				return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 			}
-			X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6)*/  X(DOWN_LEVEL) X(UP_LEVEL) X(LEVEL_FOUR)
+			X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) X(LEVEL6_NUDGE) X(DOWN_LEVEL) X(UP_LEVEL) 
 			#undef X
 			return Lift::Goal::stop();
 		} else {
@@ -439,12 +438,11 @@ Toplevel::Goal Main::teleop(
 			else if(sticky_tote_goal==Sticky_tote_goal::LEVEL3) tote_lift_pos.stacked_bins=3;
 			else if(sticky_tote_goal==Sticky_tote_goal::LEVEL4) tote_lift_pos.stacked_bins=4;
 			else if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
-			//else if(sticky_tote_goal==Sticky_tote_goal::LEVEL6) tote_lift_pos.stacked_bins=6;
 			//else if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL&&!(gunner_joystick.button[Gamepad_button::RB])) tote_lift_pos.stacked_bins=UP_LEVEL;
 			//else if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL&&!(gunner_joystick.button[Gamepad_button::LB])) tote_lift_pos.stacked_bins=DOWN_LEVEL;
 			//cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
 			#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift);
-			X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) /*X(LEVEL6)*/  X(DOWN_LEVEL)  X(UP_LEVEL)
+			X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) X(DOWN_LEVEL)  X(UP_LEVEL)
 			#undef X
 			return Lift::Goal::stop();
 		} else {

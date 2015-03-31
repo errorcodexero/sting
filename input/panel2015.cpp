@@ -116,9 +116,9 @@ Panel interpret(Joystick_data d){
 		}();
 	}
 	{
-		Volt auto_mode=d.axis[5]/3.3*5;
+		Volt auto_mode=d.axis[5];
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
-		cout<<endl<<endl<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
+		cout<<endl<<endl<<auto_mode<<"        "<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
 	}
 	{
 		float lev=d.axis[1];//default: -1

@@ -37,51 +37,27 @@ Joystick_section joystick_section(double x,double y){
 Joystick_section divide_vertical(double y){ return joystick_section(0,y); }
 
 unsigned interpret_10_turn_pot(Volt v){
-	/*measured values, measured on the Fall 2013 mecanum base:
-	0.005
-	0.56
-	1.116
-	1.66
-	2.22
-	2.77
-	3.33
-	3.89
-	4.44
-	5.01
-	limits are halfway between each value.
-	*/
 	array<Volt,10>limits={
-		-1,
-		-.78,
+		-.98,
+		-.76,
 		-.54,
-		-.34,
-		-.12,
-		.11,
-		.34,
-		.56,
-		.78,
-		1
-	/*	-.8,
-		-.63,
-		-.45,
-		-.2,
-		0,
-		.2,
-		.45,
-		.65,
-		.85,
-		1.5
-	*/
+		-.32,
+		-.10,
+		.13,
+		.36,
+		.58,
+		.80,
+		1.1
 	};
-	for(unsigned i=0;i<10;i++){
+	/*for(unsigned i=0;i<10;i++){
 		if(v<limits[i]) return i;
-	}
-	/*for(unsigned i=5;i<10;i++){
-		if(v<limits[i]) return i-5;
-	}
+	}*/
 	for(unsigned i=0;i<5;i++){
 		if(v<limits[i]) return i+5;
-	}*/
+	}
+	for(unsigned i=5;i<10;i++){
+		if(v<limits[i]) return i-5;
+	}
 	return 9;
 }
 

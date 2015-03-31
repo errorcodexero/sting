@@ -221,7 +221,7 @@ Toplevel::Goal Main::teleop(
 	}
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
-	//if(!down2) down2=oi_panel.can_nudge;
+	//if(!down2&&oi_panel.in_use) down2=oi_panel.can_nudge;
 	
 	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;

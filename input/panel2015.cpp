@@ -92,9 +92,14 @@ ostream& operator<<(ostream& o,Panel p){
 }
 
 Panel::Auto_mode auto_mode_convert(int potin){
-	if(potin==1)return Panel::Auto_mode::MOVE;
-	else if(potin==2)return Panel::Auto_mode::CAN_GRAB;
-	return Panel::Auto_mode::DO_NOTHING;
+	switch(potin) {
+		case 1:
+			return Panel::Auto_mode::MOVE;
+		case 2:
+			return Panel::Auto_mode::CAN_GRAB;
+		default:
+			return Panel::Auto_mode::DO_NOTHING;
+	}
 }
 
 Panel interpret(Joystick_data d){
@@ -148,9 +153,9 @@ Panel interpret(Joystick_data d){
 	panel.stop=d.button[3];
 	{	
 		static const float DOWN=1, UP=.48, DEFAULT=-1;
-		float updowncontrol=d.axis[4];
-		if(updowncontrol>UP-(UP-DEFAULT)/2 && updowncontrol<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
-		else if(updowncontrol>DOWN-(DOWN-UP)/2 && updowncontrol<DOWN+.25 ) panel.move_arm_cont=-1;
+		float up_down_control=d.axis[4];
+		if(up_down_control>UP-(UP-DEFAULT)/2 && up_down_control<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
+		else if(up_down_control>DOWN-(DOWN-UP)/2 && up_down_control<DOWN+.25 ) panel.move_arm_cont=-1;
 		else panel.move_arm_cont=0;		
 	}
 	{

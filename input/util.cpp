@@ -51,7 +51,17 @@ unsigned interpret_10_turn_pot(Volt v){
 	limits are halfway between each value.
 	*/
 	array<Volt,10>limits={
-		-.8,
+		-1,
+		-.78,
+		-.54,
+		-.34,
+		-.12,
+		.11,
+		.34,
+		.56,
+		.78,
+		1
+	/*	-.8,
 		-.63,
 		-.45,
 		-.2,
@@ -61,6 +71,7 @@ unsigned interpret_10_turn_pot(Volt v){
 		.65,
 		.85,
 		1.5
+	*/
 	};
 	for(unsigned i=0;i<10;i++){
 		if(v<limits[i]) return i;

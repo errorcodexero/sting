@@ -402,8 +402,8 @@ Toplevel::Goal Main::teleop(
 								sticky_tote_goal=temp_level;
 								can_priority=0;
 							}
-							if(oi_panel.engage_kicker_height && op_panel.target_type==-1){
-								temp_level=Main::Sticky_tote_goal::ENGAGE_KICKER;
+							if(oi_panel.engage_kicker_height && oi_panel.target_type==-1){
+								sticky_tote_goal=Main::Sticky_tote_goal::ENGAGE_KICKER;
 								can_priority=0;
 							}
 						}	

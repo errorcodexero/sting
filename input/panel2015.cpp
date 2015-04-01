@@ -166,9 +166,9 @@ Panel interpret(Joystick_data d){
 		else panel.move_arm_one=0;
 	}
 	{
-		float can_nudge=d.axis[0];
-		static const float DEFAULT=-1, NUDGE=0;
-		panel.can_nudge=(can_nudge>NUDGE-(NUDGE-DEFAULT)/2 && can_nudge<NUDGE+(NUDGE+.25)/2);
+		//float can_nudge=d.axis[0];
+		//static const float DEFAULT=-1, NUDGE=0;
+		//panel.can_nudge=(can_nudge>NUDGE-(NUDGE-DEFAULT)/2 && can_nudge<NUDGE+(NUDGE+.25)/2);
 	}
 	{
 		panel.bottom_mode=round(d.axis[6]);

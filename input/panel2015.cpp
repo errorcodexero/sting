@@ -145,6 +145,8 @@ Panel interpret(Joystick_data d){
 		else if(op>KILL-(KILL-KICKER_ACTIVATE)/2 && op<KILL+.25)panel.operation_buttons=Panel::Operation_buttons::KILL;//1
 		else if(op>DEFAULT-.25 && op<DEFAULT+(ENGAGE_KICKER_HEIGHT-DEFAULT)/2)panel.operation_buttons=Panel::Operation_buttons::DEFAULT;
 	}
+	panel.engage_kicker_height=(panel.operation_buttons==Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT);
+	panel.can_nudge=(panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE);
 	panel.kicker_activate=(panel.operation_buttons==Panel::Operation_buttons::KICKER_ACTIVATE);
 	panel.kill=0;//(panel.operation_buttons==Panel::Operation_buttons::KILL);
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things

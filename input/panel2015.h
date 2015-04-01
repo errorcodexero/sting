@@ -13,8 +13,8 @@ struct Panel{
 	Auto_mode auto_mode;//Added
 	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};
 	Level_button level_button;//Added
-	enum class Operation_buttons{DEFAULT,KILL,ENGAGE_KICKER_HEIGHT,KICKER_ACTIVATE,MOVE_COLLECT,CAN_NUDGE};
-	Operation_buttons operation_buttons;
+	enum class Operation_buttons{DEFAULT,KILL,ENGAGE_KICKER_HEIGHT,KICKER_ACTIVATE,MOVE_COLLECT,CAN_NUDGE};//Added
+	Operation_buttons operation_buttons;//Added
 	float slide_pos;
 	float override_height;
     //Buttons:

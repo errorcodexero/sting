@@ -118,13 +118,11 @@ Panel interpret(Joystick_data d){
 	{
 		Volt auto_mode=d.axis[5];
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
-		cout<<endl<<endl<<auto_mode<<"        "<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
+		//cout<<endl<<endl<<auto_mode<<"        "<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
 	}
 	{
 		float lev=d.axis[1];//default: -1
-		//cout<<"\n\n\n lev:"<<lev<<"  2:"<<d.digital[2]<<"\n\n\n";
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
-		//cout<<endl<<lev<<endl;
 		if(!d.button[1]){//tests if override is being pushed
 			if(lev<DEFAULT+.1)panel.level_button=Panel::Level_button::DEFAULT;
 			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2 && lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75

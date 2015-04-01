@@ -440,7 +440,6 @@ Toplevel::Goal Main::teleop(
 			else if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
 			//else if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL&&!(gunner_joystick.button[Gamepad_button::RB])) tote_lift_pos.stacked_bins=UP_LEVEL;
 			//else if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL&&!(gunner_joystick.button[Gamepad_button::LB])) tote_lift_pos.stacked_bins=DOWN_LEVEL;
-			//cout<<endl<<" 2: "<<(pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER)<<" 3: "<<(!piston.get())<<" 4: "<<(find_height(tote_lift_pos)[2]>=ENGAGE_KICKER_HEIGHT+1);
 			#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift);
 			X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) X(DOWN_LEVEL)  X(UP_LEVEL)
 			#undef X
@@ -572,8 +571,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
-	//cout<<"Can: "<<lift_can<<endl;
-	//cout<<"Tote: "<<lift_tote<<endl;
+
 	//Drivebase::Output out = control(status_detail, goal);
 
 	Toplevel::Output r_out=control(toplevel_status,goals); 

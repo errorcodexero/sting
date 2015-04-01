@@ -8,7 +8,7 @@
 #include "../control/combo_lift.h"
 
 struct Panel{
-	bool in_use; 
+	bool in_use;//Added
 	enum class Auto_mode{DO_NOTHING,MOVE,CAN_GRAB};//Added
 	Auto_mode auto_mode;//Added
 	enum class Level_button{DEFAULT,LEVEL0,LEVEL1,LEVEL2,LEVEL3,LEVEL4,LEVEL5,LEVEL6};
@@ -20,12 +20,12 @@ struct Panel{
     //Buttons:
 	bool move_arm_to_pos;
 	bool kill;//added
-	bool engage_kicker_height;
-	bool can_nudge;//added
+	bool engage_kicker_height;//added
+	bool can_nudge;//Added
 	bool chute_collect;
 	bool stop;//Added
 	bool piston_aligner;
-	bool kicker_activate;
+	bool kicker_activate;//Added
     //3 position Switches:
 	int target_type;//Added
 	int move_arm_one;

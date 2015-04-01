@@ -274,7 +274,7 @@ Toplevel::Goal Main::teleop(
 						}
 					case Joystick_section::CENTER:
 						{
-						if(oi_panel.in_use&&oi_panel.target_type==1) {
+						if(oi_panel.in_use&&oi_panel.target_type!=1) {
 							Main::Sticky_can_goal temp_level=convert_level_can(oi_panel.level_button);
 							if(temp_level!=Main::Sticky_can_goal::STOP) {
 								sticky_can_goal=temp_level;
@@ -396,7 +396,7 @@ Toplevel::Goal Main::teleop(
 						break;
 					case Joystick_section::CENTER:
 						{
-						if(oi_panel.in_use&&oi_panel.target_type!=1) {
+						if(oi_panel.in_use&&oi_panel.target_type==1) {
 							Main::Sticky_tote_goal temp_level=convert_level_tote(oi_panel.level_button);
 							if(oi_panel.engage_kicker_height) temp_level=Main::Sticky_tote_goal::ENGAGE_KICKER;
 							if(temp_level!=Main::Sticky_tote_goal::STOP) {

@@ -221,7 +221,7 @@ Toplevel::Goal Main::teleop(
 	}
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
-	if(!down2&&oi_panel.in_use) down2=oi_panel.can_nudge;
+	if(!down2&&oi_panel.in_use&&oi_panel.target_type!=-1) down2=oi_panel.can_nudge;
 	
 	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
@@ -274,7 +274,7 @@ Toplevel::Goal Main::teleop(
 						}
 					case Joystick_section::CENTER:
 						{
-						if(oi_panel.in_use&&oi_panel.target_type!=1) {
+						if(oi_panel.in_use&&oi_panel.target_type!=-1) {
 							Main::Sticky_can_goal temp_level=convert_level_can(oi_panel.level_button);
 							if(temp_level!=Main::Sticky_can_goal::STOP) {
 								sticky_can_goal=temp_level;
@@ -396,13 +396,13 @@ Toplevel::Goal Main::teleop(
 						break;
 					case Joystick_section::CENTER:
 						{
-						if(oi_panel.in_use&&oi_panel.target_type==1) {
+						if(oi_panel.in_use&&oi_panel.target_type==-1) {
 							Main::Sticky_tote_goal temp_level=convert_level_tote(oi_panel.level_button);
 							if(temp_level!=Main::Sticky_tote_goal::STOP) {
 								sticky_tote_goal=temp_level;
 								can_priority=0;
 							}
-							if(oi_panel.engage_kicker_height){
+							if(oi_panel.engage_kicker_height && op_panel.target_type==-1){
 								temp_level=Main::Sticky_tote_goal::ENGAGE_KICKER;
 								can_priority=0;
 							}

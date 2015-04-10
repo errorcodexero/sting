@@ -81,7 +81,8 @@ struct Lift{
 	class Goal{
 		public:
 		enum class Mode{GO_TO_HEIGHT,UP,DOWN,STOP,KILL};
-		
+		bool high_power_mode;
+
 		private:
 		Goal();
 		
@@ -130,7 +131,7 @@ bool operator!=(Lift const&,Lift const&);
 bool operator==(Lift const&,Lift const&);
 
 Lift::Status status(Lift::Status_detail const&);
-Lift::Output control(Lift::Status_detail const&, Lift::Goal const&);
+Lift::Output control(Lift::Status_detail const&, Lift::Goal);
 bool ready(Lift::Status,Lift::Goal);
 
 #endif

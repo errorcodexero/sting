@@ -8,7 +8,7 @@ using namespace std;
 
 Toplevel::Toplevel():
 	kicker(0),
-	can_grabber(6,4),
+	can_grabber(0,4),
 	input_reader(this),
 	estimator(this),
 	output_applicator(this)

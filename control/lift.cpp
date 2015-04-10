@@ -63,7 +63,7 @@ void Lift::Estimator::update(Time time,Lift::Input in,Lift::Output){
 			last=Lift::Status_detail::error();
 		}else{
 			last=Lift::Status_detail::top();
-			bottom=in.ticks-5712;
+			//bottom=in.ticks-5712;
 		}
 	}else{
 		if(in.bottom){
@@ -123,7 +123,9 @@ Lift::Status_detail::Status_detail():
 	stalled(0)
 {}
 
-Lift::Goal::Goal(){}
+Lift::Goal::Goal():high_power_mode(0){}
+
+
 
 Lift::Status_detail::Type Lift::Status_detail::type()const{ return type_; }
 
@@ -320,18 +322,30 @@ Lift::Status status(Lift::Status_detail const& a){
 	return a;
 }
 
-Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	const double PRESET_POWER=.75;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
-	const double MANUAL_POWER=0.45;
-	const double P=(PRESET_POWER/5);
+Lift::Output control(Lift::Status_detail const& status,Lift::Goal goal){
+	double PRESET_POWER=.75;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
+	double MANUAL_POWER=0.45;
+	double P=(PRESET_POWER/5);
+	if(goal.high_power_mode){
+		PRESET_POWER=.8;
+		MANUAL_POWER=.8;
+	}
+	const int lift_soft_limit=59.4;						
 	//const double I=0.01;
 	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
 	if(goal.mode()!=Lift::Goal::Mode::KILL) {
+		if(goal.mode()==Lift::Goal::Mode::UP){
+			if(Lift::Status_detail::Type::MID==status.type()&&status.inches_off_ground()>=lift_soft_limit){
+				goal=Lift::Goal::go_to_height(std::array<double,3>{lift_soft_limit,lift_soft_limit,lift_soft_limit});
+			}
+			else return  MANUAL_POWER; 
+		}
 		if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 			switch (status.type()) {
 				case Lift::Status_detail::Type::MID:
 					{
 						std::array<double,3> heights=goal.height();
+						if(heights[1]>=lift_soft_limit)heights[1]=lift_soft_limit;
 						double error = heights[1]-status.inches_off_ground();
 						//cout<<endl<<"Error: "<<error<<endl<<endl;
 						double desired_output_power =error*P;
@@ -353,7 +367,6 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 					assert(0);
 			}
 		}
-		if(goal.mode()==Lift::Goal::Mode::UP) return  MANUAL_POWER; 
 		if(goal.mode()==Lift::Goal::Mode::DOWN) return -MANUAL_POWER;
 		if(goal.mode()==Lift::Goal::Mode::STOP) return 0.0;
 		assert(0);

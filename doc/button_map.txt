@@ -37,6 +37,7 @@ Can:
       Right - Level 3
       Up - Level 4 
    LB - Nuge down 4in
+   A - Nudge down 2in
    Right Trigger - Can  Top 
    Function button BACK:
       

@@ -344,9 +344,25 @@ Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
 						return 0.0;*/
 					}
 				case Lift::Status_detail::Type::TOP:
-					return -MANUAL_POWER;
+					{
+						const double SLOW_HEIGHT =  48;
+						if(status.inches_off_ground() >= SLOW_HEIGHT){
+							return -MANUAL_POWER;
+						}
+						else{
+							return -PRESET_POWER;
+						}
+					}
 				case Lift::Status_detail::Type::BOTTOM:
-					return MANUAL_POWER;
+					{
+						const double SLOW_HEIGHT = 12;
+						if(status.inches_off_ground() <= SLOW_HEIGHT){
+							return MANUAL_POWER;
+						}
+						else{
+							return PRESET_POWER;
+						}
+					}
 				case Lift::Status_detail::Type::ERRORS:
 					return 0.0;
 				default:

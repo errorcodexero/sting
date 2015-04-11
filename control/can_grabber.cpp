@@ -7,6 +7,47 @@ using namespace std;
 
 #define nyi { cout<<"\nnyi "<<__LINE__<<"\n"; exit(44); }
 
+#define wall { cout<<"\nYou hit a brick wall at line "<<__LINE__<<"\n"; exit(44); }
+
+Can_grabber::Input_reader::Input_reader(unsigned int tote_lift):lift(tote_lift) {}
+ostream& operator<<(std::ostream& print, Can_grabber::Input const& grabber_info){ 
+	print<<grabber_info.lift<<" "<<grabber_info.grab_down<<"\n";
+	return print;
+}
+
+
+//Can_grabber::Input::Input(Lift::Input, bool, bool) wall
+std::set<Can_grabber::Input> examples(Can_grabber::Input*) {
+	std::set<Can_grabber::Input> can_in;
+	Can_grabber::Input a;
+	a.lift.top = 0;
+	a.lift.bottom = 1;
+	a.lift.ticks = 0;
+	a.lift.current = 0;
+	a.grab_down = 0;
+	can_in.insert(a);
+	return can_in;
+}
+Robot_inputs Can_grabber::Input_reader::operator()(Robot_inputs rtn, Can_grabber::Input) const {
+	return rtn;
+}
+Can_grabber::Input Can_grabber::Input_reader::operator()(Robot_inputs) const {
+	Can_grabber::Input a;
+	a.lift.top = 0;
+	a.lift.bottom = 1;
+	a.lift.ticks = 0;
+	a.lift.current = 0;
+	a.grab_down = 0;
+	return a;
+}
+bool operator!=(Can_grabber::Input const& canA, Can_grabber::Input const& canB) {
+	return !(canA.lift.top == canB.lift.top && canA.lift.bottom == canB.lift.bottom && canA.lift.ticks == canB.lift.ticks && canA.lift.current == canB.lift.current && canA.grab_down == canB.grab_down);
+}
+bool operator==(Can_grabber::Input const& canA, Can_grabber::Input const& canB) {
+	return (canA.lift.top == canB.lift.top && canA.lift.bottom == canB.lift.bottom && canA.lift.ticks == canB.lift.ticks && canA.lift.current == canB.lift.current && canA.grab_down == canB.grab_down);
+}
+bool operator<(Can_grabber::Input const&, Can_grabber::Input const&) wall
+
 ostream& operator<<(ostream& o,Can_grabber::Output a){
 	#define X(NAME) if(a==Can_grabber::Output::NAME) return o<<""#NAME;
 	X(RELEASE) X(LOCK)
@@ -32,7 +73,7 @@ Can_grabber::Output control(Can_grabber::Status_detail const& status,Can_grabber
 Can_grabber::Estimator::Estimator():last(Status::INITIAL){}
 
 void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber::Output out){
-	lift.update(time,in,Lift::Output{}); //we're lucky that the lift's estimator doesn't depend on its output at the moment
+	lift.update(time,in.lift,Lift::Output{}); //we're lucky that the lift's estimator doesn't depend on its output at the moment
 	auto height=lift.get().inches_off_ground();
 
 	static const double LIFT_THRESHOLD=3; //level at which the mechanism would fail to get to the bottom
@@ -60,6 +101,9 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 				last=Status::DOWN;
 				return;
 			}
+			/*
+			if(switch
+			*/
 			if(part_up){
 				last=Status::GETTING_STUCK;
 			}
@@ -247,7 +291,7 @@ struct Sim{
 
 	Can_grabber::Input get()const{
 		return Can_grabber::Input{
-			0,0,0,0
+			Lift::Input{0,0,0,0},0
 		};
 		//just choosing some port of the travel where the sensor is on
 		nyi//return .4<angle && angle<1;

@@ -8,18 +8,22 @@
 #include "lift.h"
 
 struct Can_grabber{
-	//#define CAN_GRABBER_INPUT(X) X(double,tote_height)
+	//#define CAN_GRABBER_INPUT(X) X(Lift::Input,lift) X(bool,grab_down)
+	struct Input{
+		Lift::Input lift;
+		bool grab_down;
+	};
+	
 	//DECLARE_STRUCT(Input,CAN_GRABBER_INPUT)
-	typedef Lift::Input Input;
-	typedef Lift::Input_reader Input_reader;
+	//typedef Lift::Input Input;
+	//typedef Lift::Input_reader Input_reader;
 
-	/*struct Input_reader{
-		unsigned sensor_dio;
-
+	struct Input_reader{
+		Lift::Input_reader lift;
 		explicit Input_reader(unsigned);
 		Input operator()(Robot_inputs)const;
 		Robot_inputs operator()(Robot_inputs,Input)const;
-	};*/
+	};
 	Input_reader input_reader;
 
 	enum class Output{RELEASE,LOCK};

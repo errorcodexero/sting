@@ -72,6 +72,7 @@ Can_grabber::Output control(Can_grabber::Status_detail const& status,Can_grabber
 		case Can_grabber::Status::GOING_UP:
 		case Can_grabber::Status::STUCK_UP:
 		case Can_grabber::Status::GOING_DOWN:
+		case Can_grabber::Status::SETTLING_DOWN:
 		case Can_grabber::Status::DOWN:
 			return Can_grabber::Output::RELEASE;
 		default: assert(0);
@@ -85,7 +86,7 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 	auto height=lift.get().inches_off_ground();
 
 	static const double LIFT_THRESHOLD=3; //level at which the mechanism would fail to get to the bottom
-	static const double LIFT_FULL=60; //level where the mechanism is fully folded in
+	static const double LIFT_FULL=55; //level where the mechanism is fully folded in
 
 	const bool part_up=height>LIFT_THRESHOLD;
 	const bool full_up=height>LIFT_FULL;
@@ -93,7 +94,7 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 	switch(last){
 		case Can_grabber::Status::INITIAL:
 			if(out==Output::RELEASE){
-				static const double DROP_TIME=2;
+				static const double DROP_TIME=2.5;
 				timer.set(DROP_TIME);
 				timer.update(time,0);
 				last=Status::GOING_DOWN;
@@ -106,7 +107,10 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 		case Can_grabber::Status::GOING_DOWN:
 			timer.update(time,out==Output::RELEASE);
 			if(timer.done() || in.grab_down){
-				last=Status::DOWN;
+				static const double SETTLING_TIME=1.5;
+				timer.set(SETTLING_TIME);
+				timer.update(time,0);
+				last=Status::SETTLING_DOWN;
 				return;
 			}
 			/*
@@ -114,6 +118,12 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 			*/
 			if(part_up){
 				last=Status::GETTING_STUCK;
+			}
+			break;
+		case Can_grabber::Status::SETTLING_DOWN:
+			timer.update(time,1);
+			if(timer.done()){
+				last=Status::DOWN;
 			}
 			break;
 		case Can_grabber::Status::DOWN:
@@ -176,6 +186,7 @@ bool ready(Can_grabber::Status status,Can_grabber::Goal goal){
 				return 1;
 			case Can_grabber::Status::GOING_UP:
 			case Can_grabber::Status::GOING_DOWN:
+			case Can_grabber::Status::SETTLING_DOWN:
 			case Can_grabber::Status::DOWN:
 				return 0;
 			default: assert(0);
@@ -185,6 +196,7 @@ bool ready(Can_grabber::Status status,Can_grabber::Goal goal){
 			case Can_grabber::Status::INITIAL: return 0;
 			case Can_grabber::Status::GOING_UP: return 0;
 			case Can_grabber::Status::GOING_DOWN: return 0;
+			case Can_grabber::Status::SETTLING_DOWN: return 0;
 			case Can_grabber::Status::DOWN: return 1;
 			case Can_grabber::Status::STUCK_UP:
 			case Can_grabber::Status::GETTING_STUCK:
@@ -372,10 +384,11 @@ int main(){
 		nyi
 	}
 	goal=Can_grabber::Goal::BOTTOM;
-	while(c.estimator.get().status!=Can_grabber::Status::DOWN && f<10){
+	while(c.estimator.get().status!=Can_grabber::Status::DOWN && f<13){
 		step();
 	}
 	if(c.estimator.get().status!=Can_grabber::Status::DOWN){
+		cout<<c.estimator.get().status;
 		nyi
 	}
 	goal=Can_grabber::Goal::TOP;

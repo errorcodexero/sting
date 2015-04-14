@@ -15,7 +15,7 @@ Panel::Panel():
 	slide_pos(0.0),
 	override_height(0),
 	move_arm_to_pos(0),
-	kill(0),
+	can_nudge_small(0),
 	engage_kicker_height(0),
 	can_nudge(0),
 	chute_collect(0),
@@ -55,7 +55,7 @@ ostream& operator<<(ostream& o,Panel::Level_button a){
 
 ostream& operator<<(ostream& o,Panel::Operation_buttons a){
 	o<<" Operation_buttons(";
-	if(a==Panel::Operation_buttons::KILL)o<<"kill";
+	if(a==Panel::Operation_buttons::CAN_NUDGE_SMALL)o<<"can_nudge_small";
 	else if(a==Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT)o<<"engage_kicker_height";
 	else if(a==Panel::Operation_buttons::KICKER_ACTIVATE)o<<"kicker_activate";
 	else if(a==Panel::Operation_buttons::CAN_NUDGE)o<<"can_nudge";
@@ -75,7 +75,7 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", override_height:"<<p.override_height;
 	o<<", Buttons(";
 	o<<" move_arm_to_pos:"<<p.move_arm_to_pos;
-	o<<", kill:"<<p.kill;
+	o<<", can_nudge_small:"<<p.can_nudge_small;
 	o<<", engage_kicker_height:"<<p.engage_kicker_height;
 	o<<", can_nudge:"<<p.can_nudge;
 	o<<", chute_collect:"<<p.chute_collect;
@@ -84,9 +84,9 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", kicker_activate:"<<p.kicker_activate<<")";
 	o<<", 3_pos_switches(";
 	o<<" target_type:"<<p.target_type;
-	o<<", move_arm_one"<<p.move_arm_one;
-	o<<", move_arm_cont"<<p.move_arm_cont;
-	o<<", bottom_mode"<<p.bottom_mode<<")";
+	o<<", move_arm_one:"<<p.move_arm_one;
+	o<<", move_arm_cont:"<<p.move_arm_cont;
+	o<<", bottom_mode:"<<p.bottom_mode<<")";
 	o<<")";
 	return o;
 }
@@ -116,13 +116,15 @@ Panel interpret(Joystick_data d){
 		}();
 	}
 	{
-		Volt auto_mode=d.axis[5];
+		Volt auto_mode=d.axis[5]/3.3*5;
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
-		//cout<<endl<<endl<<auto_mode<<"        "<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
+		//cout<<endl<<endl<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
 	}
 	{
 		float lev=d.axis[1];//default: -1
+		//cout<<"\n\n\n lev:"<<lev<<"  2:"<<d.digital[2]<<"\n\n\n";
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
+		//cout<<endl<<lev<<endl;
 		if(!d.button[1]){//tests if override is being pushed
 			if(lev<DEFAULT+.1)panel.level_button=Panel::Level_button::DEFAULT;
 			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2 && lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75
@@ -138,24 +140,21 @@ Panel interpret(Joystick_data d){
 	}
 	{
 		float op=d.axis[0];//default: -1
-		static const float KILL=1,KICKER_ACTIVATE=.65,CAN_NUDGE=.32,ENGAGE_KICKER_HEIGHT=0, DEFAULT=-1;
+		static const float CAN_NUDGE_SMALL=1,KICKER_ACTIVATE=.65,CAN_NUDGE=.32,ENGAGE_KICKER_HEIGHT=0, DEFAULT=-1;
 		if(op>ENGAGE_KICKER_HEIGHT-(ENGAGE_KICKER_HEIGHT-DEFAULT)/2 && op<ENGAGE_KICKER_HEIGHT+(CAN_NUDGE-ENGAGE_KICKER_HEIGHT)/2)panel.operation_buttons=Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT;//0
 		else if(op>CAN_NUDGE-(CAN_NUDGE-ENGAGE_KICKER_HEIGHT)/2 && op<CAN_NUDGE+(KICKER_ACTIVATE-CAN_NUDGE)/2)panel.operation_buttons=Panel::Operation_buttons::CAN_NUDGE;//.32
-		else if(op>KICKER_ACTIVATE-(KICKER_ACTIVATE-CAN_NUDGE)/2 && op<KICKER_ACTIVATE+(KILL-KICKER_ACTIVATE)/2)panel.operation_buttons=Panel::Operation_buttons::KICKER_ACTIVATE;//.65
-		else if(op>KILL-(KILL-KICKER_ACTIVATE)/2 && op<KILL+.25)panel.operation_buttons=Panel::Operation_buttons::KILL;//1
+		else if(op>KICKER_ACTIVATE-(KICKER_ACTIVATE-CAN_NUDGE)/2 && op<KICKER_ACTIVATE+(CAN_NUDGE_SMALL-KICKER_ACTIVATE)/2)panel.operation_buttons=Panel::Operation_buttons::KICKER_ACTIVATE;//.65
 		else if(op>DEFAULT-.25 && op<DEFAULT+(ENGAGE_KICKER_HEIGHT-DEFAULT)/2)panel.operation_buttons=Panel::Operation_buttons::DEFAULT;
 	}
-	panel.engage_kicker_height=(panel.operation_buttons==Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT);
-	panel.can_nudge=(panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE);
 	panel.kicker_activate=(panel.operation_buttons==Panel::Operation_buttons::KICKER_ACTIVATE);
-	panel.kill=0;//(panel.operation_buttons==Panel::Operation_buttons::KILL);
+	panel.can_nudge_small=0;//(panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE_SMALL);
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
 	panel.stop=d.button[3];
 	{	
 		static const float DOWN=1, UP=.48, DEFAULT=-1;
-		float up_down_control=d.axis[4];
-		if(up_down_control>UP-(UP-DEFAULT)/2 && up_down_control<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
-		else if(up_down_control>DOWN-(DOWN-UP)/2 && up_down_control<DOWN+.25 ) panel.move_arm_cont=-1;
+		float updowncontrol=d.axis[4];
+		if(updowncontrol>UP-(UP-DEFAULT)/2 && updowncontrol<UP+(DOWN-UP)/2) panel.move_arm_cont=1;
+		else if(updowncontrol>DOWN-(DOWN-UP)/2 && updowncontrol<DOWN+.25 ) panel.move_arm_cont=-1;
 		else panel.move_arm_cont=0;		
 	}
 	{
@@ -166,9 +165,9 @@ Panel interpret(Joystick_data d){
 		else panel.move_arm_one=0;
 	}
 	{
-		//float can_nudge=d.axis[0];
-		//static const float DEFAULT=-1, NUDGE=0;
-		//panel.can_nudge=(can_nudge>NUDGE-(NUDGE-DEFAULT)/2 && can_nudge<NUDGE+(NUDGE+.25)/2);
+		float can_nudge=d.axis[0];
+		static const float DEFAULT=-1, NUDGE=0;
+		panel.can_nudge=(can_nudge>NUDGE-(NUDGE-DEFAULT)/2 && can_nudge<NUDGE+(NUDGE+.25)/2);
 	}
 	{
 		panel.bottom_mode=round(d.axis[6]);

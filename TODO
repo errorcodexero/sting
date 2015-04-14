@@ -1,7 +1,5 @@
 HIGH PRIORITY:
--Fix tote arm being unable to move when at the bottom (can move to the top, but none of the specific preset heights)
 -Bug fixes
--Fix and learn camera stuff NEED THOMAS FOR THESE
 -Sensor and Auto-Alignment
 -OI(See Lower)
 -Auto-Mode
@@ -12,18 +10,9 @@ HIGH PRIORITY:
 -Drive-to-wall/Drive-to-tote
 
 
-6-HOUR WINDOW:
--Test all functions, drive, lifters, kicker, etc.
--Test encoders
--Test auto
-
-
 NOT AS HIGH PRIORITY:
 -Autonomous
         -Movement
-        -Grab can
-                -Can grabber:
-                        -check that the IO number in code is correct
         -Selection Method
 -Figure out chute_collect in panel2015
 -Drivebase wheel encoders
@@ -41,7 +30,6 @@ NOT AS HIGH PRIORITY:
         -put in outputs
                 -into framework
                 -figure out if need to reprogram the TI launchpad
--Update Driver Station and look into other software updates in the manual (Mandatory update at: http://www.ni.com/download/first-robotics-software-2015/5112/en/) - Jacob
 -Automatic Operations
         -auto-align
                 -test with totes

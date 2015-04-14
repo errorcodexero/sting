@@ -63,7 +63,7 @@ void Lift::Estimator::update(Time time,Lift::Input in,Lift::Output){
 			last=Lift::Status_detail::error();
 		}else{
 			last=Lift::Status_detail::top();
-			bottom=in.ticks-5712;
+			//bottom=in.ticks-5712;
 		}
 	}else{
 		if(in.bottom){
@@ -116,7 +116,7 @@ std::set<Lift::Input> examples(Lift::Input*){
 	};
 }
 
-std::set<Lift::Output> examples(Lift::Output*){ return {-0.75, 0, 0.75/*0,.45,-.45*/}; }
+std::set<Lift::Output> examples(Lift::Output*){ return {-0.75, 0, 0.6, 0.75/*0,.45,-.45*/}; }
 
 Lift::Status_detail::Status_detail(): 
 	reached_ends(make_pair(0,0)),
@@ -125,6 +125,7 @@ Lift::Status_detail::Status_detail():
 
 Lift::Goal::Goal(){
 	can_profile = 0;
+	high_power_mode = 0;
 }
 
 Lift::Status_detail::Type Lift::Status_detail::type()const{ return type_; }
@@ -201,11 +202,11 @@ Lift::Goal Lift::Goal::stop(){
 	return r;
 }
 
-Lift::Goal Lift::Goal::kill(){
+/*Lift::Goal Lift::Goal::kill(){
 	Lift::Goal r;
 	r.mode_=Lift::Goal::Mode::KILL;
 	return r;
-}
+}*/
 
 Lift::Goal Lift::Goal::go_to_height(std::array<double, 3> heights){
 	Lift::Goal r;
@@ -322,16 +323,30 @@ Lift::Status status(Lift::Status_detail const& a){
 	return a;
 }
 
-Lift::Output control(Lift::Status_detail const& status,Lift::Goal const& goal){
-	const double PRESET_POWER=.75;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
-	const double MANUAL_POWER=0.60; //ound()<<endl<<endl
-	const double P = (PRESET_POWER/5);
+Lift::Output control(Lift::Status_detail const& status,Lift::Goal goal){
+	double PRESET_POWER=.75;//The sign of this variable changes which direction the lifters go and the magnitude changes the speed
+	double MANUAL_POWER=0.60; //ound()<<endl<<endl
+	double P = (PRESET_POWER/5);
+	if(goal.high_power_mode){
+		PRESET_POWER=.8;
+		MANUAL_POWER=.8;
+	}
+	const int lift_soft_limit=59.4;						
+	//const double I=0.01;
+	//cout<<endl<<"Inches off ground: "<<status.inches_off_ground()<<endl<<endl;
 	if(goal.mode()!=Lift::Goal::Mode::KILL) {
+		if(goal.mode()==Lift::Goal::Mode::UP){
+			if(Lift::Status_detail::Type::MID==status.type()&&status.inches_off_ground()>=lift_soft_limit){
+				goal=Lift::Goal::go_to_height(std::array<double,3>{lift_soft_limit,lift_soft_limit,lift_soft_limit});
+			}
+			else return  MANUAL_POWER; 
+		}
 		if(goal.mode()==Lift::Goal::Mode::GO_TO_HEIGHT) {
 			switch (status.type()) {
 				case Lift::Status_detail::Type::MID:
 					{
 						std::array<double,3> heights=goal.height();
+						if(heights[1]>=lift_soft_limit)heights[1]=lift_soft_limit;
 						double error = heights[1]-status.inches_off_ground();
 						//cout<<endl<<"Error: "<<error<<endl<<endl;
 						double desired_output_power =error*P;
@@ -429,7 +444,7 @@ set<Lift::Goal> examples(Lift::Goal*){
 	goals.insert(goal);
 	goal=goal.stop();
 	goals.insert(goal);
-	goal=goal.kill();
+	//goal=goal.kill();
 	goals.insert(goal);
 	return goals;//{Lift::Goal::Mode::GO_TO_HEIGHT,Lift::Goal::Mode::DOWN,Lift::Goal::Mode::UP,Lift::Goal::Mode::STOP}; 
 }

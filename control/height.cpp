@@ -81,11 +81,11 @@ std::array<float,3> find_height(Lift_position const& a){
 	if(a.is_can){
 		int bins=a.stacked_bins;
 		if(bins==1) target+=2;
-		else if(bins==2) target+=1.25;
-		else if(bins==3) target+=.75;
-		//else if(bins==4);
-		else if(bins==5) target-=TOTE_HEIGHT-2;
-		else if(bins==6) target-=TOTE_HEIGHT+2.5;
+		else if(bins==2) target+=.5;
+		else if(bins==3) target+=-1;
+		else if(bins==4) target+=-2.75;
+		else if(bins==5) target-=3.5;
+		else if(bins==8) target=53.5;//((4*TOTE_HEIGHT)+1.4);
 		if(a.pickup){
 			//static const float CAN_PICKUP_MARGIN=1.5;
 			//target-=CAN_PICKUP_MARGIN;
@@ -166,5 +166,11 @@ int main(){
 
 	cout<<min(heights)<<" "<<max(heights)<<"\n";
 	cout<<to_feet(max(heights))<<"\n";
+	for(int i=0;i<9;i++){
+		Lift_position lift;
+		lift.is_can=1;
+		lift.stacked_bins=i;
+		cout<<"Printing out supposed heights for level"<<i<<":   "<<find_height(lift)<<endl;
+	}
 }
 #endif

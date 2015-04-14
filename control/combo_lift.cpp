@@ -180,7 +180,7 @@ Combo_lift::Goal interfere(Combo_lift::Status_detail status,Combo_lift::Goal goa
 	static const auto CAN_LIFT_SPEED=27;//inches per second, this is made up
 
 	if(goal.can.mode()==Lift::Goal::Mode::UP){
-		goal.can=Lift::Goal::go_to_height(std::array<double,3>{60,61,65});
+		goal.can=Lift::Goal::go_to_height(std::array<double,3>{60,60,65});
 	}
 
 	if(goal.can_priority){	

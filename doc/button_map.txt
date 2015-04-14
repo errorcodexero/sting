@@ -24,8 +24,7 @@ Tote:
       Left - Level 2
       Right - Level 3
       Up - Level 4
-      Left Trigger - Tote TOP 
-   Start - Tote Top 
+      Left Trigger - TOP 
    RB - Go To Engage Kicker Height
    Function button BACK:
 Can:
@@ -35,10 +34,13 @@ Can:
       Down - Level 1
       Left - Level 2
       Right - Level 3
-      Up - Level 4 
-   LB - Nuge down 4in
-   Right Trigger - Can  Top 
+      Up - Level 4
+   X - Level 5 
+   Start - TOP (nundge)//Not on oi
+   Right Trigger - TOP (TOP)
+   LB - Nuge down big
+   A - Nudge down small//not on oi
    Function button BACK:
       
 Kicker:
-   Y - Toggle Kicker
+   Y - Toggle Kicker//not working

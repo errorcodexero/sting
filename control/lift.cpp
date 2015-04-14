@@ -199,11 +199,11 @@ Lift::Goal Lift::Goal::stop(){
 	return r;
 }
 
-Lift::Goal Lift::Goal::kill(){
+/*Lift::Goal Lift::Goal::kill(){
 	Lift::Goal r;
 	r.mode_=Lift::Goal::Mode::KILL;
 	return r;
-}
+}*/
 
 Lift::Goal Lift::Goal::go_to_height(std::array<double, 3> heights){
 	Lift::Goal r;
@@ -413,7 +413,7 @@ set<Lift::Goal> examples(Lift::Goal*){
 	goals.insert(goal);
 	goal=goal.stop();
 	goals.insert(goal);
-	goal=goal.kill();
+	//goal=goal.kill();
 	goals.insert(goal);
 	return goals;//{Lift::Goal::Mode::GO_TO_HEIGHT,Lift::Goal::Mode::DOWN,Lift::Goal::Mode::UP,Lift::Goal::Mode::STOP}; 
 }

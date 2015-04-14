@@ -98,7 +98,7 @@ struct Lift{
 		static Goal up();
 		static Goal down();
 		static Goal stop();
-		static Goal kill();
+		//static Goal kill();
 	};
 	
 	explicit Lift(int);

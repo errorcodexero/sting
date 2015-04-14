@@ -208,6 +208,7 @@ Combo_lift::Output control(Combo_lift::Status_detail const& a,Combo_lift::Goal c
 	auto b2=b;
 	//uncomment the following line to enable the non-crashing logic
 	b2=interfere(a,b);
+	b2.can.can_profile = 1;
 	return Combo_lift::Output{control(a.can,b2.can),control(a.tote,b2.tote)};
 }
 

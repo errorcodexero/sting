@@ -99,6 +99,7 @@ struct Lift{
 		static Goal down();
 		static Goal stop();
 		static Goal kill();
+		bool can_profile;
 	};
 	
 	explicit Lift(int);

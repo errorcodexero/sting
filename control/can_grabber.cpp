@@ -86,7 +86,7 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 	auto height=lift.get().inches_off_ground();
 
 	static const double LIFT_THRESHOLD=3; //level at which the mechanism would fail to get to the bottom
-	static const double LIFT_FULL=60; //level where the mechanism is fully folded in
+	static const double LIFT_FULL=55; //level where the mechanism is fully folded in
 
 	const bool part_up=height>LIFT_THRESHOLD;
 	const bool full_up=height>LIFT_FULL;
@@ -94,7 +94,7 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 	switch(last){
 		case Can_grabber::Status::INITIAL:
 			if(out==Output::RELEASE){
-				static const double DROP_TIME=2;
+				static const double DROP_TIME=2.5;
 				timer.set(DROP_TIME);
 				timer.update(time,0);
 				last=Status::GOING_DOWN;

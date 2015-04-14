@@ -23,7 +23,7 @@ ostream& operator<<(ostream& o,Main::Mode a){
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
 double set_drive_speed(Joystick_data joystick,int axis,double boost,double slow,bool turning=0){
-	static const float DEFAULT_SPEED=.55;//Change these value to change the default speed
+	static const float DEFAULT_SPEED=.45;//Change these value to change the default speed
 	static const float TURNING_SLOW=.33;
 	static const float SLOW_BY=.5;//Change this value to change the percentage of the default speed the slow button slows
 	return pow(joystick.axis[axis],3)*((DEFAULT_SPEED+(1-DEFAULT_SPEED)*boost)-(((DEFAULT_SPEED*SLOW_BY)*slow)+((DEFAULT_SPEED*TURNING_SLOW)*turning)));
@@ -221,7 +221,7 @@ Toplevel::Goal Main::teleop(
 	}
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
-	if(!down2&&oi_panel.in_use&&oi_panel.target_type!=-1) down2=oi_panel.can_nudge;
+	//if(!down2) down2=oi_panel.can_nudge;
 	
 	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
@@ -293,14 +293,7 @@ Toplevel::Goal Main::teleop(
 				sticky_can_goal=Sticky_can_goal::DOWN_LEVEL;
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())-1;
 				if(DOWN_LEVEL<0) DOWN_LEVEL=0;
-				can_priority=1;
-			}
-			if(gunner_joystick.axis[Gamepad_axis::RTRIGGER]){
-				sticky_can_goal=Sticky_can_goal::UP_LEVEL;
-				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.can.inches_off_ground())+1;
-				if(UP_LEVEL>5) UP_LEVEL=5;
-				can_priority=1;
-			}*/
+				can_priority=1;*/
 		}
 		/*if (oi_panel.move_arm_one==1) {
 			sticky_can_goal=Sticky_can_goal::UP_LEVEL;
@@ -407,12 +400,6 @@ Toplevel::Goal Main::teleop(
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())-1;
 				if(DOWN_LEVEL<0) DOWN_LEVEL=0;
 				can_priority=0;
-			}
-			if(gunner_joystick.button[Gamepad_button::RB]){
-				sticky_tote_goal=Sticky_tote_goal::UP_LEVEL;
-				UP_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())+1;	
-				if(UP_LEVEL>5) UP_LEVEL=5;
-				can_priority=0;
 			}*/
 		}
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
@@ -489,7 +476,7 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 		case Main::Mode::AUTO_BACK:
 			if(!autonomous) return Main::Mode::TELEOP;
 			//timer is up - could use encoders once those work
-			if(since_switch>2) return Main::Mode::AUTO_RELEASE;
+			if(since_switch>1.5) return Main::Mode::AUTO_RELEASE;
 			return m;
 		case Main::Mode::AUTO_RELEASE:
 			if(status.can_grabber.status==Can_grabber::Status::STUCK_UP || !autonomous) return Main::Mode::TELEOP;
@@ -504,7 +491,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Joystick_data gunner_joystick=in.joystick[1];
 	Panel oi_panel=interpret(in.joystick[2]);
 	if(!in.robot_mode.enabled) oi_panel.level_button=Panel::Level_button::DEFAULT;
-	cout<<"panel: "<<oi_panel<<"\n";
+	//cout<<"panel: "<<oi_panel<<"\n";
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],
@@ -534,7 +521,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			break;
 		case Mode::AUTO_MOVE:
 			goals.drive.x=0;
-			goals.drive.y=-.6;
+			goals.drive.y=-.45;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_GRAB:
@@ -543,20 +530,22 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		case Mode::AUTO_BACK:
 			goals.can_grabber=Can_grabber::Goal::BOTTOM;
 			goals.drive.x=0;
-			goals.drive.y=-.4;
+			goals.drive.y=-.6;
 			goals.drive.theta=0;
 			break;
 		case Mode::AUTO_RELEASE:
 			goals.can_grabber=Can_grabber::Goal::TOP;
 			goals.combo_lift.can_priority=0;
 			goals.combo_lift.tote=Lift::Goal::up();
+			goals.combo_lift.tote.high_power_mode=1;
 			break;	
 		default: assert(0);
 	}
 	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
 	since_switch.update(in.now,mode!=next);
 	mode=next;
-
+	//cout<<"Can: "<<lift_can<<endl;
+	//cout<<"Tote: "<<lift_tote<<endl;
 	//Drivebase::Output out = control(status_detail, goal);
 
 	Toplevel::Output r_out=control(toplevel_status,goals); 

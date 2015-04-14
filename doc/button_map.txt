@@ -41,6 +41,5 @@ Can:
    LB - Nuge down big
    A - Nudge down small//not on oi
    Function button BACK:
-      
 Kicker:
    Y - Toggle Kicker//not working

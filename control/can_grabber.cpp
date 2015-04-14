@@ -19,34 +19,42 @@ ostream& operator<<(std::ostream& print, Can_grabber::Input const& grabber_info)
 //Can_grabber::Input::Input(Lift::Input, bool, bool) wall
 std::set<Can_grabber::Input> examples(Can_grabber::Input*) {
 	std::set<Can_grabber::Input> can_in;
-	Can_grabber::Input a;
-	a.lift.top = 0;
-	a.lift.bottom = 1;
-	a.lift.ticks = 0;
-	a.lift.current = 0;
-	a.grab_down = 0;
-	can_in.insert(a);
+	for(auto lift:examples((Lift::Input*)0)){
+		for(unsigned i=0;i<2;i++){
+			can_in|=Can_grabber::Input{lift,(bool)i};
+		}
+	}
 	return can_in;
 }
-Robot_inputs Can_grabber::Input_reader::operator()(Robot_inputs rtn, Can_grabber::Input) const {
+
+static const unsigned CAN_GRABBER_IO=6;
+
+Robot_inputs Can_grabber::Input_reader::operator()(Robot_inputs rtn, Can_grabber::Input in) const {
+	rtn=lift(rtn,in.lift);
+	rtn.digital_io.in[CAN_GRABBER_IO]=in.grab_down?Digital_in::_1:Digital_in::_0;
 	return rtn;
 }
-Can_grabber::Input Can_grabber::Input_reader::operator()(Robot_inputs) const {
-	Can_grabber::Input a;
-	a.lift.top = 0;
-	a.lift.bottom = 1;
-	a.lift.ticks = 0;
-	a.lift.current = 0;
-	a.grab_down = 0;
-	return a;
+
+Can_grabber::Input Can_grabber::Input_reader::operator()(Robot_inputs in) const {
+	return Can_grabber::Input{
+		lift(in),
+		in.digital_io.in[CAN_GRABBER_IO]==Digital_in::_1
+	};
 }
-bool operator!=(Can_grabber::Input const& canA, Can_grabber::Input const& canB) {
-	return !(canA.lift.top == canB.lift.top && canA.lift.bottom == canB.lift.bottom && canA.lift.ticks == canB.lift.ticks && canA.lift.current == canB.lift.current && canA.grab_down == canB.grab_down);
+
+bool operator!=(Can_grabber::Input const& a, Can_grabber::Input const& b) {
+	return !(a==b);
 }
-bool operator==(Can_grabber::Input const& canA, Can_grabber::Input const& canB) {
-	return (canA.lift.top == canB.lift.top && canA.lift.bottom == canB.lift.bottom && canA.lift.ticks == canB.lift.ticks && canA.lift.current == canB.lift.current && canA.grab_down == canB.grab_down);
+
+bool operator==(Can_grabber::Input const& a, Can_grabber::Input const& b) {
+	return a.lift==b.lift && a.grab_down==b.grab_down;
 }
-bool operator<(Can_grabber::Input const&, Can_grabber::Input const&) wall
+
+bool operator<(Can_grabber::Input const& a, Can_grabber::Input const& b){
+	if(a.lift<b.lift) return 1;
+	if(b.lift<a.lift) return 0;
+	return a.grab_down<b.grab_down;
+}
 
 ostream& operator<<(ostream& o,Can_grabber::Output a){
 	#define X(NAME) if(a==Can_grabber::Output::NAME) return o<<""#NAME;
@@ -97,7 +105,7 @@ void Can_grabber::Estimator::update(Time time,Can_grabber::Input in,Can_grabber:
 			break;
 		case Can_grabber::Status::GOING_DOWN:
 			timer.update(time,out==Output::RELEASE);
-			if(timer.done()){
+			if(timer.done() || in.grab_down){
 				last=Status::DOWN;
 				return;
 			}

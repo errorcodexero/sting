@@ -221,7 +221,7 @@ Toplevel::Goal Main::teleop(
 	}
 
 	bool down2=gunner_joystick.button[Gamepad_button::LB];
-	//if(!down2) down2=oi_panel.can_nudge;
+	if(!down2 && oi_panel.in_use && oi_panel.target_type!=-1) down2=oi_panel.can_nudge;
 	
 	//static const double TOTE_HEIGHT=12.1;
 	pre_sticky_tote_goal=sticky_tote_goal;
@@ -317,8 +317,11 @@ Toplevel::Goal Main::teleop(
 		else if(sticky_can_goal==Sticky_can_goal::LEVEL6_NUDGE) can_lift_pos.stacked_bins=6;
 		//else if(sticky_can_goal==Sticky_can_goal::UP_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::RTRIGGER])) can_lift_pos.stacked_bins=UP_LEVEL;
 		//else if(sticky_can_goal==Sticky_can_goal::DOWN_LEVEL&&!(gunner_joystick.axis[Gamepad_axis::LTRIGGER])) can_lift_pos.stacked_bins=DOWN_LEVEL;
-		static const float LIFT_NUDGE=3;
-		double offset=down2?-LIFT_NUDGE:0;
+		static const float BIG_LIFT_NUDGE=3;
+		static const float LITTLE_LIFT_NUDGE=2;
+		double offset=down2?-BIG_LIFT_NUDGE:0;
+		if(gunner_joystick.button[Gamepad_button::A]) offset-=LITTLE_LIFT_NUDGE;
+		if(offset!=LITTLE_LIFT_NUDGE && oi_panel.in_use && oi_panel.target_type!=-1 && oi_panel.can_nudge_small) offset-=LITTLE_LIFT_NUDGE;
 		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
 			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 		}

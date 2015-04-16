@@ -19,6 +19,20 @@ ostream& operator<<(ostream& o,Main::Mode a){
 	assert(0);
 }
 
+ostream& operator<<(ostream& o, Main::Sticky_can_goal a){
+	#define X(name) if(a==Main::Sticky_can_goal::name) return o<<""#name;
+	X(STOP) X(BOTTOM) X(TOP) X(UP_LEVEL) X(DOWN_LEVEL) X(LEVEL1) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) X(LEVEL6_NUDGE)
+	#undef X
+	assert(0);
+}
+ostream& operator<<(ostream& o, Main::Sticky_tote_goal a){
+	#define X(name) if(a==Main::Sticky_tote_goal::name) return o<<""#name;
+	X(STOP) X(BOTTOM) X(TOP) X(UP_LEVEL) X(DOWN_LEVEL) X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5)
+	#undef X
+	assert(0);
+}
+
+
 //todo: at some point, might want to make this whatever is right to start autonomous mode.
 Main::Main():mode(Mode::TELEOP),autonomous_start(0),sticky_can_goal(Sticky_can_goal::STOP),sticky_tote_goal(Sticky_tote_goal::STOP),can_priority(1){}
 
@@ -41,12 +55,13 @@ array<double,LEN> floats_to_doubles(array<float,LEN> a){
 	return r;
 }
 
-Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1){//Auto kicking code 
+Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1,bool nudging=0){//Auto kicking code 
 	static const float ABOVE_ENGAGE_KICKER_HEIGHT=ENGAGE_KICKER_HEIGHT;
+	static const float NUDGE=nudging?-1.5:0;
 	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT){
 		piston.update(1);
 	}
-	return Lift::Goal::go_to_height(floats_to_doubles(find_height(tote_lift_pos)));
+	return Lift::Goal::go_to_height(floats_to_doubles(array<float,3>{find_height(tote_lift_pos)[0]+NUDGE,find_height(tote_lift_pos)[1]+NUDGE,find_height(tote_lift_pos)[2]+NUDGE}));
 }
 
 int round_to_level(float tote_height,float height){
@@ -306,6 +321,7 @@ Toplevel::Goal Main::teleop(
 			if(DOWN_LEVEL<0) DOWN_LEVEL=0;
 			can_priority=1;
 		}*/
+		cout<<"\nSticky_can_goal: "<<sticky_can_goal<<"\n";
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
@@ -337,6 +353,7 @@ Toplevel::Goal Main::teleop(
 			sticky_tote_goal=Sticky_tote_goal::STOP;
 			can_priority=0;
 		}
+		bool nudging=0;
 		if(!gunner_joystick.button[Gamepad_button::BACK]){
 			if(gunner_joystick.button[Gamepad_button::L_JOY]){
 				can_priority=0;
@@ -393,11 +410,8 @@ Toplevel::Goal Main::teleop(
 					}
 				default: assert(0);
 			}
-			/*if(gunner_joystick.button[Gamepad_button::BACK]){
-				sticky_tote_goal=Sticky_tote_goal::LEVEL5;
-				can_priority=0;
-			}*/
 		}else{
+			nudging=1;
 			/*if(gunner_joystick.button[Gamepad_button::LB]){
 				sticky_tote_goal=Sticky_tote_goal::DOWN_LEVEL;
 				DOWN_LEVEL=round_to_level(TOTE_HEIGHT,toplevel_status.combo_lift.tote.inches_off_ground())-1;
@@ -405,6 +419,7 @@ Toplevel::Goal Main::teleop(
 				can_priority=0;
 			}*/
 		}
+		cout<<"\nSticky_tote_goal: "<<sticky_tote_goal<<"\n";
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();
@@ -419,8 +434,10 @@ Toplevel::Goal Main::teleop(
 		else if(sticky_tote_goal==Sticky_tote_goal::LEVEL5) tote_lift_pos.stacked_bins=5;
 		//else if(sticky_tote_goal==Sticky_tote_goal::UP_LEVEL&&!(gunner_joystick.button[Gamepad_button::RB])) tote_lift_pos.stacked_bins=UP_LEVEL;
 		//else if(sticky_tote_goal==Sticky_tote_goal::DOWN_LEVEL&&!(gunner_joystick.button[Gamepad_button::LB])) tote_lift_pos.stacked_bins=DOWN_LEVEL;
-		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name) return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift);
-		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) X(DOWN_LEVEL)  X(UP_LEVEL)
+		#define X(name) if(sticky_tote_goal==Sticky_tote_goal::name){ \
+			 return tote_lifter(tote_lift_pos,ENGAGE_KICKER_HEIGHT,pre_sticky_tote_goal,piston,kick_and_lift,nudging); \
+		}
+		X(ENGAGE_KICKER) X(LEVEL1) X(LEVEL2) X(LEVEL2) X(LEVEL3) X(LEVEL4) X(LEVEL5) X(DOWN_LEVEL) X(UP_LEVEL)
 		#undef X
 		return Lift::Goal::stop();	
 	}();	
@@ -513,7 +530,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	since_auto_start.update(in.now,autonomous_start_now);
 	//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
-	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
+	//if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 
 	Toplevel::Goal goals;
 	//Drivebase::Status_detail status_detail = drivebase.estimator.get();

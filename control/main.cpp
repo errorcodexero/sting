@@ -335,7 +335,7 @@ Toplevel::Goal Main::teleop(
 		static const float LITTLE_LIFT_NUDGE=2;
 		double offset=down2?-BIG_LIFT_NUDGE:0;
 		if(gunner_joystick.button[Gamepad_button::A]) offset-=LITTLE_LIFT_NUDGE;
-		if(offset!=LITTLE_LIFT_NUDGE && oi_panel.in_use && oi_panel.target_type!=-1 && oi_panel.can_nudge_small) offset-=LITTLE_LIFT_NUDGE;
+		if(!gunner_joystick.button[Gamepad_button::A] && oi_panel.in_use && oi_panel.target_type!=-1 && oi_panel.can_nudge_small) offset-=LITTLE_LIFT_NUDGE;
 		#define X(name) if(sticky_can_goal==Sticky_can_goal::name){ \
 			return Lift::Goal::go_to_height(std::array<double,3>{find_height(can_lift_pos)[0]+offset,find_height(can_lift_pos)[1]+offset,find_height(can_lift_pos)[2]+offset}); \
 		}

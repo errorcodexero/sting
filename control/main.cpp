@@ -57,11 +57,13 @@ array<double,LEN> floats_to_doubles(array<float,LEN> a){
 
 Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1,bool nudging=0){//Auto kicking code 
 	static const float ABOVE_ENGAGE_KICKER_HEIGHT=ENGAGE_KICKER_HEIGHT;
-	static const float NUDGE=nudging?-1.5:0;
+	float nudge=0.0;
+	if(nudging) nudge=-1.5;
+	cout<<"\nnudge: "<<nudge<<"\n";
 	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT){
 		piston.update(1);
 	}
-	return Lift::Goal::go_to_height(floats_to_doubles(array<float,3>{find_height(tote_lift_pos)[0]+NUDGE,find_height(tote_lift_pos)[1]+NUDGE,find_height(tote_lift_pos)[2]+NUDGE}));
+	return Lift::Goal::go_to_height(floats_to_doubles(array<float,3>{find_height(tote_lift_pos)[0]+nudge,find_height(tote_lift_pos)[1]+nudge,find_height(tote_lift_pos)[2]+nudge}));
 }
 
 int round_to_level(float tote_height,float height){

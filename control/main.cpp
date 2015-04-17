@@ -530,7 +530,8 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	since_auto_start.update(in.now,autonomous_start_now);
 	//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
-	//if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
+	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
+	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_can_goal=Sticky_can_goal::STOP;
 
 	Toplevel::Goal goals;
 	//Drivebase::Status_detail status_detail = drivebase.estimator.get();

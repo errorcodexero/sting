@@ -482,7 +482,7 @@ public:
 	void run(Robot_inputs in){
 		static int print_out_speed=0;
 		Robot_outputs out=main(in);
-		if((print_out_speed%100)==0){
+		if((print_out_speed%300)==0){
 			cout<<"in:"<<in<<"\n";
 			cout<<"main: "<<main<<"\n";
 			cout<<"out:"<<out<<"\n";

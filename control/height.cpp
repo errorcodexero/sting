@@ -67,13 +67,13 @@ std::array<float,3> find_height(Lift_position const& a){
 		target+=TOTE_HOLD_MARGIN;
 	}
 
-	if(a.placed_on_scoring){
+	/*if(a.placed_on_scoring){
 		const float HEIGHT_OF_SCORING_PLATFORM=6.25;
 		target+=HEIGHT_OF_SCORING_PLATFORM;
 	}else if(a.on_step){
 		const float HEIGHT_OF_STEP=1.96;
 		target+=HEIGHT_OF_STEP;
-	}
+	}*/
 	
 	float positive_tolerance=2;
 	float negative_tolerance=2;

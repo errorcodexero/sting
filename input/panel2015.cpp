@@ -118,14 +118,11 @@ Panel interpret(Joystick_data d){
 	{
 		Volt auto_mode=d.axis[5]/3.3*5;
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
-		//cout<<endl<<endl<<interpret_10_turn_pot(auto_mode)<<endl<<endl;
 	}
 	{
-		float lev=d.axis[1];//default: -1
-		//cout<<"\n\n\n lev:"<<lev<<"  2:"<<d.digital[2]<<"\n\n\n";
+		float lev=d.axis[1];//Default=-1
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
-		//cout<<endl<<lev<<endl;
-		if(!d.button[1]){//tests if override is being pushed
+		if(1/*!d.button[1]*/){//tests if override is being pushed
 			if(lev<DEFAULT+.1)panel.level_button=Panel::Level_button::DEFAULT;
 			else if(lev>LEVEL0-(LEVEL0-DEFAULT)/2 && lev<LEVEL0+(LEVEL1-LEVEL0)/2)panel.level_button=Panel::Level_button::LEVEL0;//-.75
 			else if(lev>LEVEL1-(LEVEL1-LEVEL0)/2 && lev<LEVEL1+(LEVEL2-LEVEL1)/2)panel.level_button=Panel::Level_button::LEVEL1;//-.5
@@ -146,8 +143,10 @@ Panel interpret(Joystick_data d){
 		else if(op>TOTE_NUDGE-(TOTE_NUDGE-CAN_NUDGE)/2 && op<TOTE_NUDGE+(CAN_NUDGE_SMALL-TOTE_NUDGE)/2)panel.operation_buttons=Panel::Operation_buttons::TOTE_NUDGE;//.65
 		else if(op>DEFAULT-.25 && op<DEFAULT+(ENGAGE_KICKER_HEIGHT-DEFAULT)/2)panel.operation_buttons=Panel::Operation_buttons::DEFAULT;
 	}
+	panel.can_nudge=panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE;
 	panel.tote_nudge=(panel.operation_buttons==Panel::Operation_buttons::TOTE_NUDGE);
-	panel.can_nudge_small=0;//(panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE_SMALL);
+	panel.can_nudge_small=(panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE_SMALL);
+	panel.engage_kicker_height=panel.operation_buttons==Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT;
 	//panel.slide_pos=(d.analog[2]+1)*((65-5)/2);//May be useless due to previous things
 	panel.stop=d.button[3];
 	{	
@@ -164,14 +163,7 @@ Panel interpret(Joystick_data d){
 		if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
 		else panel.move_arm_one=0;
 	}
-	{
-		float can_nudge=d.axis[0];
-		static const float DEFAULT=-1, NUDGE=0;
-		panel.can_nudge=(can_nudge>NUDGE-(NUDGE-DEFAULT)/2 && can_nudge<NUDGE+(NUDGE+.25)/2);
-	}
-	{
-		panel.bottom_mode=round(d.axis[6]);
-	}
+	panel.bottom_mode=round(d.axis[6]);
 	panel.target_type=round(d.axis[3]);
 	return panel;
 }

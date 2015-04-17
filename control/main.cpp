@@ -120,9 +120,9 @@ Toplevel::Goal Main::teleop(
 	Joystick_data const& main_joystick,
 	Joystick_data const& gunner_joystick,
 	Panel const&  oi_panel,
-	Toplevel::Status_detail& toplevel_status
+	Toplevel::Status_detail& /*toplevel_status*/
 ){
-	cout<<toplevel_status<<"\n";
+	//cout<<toplevel_status<<"\n";
 	Toplevel::Goal goals;
 
 	static const float X_NUDGE_POWER=.45;//Change these nudge values to adjust the nudge speeds/amounts
@@ -217,6 +217,7 @@ Toplevel::Goal Main::teleop(
 	Lift_position can_lift_pos;
 	can_lift_pos.is_can=1;
 	Lift_position tote_lift_pos;
+	tote_lift_pos.is_can=0;
 	
 	if(oi_panel.bottom_mode==1){
 		can_lift_pos.on_step=0;
@@ -504,7 +505,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Joystick_data gunner_joystick=in.joystick[1];
 	Panel oi_panel=interpret(in.joystick[2]);
 	if(!in.robot_mode.enabled) oi_panel.level_button=Panel::Level_button::DEFAULT;
-	//cout<<"panel: "<<oi_panel<<"\n";
+	cout<<"panel: "<<oi_panel<<"\n";
 	force.update(
 		main_joystick.button[Gamepad_button::A],
 		main_joystick.button[Gamepad_button::LB],

@@ -58,7 +58,7 @@ array<double,LEN> floats_to_doubles(array<float,LEN> a){
 Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,Main::Sticky_tote_goal pre_sticky_tote_goal,Posedge_toggle& piston,bool kick_and_lift=1,bool nudging=0){//Auto kicking code 
 	static const float ABOVE_ENGAGE_KICKER_HEIGHT=ENGAGE_KICKER_HEIGHT;
 	float nudge=0.0;
-	if(nudging) nudge=-1.5;
+	if(nudging) nudge=-3.5;
 	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT){
 		piston.update(1);
 	}
@@ -213,7 +213,6 @@ Toplevel::Goal Main::teleop(
 	
 	goals.drive=goal;
 	piston.update(gunner_joystick.button[Gamepad_button::Y]);
-	if(!gunner_joystick.button[Gamepad_button::Y]) piston.update(oi_panel.kicker_activate);
 	
 	Lift_position can_lift_pos;
 	can_lift_pos.is_can=1;
@@ -352,6 +351,7 @@ Toplevel::Goal Main::teleop(
 			can_priority=0;
 		}
 		bool nudging=gunner_joystick.button[Gamepad_button::BACK];
+		if(!nudging && oi_panel.in_use && oi_panel.target_type==-1) nudging=oi_panel.tote_nudge;
 		if(gunner_joystick.button[Gamepad_button::L_JOY]){
 			can_priority=0;
 			sticky_tote_goal=Sticky_tote_goal::BOTTOM;

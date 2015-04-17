@@ -59,7 +59,6 @@ Lift::Goal tote_lifter(Lift_position& tote_lift_pos,float ENGAGE_KICKER_HEIGHT,M
 	static const float ABOVE_ENGAGE_KICKER_HEIGHT=ENGAGE_KICKER_HEIGHT;
 	float nudge=0.0;
 	if(nudging) nudge=-1.5;
-	cout<<"\nnudge: "<<nudge<<"\n";
 	if(kick_and_lift && pre_sticky_tote_goal==Main::Sticky_tote_goal::ENGAGE_KICKER && !piston.get() && find_height(tote_lift_pos)[2]>=ABOVE_ENGAGE_KICKER_HEIGHT){
 		piston.update(1);
 	}
@@ -323,7 +322,6 @@ Toplevel::Goal Main::teleop(
 			if(DOWN_LEVEL<0) DOWN_LEVEL=0;
 			can_priority=1;
 		}*/
-		cout<<"\nSticky_can_goal: "<<sticky_can_goal<<"\n";
 		if(sticky_can_goal==Sticky_can_goal::STOP) return Lift::Goal::stop();
 		if(sticky_can_goal==Sticky_can_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_can_goal==Sticky_can_goal::TOP) return Lift::Goal::up();
@@ -421,7 +419,6 @@ Toplevel::Goal Main::teleop(
 				can_priority=0;
 			}*/
 		}
-		cout<<"\nSticky_tote_goal: "<<sticky_tote_goal<<"\n";
 		if(sticky_tote_goal==Sticky_tote_goal::STOP) return Lift::Goal::stop();
 		if(sticky_tote_goal==Sticky_tote_goal::BOTTOM) return Lift::Goal::down();
 		if(sticky_tote_goal==Sticky_tote_goal::TOP) return Lift::Goal::up();

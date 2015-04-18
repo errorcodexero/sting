@@ -1,19 +1,13 @@
 HIGH PRIORITY:
 -Bug fixes
--Sensor and Auto-Alignment
--OI(See Lower)
 -Auto-Mode
         -Move-tune this
-        -Full Auto
-        -Auto mode switcher integration
-        -Sensor integration
--Drive-to-wall/Drive-to-tote
+        -Encoder integration
 
 
 NOT AS HIGH PRIORITY:
 -Autonomous
         -Movement
--Figure out chute_collect in panel2015
 -Drivebase wheel encoders
         -Get all A/B lines working (electrical)
         -Turn on counting mode & see if works

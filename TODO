@@ -13,7 +13,6 @@ HIGH PRIORITY:
 NOT AS HIGH PRIORITY:
 -Autonomous
         -Movement
-        -Selection Method
 -Figure out chute_collect in panel2015
 -Drivebase wheel encoders
         -Get all A/B lines working (electrical)
@@ -24,21 +23,13 @@ NOT AS HIGH PRIORITY:
         -UI
         -figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
         -code to diagnose motor/encoder problems
-        -track whether been to one of the ends yet?
 -Write logging code
 -OI:
         -put in outputs
                 -into framework
-                -figure out if need to reprogram the TI launchpad
--Automatic Operations
-        -auto-align
-                -test with totes
-                -consider disabling when would be looking at the grabber
-        -lift
 
 
 NICE THINGS TO HAVE:
--Drive to Wall
 -Clean-up stuff:
         -use enum class more places
         -use std::array in place of C arrays in several places

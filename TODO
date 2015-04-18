@@ -1,8 +1,8 @@
 HIGH PRIORITY:
 	-Bug fixes
 	-Auto-Mode
-	-Move-tune this
-	-Encoder integration
+		-Move-tune this
+		-Encoder integration
 
 
 NOT AS HIGH PRIORITY:
@@ -24,16 +24,16 @@ NOT AS HIGH PRIORITY:
 
 		
 NICE THINGS TO HAVE:
--Clean-up stuff:
-	-use enum class more places
-	-use std::array in place of C arrays in several places
--Meta IO information
-	-Add a function that will discover which IOs different parts use (and make a nice list)
-	-Make a data type to talk about different inputs
--Improve testing, make sims meaningful
--Audit code to see what each part of the robot does when in disabled mode
--Improve testing for toplevel.cpp
--Laptop configuration
-	-ssh config:
-		-Fix the "rm ~/.ssh/known_hosts" problem
-		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
+	-Clean-up stuff:
+		-use enum class more places
+		-use std::array in place of C arrays in several places
+	-Meta IO information
+		-Add a function that will discover which IOs different parts use (and make a nice list)
+		-Make a data type to talk about different inputs
+	-Improve testing, make sims meaningful
+	-Audit code to see what each part of the robot does when in disabled mode
+	-Improve testing for toplevel.cpp
+	-Laptop configuration
+		-ssh config:
+			-Fix the "rm ~/.ssh/known_hosts" problem
+			-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot

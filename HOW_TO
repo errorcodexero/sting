@@ -1,7 +1,14 @@
 
 												A How-To Guide for ALL your robot needs
 	
-How to fine tune the heights for the can lfter:
+Useful terminal commands:
+	-"CTRL+C" ends the current running command.
+	-"cd [insert_name_here]" an be used to enter the [insert_name_here] ("cd .." will go up one level).
+	-"ls" will list the files within the current directory.
+	-"CTRL+L" will clear the terminal.
+	-The ↑ (up arrow) Key will replace the current command line with previously used commands.
+
+How to fine tune the heights for the can lifter:
 	1. Open the terminal emulator by using the "CTRL+ALT+T" keyboard shotcut on one of the software computers in linux.
 	2. Type "cd ~/fourteentwentyfive.sting/control" into the terminal and press enter. This will move you to the directory that contains the robot code.
 	3. Type "gedit height.cpp" and press enter. This opens the cpp file that contains the code you want.
@@ -18,6 +25,8 @@ How to fine tune the heights for the can lfter:
 		else if(bins==4) target+=-2.75;
 		else if(bins==5) target+=(-TOTE_HEIGHT)+3.5;
 		else if(bins==6) target+=(-TOTE_HEIGHT)+-2.5;
+		
+		(ayy lmao)
 		
 How to deploy code to the robot:
 	1. Open the terminal emulator by using the "CTRL+ALT+T" keyboard shotcut on one of the software computers in linux.
@@ -43,7 +52,7 @@ Software contacts:
                                       /\ ) ) ).'/
                                      /(  \  // /
                                     /(   J`((_/ \
-                                   / ) | _\     /
+                                   / ) | 0\     /
                                   /|)  \  eJ    L
                                  |  \ L \   L   L
                                 /  \  J  `. J   L

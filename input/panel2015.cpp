@@ -113,7 +113,6 @@ Panel interpret(Joystick_data d){
 	}
 	{
 		Volt auto_mode=d.axis[5];
-		cout<<"\nauto_selector: "<<interpret_10_turn_pot(auto_mode)<<"\n";
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{
@@ -128,6 +127,7 @@ Panel interpret(Joystick_data d){
 			else if(lev>LEVEL4-(LEVEL4-LEVEL3)/2 && lev<LEVEL4+(LEVEL5-LEVEL4)/2)panel.level_button=Panel::Level_button::LEVEL4;//.32
 			else if(lev>LEVEL5-(LEVEL5-LEVEL4)/2 && lev<LEVEL5+(LEVEL6-LEVEL5)/2)panel.level_button=Panel::Level_button::LEVEL5;//.65
 			else if(lev>LEVEL6-(LEVEL6-LEVEL5)/2 && lev<LEVEL6+.25)panel.level_button=Panel::Level_button::LEVEL6;//1
+			else panel.level_button=Panel::Level_button::DEFAULT;
 		}else{//This sets it to the SlipnSlide
 			panel.override_height=(d.axis[2]+1)*((65-5)/2);
 		}
@@ -138,7 +138,8 @@ Panel interpret(Joystick_data d){
 		if(op>ENGAGE_KICKER_HEIGHT-(ENGAGE_KICKER_HEIGHT-DEFAULT)/2 && op<ENGAGE_KICKER_HEIGHT+(CAN_NUDGE-ENGAGE_KICKER_HEIGHT)/2)panel.operation_buttons=Panel::Operation_buttons::ENGAGE_KICKER_HEIGHT;//0
 		else if(op>CAN_NUDGE-(CAN_NUDGE-ENGAGE_KICKER_HEIGHT)/2 && op<CAN_NUDGE+(TOTE_NUDGE-CAN_NUDGE)/2)panel.operation_buttons=Panel::Operation_buttons::CAN_NUDGE;//.32
 		else if(op>TOTE_NUDGE-(TOTE_NUDGE-CAN_NUDGE)/2 && op<TOTE_NUDGE+(CAN_NUDGE_SMALL-TOTE_NUDGE)/2)panel.operation_buttons=Panel::Operation_buttons::TOTE_NUDGE;//.65
-		else if(op>DEFAULT-.25 && op<DEFAULT+(ENGAGE_KICKER_HEIGHT-DEFAULT)/2)panel.operation_buttons=Panel::Operation_buttons::DEFAULT;
+		else if(op>CAN_NUDGE_SMALL-(CAN_NUDGE_SMALL-TOTE_NUDGE)/2 && op<CAN_NUDGE_SMALL+.25)panel.operation_buttons=Panel::Operation_buttons::CAN_NUDGE_SMALL;
+		else panel.operation_buttons=Panel::Operation_buttons::DEFAULT;
 	}
 	panel.can_nudge=panel.operation_buttons==Panel::Operation_buttons::CAN_NUDGE;
 	panel.tote_nudge=(panel.operation_buttons==Panel::Operation_buttons::TOTE_NUDGE);

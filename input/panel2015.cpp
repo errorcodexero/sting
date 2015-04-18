@@ -113,6 +113,7 @@ Panel interpret(Joystick_data d){
 	}
 	{
 		Volt auto_mode=d.axis[5];
+		cout<<"\nauto_selector: "<<interpret_10_turn_pot(auto_mode)<<"\n";
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{

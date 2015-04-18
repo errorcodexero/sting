@@ -463,7 +463,6 @@ Main::Mode next_mode(Main::Mode m,bool autonomous,bool autonomous_start,Toplevel
 	switch(m){
 		case Main::Mode::TELEOP:
 			if(autonomous_start){
-				//todo: make this depend on a switch or something.
 				if (oi_panel.in_use) {
 					switch(oi_panel.auto_mode){ 
 						case Panel::Auto_mode::CAN_GRAB:
@@ -523,7 +522,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	if (in.digital_io.encoder[2]) cout<<"Wheel 3: "<<*in.digital_io.encoder[2]<<"\n";
 	bool autonomous_start_now=autonomous_start(in.robot_mode.autonomous && in.robot_mode.enabled);
 	since_auto_start.update(in.now,autonomous_start_now);
-	//static const Time AUTONOMOUS_MODE_LENGTH=10;
 		
 	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_can_goal=Sticky_can_goal::STOP;
@@ -562,7 +560,6 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;
 	//cout<<"Tote: "<<lift_tote<<endl;
-	//Drivebase::Output out = control(status_detail, goal);
 
 	Toplevel::Output r_out=control(toplevel_status,goals); 
 

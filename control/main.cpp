@@ -503,7 +503,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Joystick_data main_joystick=in.joystick[0];
 	Joystick_data gunner_joystick=in.joystick[1];
 	Panel oi_panel=interpret(in.joystick[2]);
-	if(!in.robot_mode.enabled) oi_panel.level_button=Panel::Level_button::DEFAULT;
+	if(!in.robot_mode.enabled || in.robot_mode.autonomous) oi_panel.level_button=Panel::Level_button::DEFAULT;
 	
 	force.update(
 		main_joystick.button[Gamepad_button::A],
@@ -525,7 +525,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 		
 	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_tote_goal=Sticky_tote_goal::STOP;
 	if(!in.robot_mode.enabled || in.robot_mode.autonomous) sticky_can_goal=Sticky_can_goal::STOP;
-
+	
 	Toplevel::Goal goals;
 	//Drivebase::Status_detail status_detail = drivebase.estimator.get();
 	

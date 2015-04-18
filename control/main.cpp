@@ -516,8 +516,9 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	);
 	
 	Toplevel::Status_detail toplevel_status=toplevel.estimator.get();
-	
-	cout<<"\npanel: "<<oi_panel<<"\n";	
+	static int print_out_speed=0;	
+	if(print_out_speed%300==0)cout<<"panel: "<<oi_panel<<"\n";	
+	print_out_speed++;
 	if (in.digital_io.encoder[0]) cout<<"Wheel 1: "<<*in.digital_io.encoder[0]<<"\n";
 	if (in.digital_io.encoder[1]) cout<<"Wheel 2: "<<*in.digital_io.encoder[1]<<"\n";
 	if (in.digital_io.encoder[2]) cout<<"Wheel 3: "<<*in.digital_io.encoder[2]<<"\n";

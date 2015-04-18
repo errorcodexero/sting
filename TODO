@@ -1,39 +1,39 @@
 HIGH PRIORITY:
--Bug fixes
--Auto-Mode
-        -Move-tune this
-        -Encoder integration
+	-Bug fixes
+	-Auto-Mode
+	-Move-tune this
+	-Encoder integration
 
 
 NOT AS HIGH PRIORITY:
--Autonomous
-        -Movement
--Drivebase wheel encoders
-        -Get all A/B lines working (electrical)
-        -Turn on counting mode & see if works
-        -Determine directions & scales of counts
-        -Drive distance routine
--Lifter Code
-        -UI
-        -figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
-        -code to diagnose motor/encoder problems
--Write logging code
--OI:
-        -put in outputs
-                -into framework
+	-Autonomous
+		-Movement
+	-Drivebase wheel encoders
+		-Get all A/B lines working (electrical)
+		-Turn on counting mode & see if works
+		-Determine directions & scales of counts
+		-Drive distance routine
+	-Lifter Code
+		-UI
+		-figure out the limits of when we throw totes (i.e. how fast we can turn before we throw them off)
+		-code to diagnose motor/encoder problems
+	-Write logging code
+	-OI:
+		-put in outputs
+		-into framework
 
-
+		
 NICE THINGS TO HAVE:
 -Clean-up stuff:
-        -use enum class more places
-        -use std::array in place of C arrays in several places
+	-use enum class more places
+	-use std::array in place of C arrays in several places
 -Meta IO information
-        -Add a function that will discover which IOs different parts use (and make a nice list)
-        -Make a data type to talk about different inputs
+	-Add a function that will discover which IOs different parts use (and make a nice list)
+	-Make a data type to talk about different inputs
 -Improve testing, make sims meaningful
 -Audit code to see what each part of the robot does when in disabled mode
 -Improve testing for toplevel.cpp
 -Laptop configuration
-        -ssh config:
-                -Fix the "rm ~/.ssh/known_hosts" problem
-                -add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
+	-ssh config:
+		-Fix the "rm ~/.ssh/known_hosts" problem
+		-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot

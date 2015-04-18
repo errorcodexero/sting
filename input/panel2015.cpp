@@ -112,7 +112,7 @@ Panel interpret(Joystick_data d){
 		}();
 	}
 	{
-		Volt auto_mode=d.axis[5]/3.3*5;
+		Volt auto_mode=d.axis[5];
 		panel.auto_mode=auto_mode_convert(interpret_10_turn_pot(auto_mode));
 	}
 	{

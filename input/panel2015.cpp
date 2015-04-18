@@ -21,7 +21,6 @@ Panel::Panel():
 	can_nudge(0),
 	chute_collect(0),
 	stop(0),
-	piston_aligner(0),
 	target_type(0),
 	move_arm_one(0),
 	move_arm_cont(0),
@@ -81,7 +80,6 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", can_nudge:"<<p.can_nudge;
 	o<<", chute_collect:"<<p.chute_collect;
 	o<<", stop:"<<p.stop;
-	o<<", piston_aligner:"<<p.piston_aligner;
 	o<<", 3_pos_switches(";
 	o<<" target_type:"<<p.target_type;
 	o<<", move_arm_one:"<<p.move_arm_one;

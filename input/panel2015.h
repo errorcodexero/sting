@@ -25,7 +25,6 @@ struct Panel{
 	bool can_nudge;//Added
 	bool chute_collect;
 	bool stop;//Added
-	bool piston_aligner;
     //3 position Switches:
 	int target_type;//Added
 	int move_arm_one;

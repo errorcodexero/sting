@@ -19,7 +19,6 @@ Panel::Panel():
 	engage_kicker_height(0),
 	tote_nudge(0),
 	can_nudge(0),
-	chute_collect(0),
 	stop(0),
 	target_type(0),
 	move_arm_one(0),
@@ -78,7 +77,6 @@ ostream& operator<<(ostream& o,Panel p){
 	o<<", engage_kicker_height:"<<p.engage_kicker_height;
 	o<<", tote_nudge:"<<p.tote_nudge;
 	o<<", can_nudge:"<<p.can_nudge;
-	o<<", chute_collect:"<<p.chute_collect;
 	o<<", stop:"<<p.stop;
 	o<<", 3_pos_switches(";
 	o<<" target_type:"<<p.target_type;

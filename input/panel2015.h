@@ -23,7 +23,6 @@ struct Panel{
 	bool engage_kicker_height;//added
 	bool tote_nudge;//Added
 	bool can_nudge;//Added
-	bool chute_collect;
 	bool stop;//Added
     //3 position Switches:
 	int target_type;//Added

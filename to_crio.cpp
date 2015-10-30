@@ -76,35 +76,34 @@ void SendWOL (void)
     close(udpSocket);
 }
 
-Joystick_data read_joystick(DriverStation& ds,int port){
+Joystick_data read_joystick(int port){
 	//I don't know what the DriverStation does when port is out of range.
+	Joystick joy(port);
 	Joystick_data r;
 	{
-		auto lim=ds.GetStickAxisCount(port);
+		auto lim=joy.GetAxisCount();
 		assert(lim>=0);
 		unsigned axes=std::min((unsigned)JOY_AXES,(unsigned)lim);
 		for(unsigned i=0;i<axes;i++){
 			//r.axis[i]=ds.GetStickAxis(port+1,i+1);
 			//cerr<<"Reading Port "<<port<<" Axis "<<i<<endl<<flush;
-			r.axis[i]=ds.GetStickAxis(port,i);
+			r.axis[i]=joy.GetRawAxis(i);
 			//cerr<<r.axis[i]<<endl<<flush;
 		}
 	}
-	auto lim=ds.GetStickButtonCount(port);
+	auto lim=joy.GetButtonCount();
 	assert(lim>=0);
 	const auto buttons=std::min((unsigned)JOY_BUTTONS,(unsigned)lim);
 	for(unsigned i=0;i<buttons;i++){
 		//if(buttons&(1<<i)) r.button[i]=1;
-		r.button[i]=ds.GetStickButton(port,i+1);
+		r.button[i]=joy.GetRawButton(i+1);
 	}
 	return r;
 }
 
 int read_joysticks(Robot_inputs &r){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(!ds) return 4;
 	for(unsigned i=0;i<r.JOYSTICKS;i++){
-		r.joystick[i]=read_joystick(*ds,i);
+		r.joystick[i]=read_joystick(i);
 	}
 	return 0;
 }

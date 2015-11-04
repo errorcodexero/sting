@@ -29,6 +29,7 @@ struct Panel{
 	int move_arm_one;
 	int move_arm_cont;
 	int bottom_mode;//added
+	bool mode_led;
 	Panel();
 };
 

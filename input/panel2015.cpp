@@ -155,13 +155,14 @@ Panel interpret(Joystick_data d){
 		else panel.move_arm_cont=0;		
 	}
 	{
-		static const float DOWN=0,UP=-.5,DEFAULT=-1;;
+		static const float DOWN=0,UP=-.5,DEFAULT=-1;
 		float level_up_down_control=d.axis[4];
 		if(level_up_down_control>UP-(UP-DEFAULT)/2 && level_up_down_control<UP+(DOWN-UP)/2)panel.move_arm_one=1;
 		if(level_up_down_control>DOWN-(DOWN-UP)/2 && level_up_down_control<DOWN+.25)panel.move_arm_one=-1;
 		else panel.move_arm_one=0;
 	}
 	panel.bottom_mode=round(d.axis[6]);
+	//if (round(d.axis[3]) != panel.target_type) panel.mode_led = !panel.mode_led;
 	panel.target_type=round(d.axis[3]);
 	return panel;
 }

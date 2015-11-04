@@ -136,6 +136,9 @@ Toplevel::Goal Main::teleop(
 	
 	const double turbo_button=main_joystick.axis[Gamepad_axis::LTRIGGER];
 	
+	//Joystick joy(2);
+	//joy.setOutput( , panel.mode_led);
+
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
 	else if(!nudges[1].timer.done())goal.x=X_NUDGE_POWER;
@@ -516,7 +519,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	);
 	
 	Toplevel::Status_detail toplevel_status=toplevel.estimator.get();
-	
+
 	static int print_out_speed=0;	
 	if(print_out_speed%300==0)cout<<"panel: "<<oi_panel<<"\n";	
 	print_out_speed++;

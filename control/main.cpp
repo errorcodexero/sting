@@ -568,8 +568,11 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	Toplevel::Output r_out=control(toplevel_status,goals); 
 
 	auto r=toplevel.output_applicator(Robot_outputs{},r_out);
-
-	r.panel_led = oi_panel.mode_led;
+	
+	//Do can_height/tote_heigt based on swithc on oi
+	//double can_height = toplevel_status.combo_lift.can.inches_off_ground();
+	//Iterate through number of totes in a LiftPosition passed to findHeight and see if can_height it between values
+	r.panel_led = oi_panel.level_light;	
 
 	r=force(r);
 

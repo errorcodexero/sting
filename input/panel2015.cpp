@@ -117,6 +117,7 @@ Panel interpret(Joystick_data d){
 	}
 	{
 		float lev=d.axis[1];//Default=-1
+		Panel::Level_button old_level = panel.level_button;
 		static const float DEFAULT=-1,LEVEL0=-.75,LEVEL1=-.5,LEVEL2=-.25,LEVEL3=0,LEVEL4=.32,LEVEL5=.65,LEVEL6=1;
 		if(1/*!d.button[1]*/){//tests if override is being pushed
 			if(lev<DEFAULT+.1)panel.level_button=Panel::Level_button::DEFAULT;
@@ -130,6 +131,33 @@ Panel interpret(Joystick_data d){
 			else panel.level_button=Panel::Level_button::DEFAULT;
 		}else{//This sets it to the SlipnSlide
 			panel.override_height=(d.axis[2]+1)*((65-5)/2);
+		}
+		if ((panel.level_button != old_level) && (panel.level_button != Panel::Level_button::DEFAULT)) {
+			switch(panel.level_button) {
+				case Panel::Level_button::LEVEL0:
+					panel.level_light = 1;
+					break;
+				case Panel::Level_button::LEVEL1:
+					panel.level_light = 2;
+					break;
+				case Panel::Level_button::LEVEL2:
+					panel.level_light = 3;
+					break;
+				case Panel::Level_button::LEVEL3:
+					panel.level_light = 4;
+					break;
+				case Panel::Level_button::LEVEL4:
+					panel.level_light = 5;
+					break;
+				case Panel::Level_button::LEVEL5:
+					panel.level_light = 6;
+					break;
+				case Panel::Level_button::LEVEL6:
+					panel.level_light = 7;
+					break;
+				default:
+					break;
+			}
 		}
 	}
 	{
@@ -162,7 +190,6 @@ Panel interpret(Joystick_data d){
 		else panel.move_arm_one=0;
 	}
 	panel.bottom_mode=round(d.axis[6]);
-	if (round(d.axis[3]) != panel.target_type) panel.mode_led = !panel.mode_led;
 	panel.target_type=round(d.axis[3]);
 	return panel;
 }

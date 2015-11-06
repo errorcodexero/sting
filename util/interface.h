@@ -93,6 +93,8 @@ struct Robot_outputs{
 	Driver_station_output driver_station;
 	bool pump_auto;
 
+	bool panel_led;
+
 	Robot_outputs();
 };
 

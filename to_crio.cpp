@@ -410,6 +410,9 @@ public:
 		//test.Set(1);
 		test1.Set(out.talon_srx[0].power_level);
 		test2.Set(out.talon_srx[1].power_level);
+
+		Joystick joy(2);
+		joy.SetOutput(7, out.panel_led);
 		//test2.SetSensorDirection(0);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();

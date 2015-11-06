@@ -135,9 +135,6 @@ Toplevel::Goal Main::teleop(
 	static const bool SLOW_TURNING=0;//Slows drive turning
 	
 	const double turbo_button=main_joystick.axis[Gamepad_axis::LTRIGGER];
-	
-	//Joystick joy(2);
-	//joy.setOutput( , panel.mode_led);
 
 	Drivebase::Goal &goal=goals.drive;
 	if(!nudges[0].timer.done())goal.x=-X_NUDGE_POWER;
@@ -566,11 +563,14 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 	since_switch.update(in.now,mode!=next);
 	mode=next;
 	//cout<<"Can: "<<lift_can<<endl;
-	//cout<<"Tote: "<<lift_tote<<endl;
+	//cout<<"Tote: "<<lift_tote<<endl;	
 
 	Toplevel::Output r_out=control(toplevel_status,goals); 
 
 	auto r=toplevel.output_applicator(Robot_outputs{},r_out);
+
+	r.panel_led = oi_panel.mode_led;
+
 	r=force(r);
 
 	/*Lift::Input can_input;

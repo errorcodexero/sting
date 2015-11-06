@@ -162,7 +162,7 @@ Panel interpret(Joystick_data d){
 		else panel.move_arm_one=0;
 	}
 	panel.bottom_mode=round(d.axis[6]);
-	//if (round(d.axis[3]) != panel.target_type) panel.mode_led = !panel.mode_led;
+	if (round(d.axis[3]) != panel.target_type) panel.mode_led = !panel.mode_led;
 	panel.target_type=round(d.axis[3]);
 	return panel;
 }

@@ -556,7 +556,7 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 			goals.combo_lift.can_priority=0;
 			goals.combo_lift.tote=Lift::Goal::up();
 			goals.combo_lift.tote.high_power_mode=1;
-			break;	
+			break;
 		default: assert(0);
 	}
 	auto next=next_mode(mode,in.robot_mode.autonomous,autonomous_start_now,toplevel_status,since_switch.elapsed(),oi_panel);
@@ -569,10 +569,32 @@ Robot_outputs Main::operator()(Robot_inputs in,ostream&){
 
 	auto r=toplevel.output_applicator(Robot_outputs{},r_out);
 	
-	//Do can_height/tote_heigt based on swithc on oi
-	//double can_height = toplevel_status.combo_lift.can.inches_off_ground();
-	//Iterate through number of totes in a LiftPosition passed to findHeight and see if can_height it between values
-	r.panel_led = oi_panel.level_light;	
+	double height = ((oi_panel.target_type == -1) ? toplevel_status.combo_lift.tote.inches_off_ground() : toplevel_status.combo_lift.can.inches_off_ground());
+
+	Lift_position testing_pos;
+	testing_pos.is_can = (oi_panel.target_type != -1);
+
+	switch(oi_panel.bottom_mode) {
+		case 1:
+			testing_pos.on_step = 0;
+			testing_pos.placed_on_scoring = 1;
+			break;
+		case 0:
+			testing_pos.on_step = 1;
+			testing_pos.placed_on_scoring = 0;
+			break;
+		default:
+			testing_pos.on_step = 0;
+			testing_pos.placed_on_scoring = 0;
+			break;
+	}
+
+	for (int i = 0; i <= 5; i++) {
+		testing_pos.stacked_bins = i;
+		if ((height > find_height(testing_pos)[0]) && (height < find_height(testing_pos)[2])) break;
+	}
+
+	r.panel_led = testing_pos.stacked_bins + 1;	
 
 	r=force(r);
 

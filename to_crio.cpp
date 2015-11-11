@@ -413,6 +413,7 @@ public:
 
 		Joystick joy(2);
 		joy.SetOutput(out.panel_led, true);
+		SmartDashboard::PutNumber("Light", out.panel_led);
 		//test2.SetSensorDirection(0);
 		{
 			/*DriverStation *ds=DriverStation::GetInstance();

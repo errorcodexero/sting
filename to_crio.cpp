@@ -157,15 +157,15 @@ int read_analog(Robot_inputs& r){
 
 //it might make sense to put this in the Robot_inputs structure.  
 Volt battery_voltage(){
-	auto *d=DriverStation::GetInstance();
+	auto &d=DriverStation::GetInstance();
 	//AnalogModule *am=AnalogModule::GetInstance(DriverStation::kBatteryModuleNumber);
-	if(!d){
+	/*if(!d){
 		return 18; //this should look surprising
 		//but maybe should actually return NAN.
-	}
+	}*/
 	/*float f=am->GetAverageVoltage(DriverStation::kBatteryChannel);
 	return f * (1680.0 / 1000.0);//copied from WPIlib's DriverStation.cpp*/
-	return d->GetBatteryVoltage();
+	return d.GetBatteryVoltage();
 }
 
 int find_solenoid_module(){
